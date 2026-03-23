@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!DOCTYPE cambalache-project SYSTEM "cambalache-project.dtd">
+<!-- Created with Cambalache 1.0 -->
+<cambalache-project version="1.0.0" target_tk="gtk-4.0" depends="libadwaita-1,webkitgtk-6.0">
+  <ui filename="scopa.ui" sha256="bd611208bf2545396e674245859b5d3dec47cf24b75b0e93995647f5d18233ff"/>
+  <ui template-class="ScopaWindow" filename="../Projects/Scopa/src/scopa-window.ui" sha256="2631656b0814aecf20839ca3a01980f68e5dbc1226b157acf9e60afe333d94b7"/>
+  <ui filename="new-game.ui" sha256="a6add979845bcea7b50871c18d6695679aaf1a2e2472a64d359722221e078739"/>
+  <ui>
+    <content><![CDATA[<interface/>
+]]></content>
+  </ui>
+</cambalache-project>

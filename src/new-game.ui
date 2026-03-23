@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 1.0 -->
+<interface>
+  <!-- interface-name new-game.ui -->
+  <requires lib="gtk" version="4.18"/>
+  <requires lib="libadwaita" version="1.4"/>
+  <object class="AdwApplicationWindow">
+    <child>
+      <object class="AdwToolbarView">
+        <child>
+          <object class="AdwHeaderBar">
+            <child>
+              <object class="GtkStackSwitcher"/>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <child>
+              <object class="AdwViewStack">
+                <child>
+                  <object class="AdwViewStack" id="local_game_stack">
+                    <child>
+                      <object class="AdwStatusPage">
+                        <child>
+                          <object class="GtkBox">
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="halign">start</property>
+                                <property name="hexpand">True</property>
+                                <property name="hexpand-set">True</property>
+                                <property name="label">Insert difficulty: </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton">
+                                <property name="halign">end</property>
+                                <property name="hexpand">True</property>
+                                <property name="hexpand-set">True</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwViewStack" id="network_game_stack">
+                    <child>
+                      <object class="AdwStatusPage">
+                        <child>
+                          <object class="GtkBox"/>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="AdwViewStackPage">
+    <property name="child">
+      <object class="GtkLabel">
+        <property name="label">Empty Page</property>
+      </object>
+    </property>
+  </object>
+</interface>
