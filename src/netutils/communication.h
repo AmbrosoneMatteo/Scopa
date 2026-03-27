@@ -1,0 +1,10 @@
+#ifndef COMMUNICATION_H
+#define COMMUNICATION_H
+enum MSG_TYPE {
+  INIT,
+  REQ_CARD,
+  SET_CARDS,
+  UPDATE_TABLE
+};
+
+#endif
