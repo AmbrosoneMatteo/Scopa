@@ -1,10 +1,16 @@
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
-enum MSG_TYPE {
+enum MsgType {
   INIT,
   REQ_CARD,
   SET_CARDS,
-  UPDATE_TABLE
+  UPDATE_TABLE,
+  OPPONENT_CARD
+};
+
+struct GamePacket {
+  enum MsgType type;
+  int payload_length;
 };
 
 #endif

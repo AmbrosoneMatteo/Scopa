@@ -3,7 +3,8 @@ scopa_sources = [
   'scopa-application.c',
   'scopa-window.c',
   'server/server.c',
-  'server/game-manager.c'
+  'server/game-manager.c',
+  'server/game-helper.c'
 ]
 
 scopa_deps = [

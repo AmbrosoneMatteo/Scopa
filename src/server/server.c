@@ -10,11 +10,17 @@ GSocketConnection *first_client = NULL;
 
 // Callback function called when a client connects to the server
 gboolean incoming_callback  (GSocketService *service, GSocketConnection *connection, GObject *source_object, gpointer user_data) {
-  GError *err = NULL;
-  GSocketAddress *addr = g_socket_connection_get_remote_address(connection, &err);
+  g_object_ref(connection); // Keep the connection alive
+  GError *error = NULL;
+  GSocketAddress *addr = g_socket_connection_get_remote_address(connection, &error);
   gchar *addr_str = g_socket_connectable_to_string(G_SOCKET_CONNECTABLE(addr));
   g_print("Received connection from client at %s\n", addr_str);
   connection_counter++;
+
+  if (error != NULL){
+    g_printerr("%s\n", error->message);
+    return FALSE;
+  }
 
   // Starting the game when the server is full (2 clients connected)
   if(connection_counter >= 2){
@@ -24,11 +30,10 @@ gboolean incoming_callback  (GSocketService *service, GSocketConnection *connect
 
     g_print("The server is full, starting the game...\n");
     start_game(first_client, connection);
-
-    return FALSE;
   }else{
     first_client = connection;
   }
+
   return FALSE;
 }
 

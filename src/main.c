@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include <glib/gi18n.h>
+#include <time.h>
 
 #include "scopa-application.h"
 #include "server/server.h"
@@ -29,6 +30,7 @@ int
 main (int   argc,
       char *argv[])
 {
+  srand(time(NULL));
 	g_autoptr(ScopaApplication) app = NULL;
 	int ret;
 
