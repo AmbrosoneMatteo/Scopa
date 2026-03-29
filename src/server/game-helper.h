@@ -3,5 +3,8 @@
 
 struct Deck *deck_init(void);
 void shuffle_deck(struct Deck *deck);
+struct Card *draw_card(struct Deck *deck);
+struct Table *table_init(struct Deck *deck);
+struct Hand *get_hand(struct Deck *deck, struct Hand *hand);
 
 #endif

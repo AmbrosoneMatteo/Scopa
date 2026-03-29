@@ -3,7 +3,7 @@
 enum MsgType {
   INIT,
   REQ_CARD,
-  SET_CARDS,
+  SET_HAND,
   UPDATE_TABLE,
   OPPONENT_CARD
 };

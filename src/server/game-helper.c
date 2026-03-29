@@ -5,6 +5,7 @@
 
 // Fucntion that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.
+// Returned is a pointer to the deck structure
 struct Deck *deck_init(void){
   struct Deck *deck = malloc(sizeof(struct Deck));
   if(deck == NULL){
@@ -33,4 +34,41 @@ void shuffle_deck(struct Deck *deck){
     deck->cards[i] = deck->cards[j];
     deck->cards[j] = temp;
   }
+  deck->top = &deck->cards[DECK_SIZE - 1]; // Resetting the top of the deck
+}
+
+// Function that draws a card from the top of the deck
+// Returned is the pointer to the card
+struct Card *draw_card(struct Deck *deck){
+  if(deck->top >= &deck->cards[0]){
+    struct Card *card = deck->top;
+    deck->top--;
+    return card;
+  }
+  return NULL;
+}
+
+// Function that initializes the table with 4 cards
+// Returned is the pointer to the table structure
+struct Table *table_init(struct Deck *deck){
+  struct Table *table = calloc(1, sizeof(struct Table));
+  if(table == NULL){
+    return NULL;
+  }
+  
+  for(int i = 0; i < 4; i++){
+    table->cards[i] = *(draw_card(deck));
+  }
+  table->count = 4; // Initial size of the table
+  return table;
+}
+
+// Function that gets a new 3 card hand for the player
+// Returned is the pointer to the hand structure
+struct Hand *get_hand(struct Deck *deck, struct Hand *hand){
+  for(int i = 0; i < HAND_SIZE; i++){
+    hand->cards[i] = *(draw_card(deck));
+  }
+  hand->count = HAND_SIZE;
+  return hand;
 }
