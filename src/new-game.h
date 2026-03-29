@@ -1,4 +1,4 @@
-/* scopa-window.c
+/* new-game.h
  *
  * Copyright 2026 matteo
  *
@@ -18,31 +18,14 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include "config.h"
+#pragma once
 
-#include "scopa-window.h"
+#include <adwaita.h>
 
-struct _ScopaWindow
-{
-	AdwApplicationWindow  parent_instance;
+G_BEGIN_DECLS
 
-	/* Template widgets */
-        GtkImage        *stack_card_image;
-};
+#define NEW_GAME_TYPE_WINDOW (new_game_window_get_type())
 
-G_DEFINE_FINAL_TYPE (ScopaWindow, scopa_window, ADW_TYPE_APPLICATION_WINDOW)
+G_DECLARE_FINAL_TYPE (NewGameWindow, new_game_window, NEW, WINDOW, AdwApplicationWindow)
 
-static void
-scopa_window_class_init (ScopaWindowClass *klass)
-{
-	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-
-	gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Example/scopa-window.ui");
-	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, stack_card_image);
-}
-
-static void
-scopa_window_init (ScopaWindow *self)
-{
-	gtk_widget_init_template (GTK_WIDGET (self));
-}
+G_END_DECLS

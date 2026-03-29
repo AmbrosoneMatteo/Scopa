@@ -1,4 +1,4 @@
-/* scopa-window.c
+/* new-game.c
  *
  * Copyright 2026 matteo
  *
@@ -20,29 +20,27 @@
 
 #include "config.h"
 
-#include "scopa-window.h"
+#include "new-game.h"
 
-struct _ScopaWindow
+struct _NewGameWindow
 {
-	AdwApplicationWindow  parent_instance;
-
-	/* Template widgets */
-        GtkImage        *stack_card_image;
+    AdwApplicationWindow  parent_instance;
+    GtkSpinButton        *difficulty_input;
 };
 
-G_DEFINE_FINAL_TYPE (ScopaWindow, scopa_window, ADW_TYPE_APPLICATION_WINDOW)
+G_DEFINE_FINAL_TYPE (NewGameWindow, new_game_window, ADW_TYPE_APPLICATION_WINDOW)
 
 static void
-scopa_window_class_init (ScopaWindowClass *klass)
+new_game_window_class_init (NewGameWindowClass *klass)
 {
-	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+    GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-	gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Example/scopa-window.ui");
-	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, stack_card_image);
+    gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Example/new-game.ui");
+    //gtk_widget_class_bind_template_child (widget_class, NewGameWindow, difficulty_input);
 }
 
 static void
-scopa_window_init (ScopaWindow *self)
+new_game_window_init (NewGameWindow *self)
 {
-	gtk_widget_init_template (GTK_WIDGET (self));
+    gtk_widget_init_template (GTK_WIDGET (self));
 }
