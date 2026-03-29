@@ -11,8 +11,8 @@
           <object class="AdwHeaderBar">
             <child type="title">
               <object class="AdwViewSwitcher">
-                <property name="stack">game_type_stack</property>
                 <property name="policy">wide</property>
+                <property name="stack">game_type_stack</property>
               </object>
             </child>
           </object>
@@ -23,50 +23,210 @@
               <object class="AdwViewStack" id="game_type_stack">
                 <child>
                   <object class="AdwViewStackPage" id="local_game_stack">
-                    <property name="name">local</property>
-                    <property name="title">Local</property>
                     <property name="child">
                       <object class="AdwStatusPage">
+                        <property name="vexpand">True</property>
+                        <property name="vexpand-set">True</property>
                         <child>
                           <object class="GtkBox">
+                            <property name="hexpand">True</property>
+                            <property name="hexpand-set">True</property>
+                            <property name="orientation">vertical</property>
+                            <property name="vexpand">True</property>
+                            <property name="vexpand-set">True</property>
                             <child>
-                              <object class="GtkLabel">
-                                <property name="halign">start</property>
+                              <object class="GtkBox">
                                 <property name="hexpand">True</property>
                                 <property name="hexpand-set">True</property>
-                                <property name="label">Insert difficulty: </property>
+                                <property name="valign">start</property>
+                                <property name="vexpand">True</property>
+                                <property name="vexpand-set">True</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="halign">start</property>
+                                    <property name="label">Insert difficulty: </property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="difficulty_input_2">
+                                    <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="hexpand-set">True</property>
+                                    <property name="margin-start">10</property>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkSpinButton" id="difficulty_input">
-                                <property name="halign">end</property>
-                                <property name="hexpand">True</property>
-                                <property name="hexpand-set">True</property>
+                              <object class="GtkButton">
+                                <property name="halign">center</property>
+                                <property name="label">Start local game</property>
+                                <property name="valign">end</property>
+                                <property name="vexpand">True</property>
+                                <property name="vexpand-set">True</property>
+                                <style>
+                                  <class name="suggested-action"/>
+                                </style>
                               </object>
                             </child>
                           </object>
                         </child>
                       </object>
                     </property>
+                    <property name="name">local</property>
+                    <property name="title">Local</property>
                   </object>
                 </child>
                 <child>
                   <object class="AdwViewStackPage" id="network_game_stack">
-                    <property name="name">network</property>
-                    <property name="title">network</property>
                     <property name="child">
                       <object class="AdwStatusPage">
+                        <property name="valign">start</property>
+                        <property name="vexpand">True</property>
+                        <property name="vexpand-set">True</property>
                         <child>
                           <object class="GtkBox">
-                            <child>
-                              <object class="GtkEntry">
-                                <property name="placeholder-text">server name or address</property>
+                            <property name="halign">baseline-fill</property>
+                            <property name="orientation">vertical</property>
+                            <property name="valign">start</property>
+                            <property name="vexpand">True</property>
+                            <property name="vexpand-set">True</property>
+                            <child type="top">
+                              <object class="AdwViewSwitcher">
+                                <property name="policy">wide</property>
+                                <property name="stack">net_type_stack</property>
+                                <property name="valign">start</property>
+                                <property name="vexpand">True</property>
+                                <property name="vexpand-set">True</property>
+                              </object>
+                            </child>
+                            <child type="bottom">
+                              <object class="AdwViewStack" id="net_type_stack">
+                                <property name="hexpand">True</property>
+                                <property name="hexpand-set">True</property>
+                                <property name="valign">start</property>
+                                <property name="vexpand">True</property>
+                                <property name="vexpand-set">True</property>
+                                <child>
+                                  <object class="AdwViewStackPage" id="connect_stack">
+                                    <property name="child">
+                                      <object class="AdwStatusPage">
+                                        <property name="hexpand">True</property>
+                                        <property name="hexpand-set">True</property>
+                                        <property name="valign">start</property>
+                                        <property name="vexpand">True</property>
+                                        <property name="vexpand-set">True</property>
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="hexpand">true</property>
+                                            <property name="hexpand-set">True</property>
+                                            <property name="orientation">vertical</property>
+                                            <property name="valign">start</property>
+                                            <property name="vexpand">true</property>
+                                            <property name="vexpand-set">True</property>
+                                            <child>
+                                              <object class="GtkEntry" id="ip_address_number">
+                                                <property name="placeholder-text">ip address or hostname</property>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkBox">
+                                                <property name="hexpand">true</property>
+                                                <property name="orientation">horizontal</property>
+                                                <property name="vexpand">true</property>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="label">port number</property>
+                                                  </object>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="server_port_number">
+                                                    <property name="halign">start</property>
+                                                    <property name="hexpand">True</property>
+                                                    <property name="hexpand-set">True</property>
+                                                    <property name="margin-start">10</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton">
+                                                <property name="halign">center</property>
+                                                <property name="label">Start local game</property>
+                                                <property name="valign">end</property>
+                                                <property name="vexpand">True</property>
+                                                <property name="vexpand-set">True</property>
+                                                <style>
+                                                  <class name="suggested-action"/>
+                                                </style>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </property>
+                                    <property name="name">connect to server</property>
+                                    <property name="title">connect</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwViewStackPage" id="create_server_stack">
+                                    <property name="child">
+                                      <object class="AdwStatusPage">
+                                        <child>
+                                          <object class="GtkBox">
+                                            <property name="hexpand">true</property>
+                                            <property name="orientation">vertical</property>
+                                            <property name="vexpand">true</property>
+                                            <child>
+                                              <object class="GtkBox">
+                                                <property name="hexpand">true</property>
+                                                <property name="orientation">horizontal</property>
+                                                <property name="vexpand">true</property>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="label">port number</property>
+                                                  </object>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="connect_port_number">
+                                                    <property name="halign">start</property>
+                                                    <property name="hexpand">True</property>
+                                                    <property name="hexpand-set">True</property>
+                                                    <property name="margin-start">10</property>
+                                                    <property name="valign">end</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton">
+                                                <property name="halign">center</property>
+                                                <property name="label">Start local game</property>
+                                                <property name="valign">end</property>
+                                                <property name="vexpand">True</property>
+                                                <property name="vexpand-set">True</property>
+                                                <style>
+                                                  <class name="suggested-action"/>
+                                                </style>
+                                              </object>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </property>
+                                    <property name="name">create server</property>
+                                    <property name="title">create</property>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                           </object>
                         </child>
                       </object>
                     </property>
+                    <property name="name">network</property>
+                    <property name="title">network</property>
                   </object>
                 </child>
               </object>

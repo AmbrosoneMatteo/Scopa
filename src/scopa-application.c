@@ -128,10 +128,37 @@ scopa_application_new_game_action (GSimpleAction *action,
     gtk_window_present (GTK_WINDOW (window));
 }
 
+static void
+scopa_application_start_game_action (GSimpleAction *action,
+                                   GVariant      *parameter,
+                                   gpointer       user_data)
+{
+
+}
+
+static void
+scopa_application_connect_game_action (GSimpleAction *action,
+                                   GVariant      *parameter,
+                                   gpointer       user_data)
+{
+
+}
+
+static void
+scopa_application_start_server_action (GSimpleAction *action,
+                                   GVariant      *parameter,
+                                   gpointer       user_data)
+{
+
+}
+
 static const GActionEntry app_actions[] = {
 	{ "quit", scopa_application_quit_action },
 	{ "about", scopa_application_about_action },
         { "new_game", scopa_application_new_game_action },
+        { "start_game", scopa_application_start_game_action },
+        { "connect_game", scopa_application_connect_game_action },
+        { "start_server", scopa_application_start_server_action },
 };
 
 static void

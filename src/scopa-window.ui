@@ -13,9 +13,9 @@
           <object class="AdwHeaderBar">
             <child type="start">
               <object class="GtkButton">
+                <property name="action-name">app.new_game</property>
                 <property name="icon-name">plus-large-symbolic</property>
                 <property name="tooltip-text" translatable="yes">Create game</property>
-                <property name="action-name">app.new_game</property>
               </object>
             </child>
             <child type="end">
