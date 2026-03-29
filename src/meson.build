@@ -2,6 +2,7 @@ scopa_sources = [
   'main.c',
   'scopa-application.c',
   'scopa-window.c',
+  'new-game.c',
 ]
 
 scopa_deps = [

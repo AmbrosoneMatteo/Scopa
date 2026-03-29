@@ -4,23 +4,28 @@
   <!-- interface-name new-game.ui -->
   <requires lib="gtk" version="4.18"/>
   <requires lib="libadwaita" version="1.4"/>
-  <object class="AdwApplicationWindow">
+  <template class="NewGameWindow" parent="AdwApplicationWindow">
     <child>
       <object class="AdwToolbarView">
-        <child>
+        <child type="top">
           <object class="AdwHeaderBar">
-            <child>
-              <object class="GtkStackSwitcher"/>
+            <child type="title">
+              <object class="AdwViewSwitcher">
+                <property name="stack">game_type_stack</property>
+                <property name="policy">wide</property>
+              </object>
             </child>
           </object>
         </child>
         <child>
           <object class="GtkBox">
             <child>
-              <object class="AdwViewStack">
+              <object class="AdwViewStack" id="game_type_stack">
                 <child>
-                  <object class="AdwViewStack" id="local_game_stack">
-                    <child>
+                  <object class="AdwViewStackPage" id="local_game_stack">
+                    <property name="name">local</property>
+                    <property name="title">Local</property>
+                    <property name="child">
                       <object class="AdwStatusPage">
                         <child>
                           <object class="GtkBox">
@@ -33,7 +38,7 @@
                               </object>
                             </child>
                             <child>
-                              <object class="GtkSpinButton">
+                              <object class="GtkSpinButton" id="difficulty_input">
                                 <property name="halign">end</property>
                                 <property name="hexpand">True</property>
                                 <property name="hexpand-set">True</property>
@@ -42,18 +47,26 @@
                           </object>
                         </child>
                       </object>
-                    </child>
+                    </property>
                   </object>
                 </child>
                 <child>
-                  <object class="AdwViewStack" id="network_game_stack">
-                    <child>
+                  <object class="AdwViewStackPage" id="network_game_stack">
+                    <property name="name">network</property>
+                    <property name="title">network</property>
+                    <property name="child">
                       <object class="AdwStatusPage">
                         <child>
-                          <object class="GtkBox"/>
+                          <object class="GtkBox">
+                            <child>
+                              <object class="GtkEntry">
+                                <property name="placeholder-text">server name or address</property>
+                              </object>
+                            </child>
+                          </object>
                         </child>
                       </object>
-                    </child>
+                    </property>
                   </object>
                 </child>
               </object>
@@ -62,12 +75,5 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="AdwViewStackPage">
-    <property name="child">
-      <object class="GtkLabel">
-        <property name="label">Empty Page</property>
-      </object>
-    </property>
-  </object>
+  </template>
 </interface>

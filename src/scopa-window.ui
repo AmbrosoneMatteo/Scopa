@@ -11,6 +11,13 @@
       <object class="AdwToolbarView">
         <child type="top">
           <object class="AdwHeaderBar">
+            <child type="start">
+              <object class="GtkButton">
+                <property name="icon-name">plus-large-symbolic</property>
+                <property name="tooltip-text" translatable="yes">Create game</property>
+                <property name="action-name">app.new_game</property>
+              </object>
+            </child>
             <child type="end">
               <object class="GtkMenuButton">
                 <property name="icon-name">open-menu-symbolic</property>
@@ -82,10 +89,6 @@
   </template>
   <menu id="primary_menu">
     <section>
-      <item>
-        <attribute name="action">app.new_game</attribute>
-        <attribute name="label" translatable="yes">_New Game</attribute>
-      </item>
       <item>
         <attribute name="action">app.preferences</attribute>
         <attribute name="label" translatable="yes">_Preferences</attribute>

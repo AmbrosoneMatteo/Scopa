@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/org/gnome/Example">
     <file preprocess="xml-stripblanks">scopa-window.ui</file>
+    <file preprocess="xml-stripblanks">new-game.ui</file>
     <file preprocess="xml-stripblanks">shortcuts-dialog.ui</file>
   </gresource>
 </gresources>

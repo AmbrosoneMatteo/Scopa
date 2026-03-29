@@ -23,6 +23,7 @@
 
 #include "scopa-application.h"
 #include "scopa-window.h"
+#include "new-game.h"
 
 struct _ScopaApplication
 {
@@ -105,9 +106,32 @@ scopa_application_quit_action (GSimpleAction *action,
 	g_application_quit (G_APPLICATION (self));
 }
 
+static void
+scopa_application_new_game_action (GSimpleAction *action,
+                                   GVariant      *parameter,
+                                   gpointer       user_data)
+{
+    ScopaApplication *self = user_data;
+    GtkWindow *parent;
+    NewGameWindow *window;
+
+    g_assert (SCOPA_IS_APPLICATION (self));
+
+    parent = gtk_application_get_active_window (GTK_APPLICATION (self));
+
+    window = g_object_new (NEW_GAME_TYPE_WINDOW,
+                           "application", self,
+                           "transient-for", parent,
+                           "modal", TRUE,
+                           NULL);
+
+    gtk_window_present (GTK_WINDOW (window));
+}
+
 static const GActionEntry app_actions[] = {
 	{ "quit", scopa_application_quit_action },
 	{ "about", scopa_application_about_action },
+        { "new_game", scopa_application_new_game_action },
 };
 
 static void
