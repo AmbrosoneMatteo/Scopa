@@ -19,6 +19,8 @@
  */
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "local_game.h"
 #include "engine/game-helper.h"
 #include "engine/game-assets.h"
@@ -72,6 +74,22 @@ void append_node (struct Card * card) {
   }
 }
 
+//removes a node from the linked list, and updates the chain
+void remove_node (struct CardNode * node) {
+  if (node->next!=NULL && node->previous!=NULL) {
+      node->next->previous = node->previous;
+      node->previous->next = node->next;
+  } else if (node->next!=NULL && node->previous==NULL) {
+      //In this case the node is at the start of the chain
+      node->next->previous = NULL;
+  } else if (node->next==NULL && node->previous!=NULL) {
+      //In this case the node is at the end of the chain
+      node->previous->next = NULL;
+  }
+  //the last case is where the node is the only one in the chain
+  free(node);
+}
+
 bool has_card (struct Card * player_card[],struct Card * card) {
     for (int i = 0;i<3;i++)
         if (player_card[i]->suit == card->suit &&
@@ -80,16 +98,35 @@ bool has_card (struct Card * player_card[],struct Card * card) {
     return false;
 }
 
+//Random number generator using /dev/random
+int get_random_integer(void)
+{
+    unsigned int randval;
+    FILE *f;
+
+    f = fopen("/dev/random", "r");
+    fread(&randval, sizeof(randval), 1, f);
+    fclose(f);
+
+    return randval%100;
+}
+
+
 /*
  * Run through the whole linked list and with a probability decided by
  * the difficulty variable remove a node, substitute the previous node
- * next address with the next node address and viceversa
+ * next address with the next node address and vice versa
  **/
 void rerun_probability (int difficulty) {
-    while (memorized_card->next != NULL) {
-        if (!has_card(bot_cards, memorized_card->card)) {
-
-
+    int threshold = difficulty*10;
+    struct CardNode * index = memorized_card;
+    while (index->next != NULL) {
+        if (!has_card(bot_cards, index->card)) {
+            if (threshold-get_random_integer()<=0) {
+                struct CardNode * next = index->next;
+                remove_node (index);
+                index = next;
+            }
         }
 
     }
