@@ -48,7 +48,7 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="difficulty_input_2">
+                                  <object class="GtkSpinButton" id="difficulty_input">
                                     <property name="halign">start</property>
                                     <property name="hexpand">True</property>
                                     <property name="hexpand-set">True</property>
@@ -64,6 +64,7 @@
                                 <property name="valign">end</property>
                                 <property name="vexpand">True</property>
                                 <property name="vexpand-set">True</property>
+                                <property name="action-name">app.start_game</property>
                                 <style>
                                   <class name="suggested-action"/>
                                 </style>
