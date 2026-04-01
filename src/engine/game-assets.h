@@ -11,6 +11,9 @@ enum Suit {
   SPADES
 };
 
+//this array is only used to create the path of the images
+char suit_strings[] = { 'C', 'D', 'H', 'S' };
+
 // Struct that represents a card
 struct Card {
   enum Suit suit;

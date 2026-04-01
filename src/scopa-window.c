@@ -42,11 +42,18 @@ scopa_window_class_init (ScopaWindowClass *klass)
 	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, stack_card_image);
 }
 
-GtkBox *
-scopa_window_get_player_cards (ScopaWindow *self)
-{
-    g_return_val_if_fail (SCOPA_IS_WINDOW (self), NULL);
-    return self->player_cards;
+//user_data contains the card to place as a string
+static void
+place_player_card (ScopaWindow *window, char *path, int index) {
+    g_print("Placing card\n");
+    GtkBox *player_cards = window->player_cards;
+    GtkImage *last_card = NULL;
+    if ((last_card = (GtkImage*)gtk_widget_get_last_child((GtkWidget*)player_cards))!=NULL){
+
+    } else {
+        GtkWidget *image = gtk_image_new_from_icon_name (path);
+        gtk_box_insert_child_after (player_cards, image, gtk_widget_get_last_child ((GtkWidget*)player_cards));
+    }
 }
 
 static void

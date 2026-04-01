@@ -22,7 +22,6 @@
 #include <glib/gi18n.h>
 
 #include "scopa-application.h"
-#include "scopa-window.h"
 #include "new-game.h"
 #include "local/local_game.h"
 
@@ -36,9 +35,6 @@ G_DEFINE_FINAL_TYPE (ScopaApplication, scopa_application, ADW_TYPE_APPLICATION)
 static void on_start_local (NewGameWindow *window, gpointer user_data);
 static void on_start_network (NewGameWindow *window, gpointer user_data);
 static void on_start_server (NewGameWindow *window, gpointer user_data);
-static void place_player_card (NewGameWindow *window, gpointer user_data);
-
-ScopaWindow *main_window;
 
 ScopaApplication *
 scopa_application_new (const char        *application_id,
@@ -148,7 +144,6 @@ on_start_local (NewGameWindow *window, gpointer user_data)
     int difficulty = new_game_window_get_difficulty (window);
     gtk_window_close (GTK_WINDOW (window));
     g_print("starting local game with difficulty: %d\n", difficulty);
-    g_signal_connect (window, "place-user-card", G_CALLBACK (place_player_card), self);
     start_local_game (difficulty);
 }
 
@@ -166,21 +161,6 @@ on_start_server (NewGameWindow *window, gpointer user_data)
     ScopaApplication *self = user_data;
     gtk_window_close (GTK_WINDOW (window));
     // start network game...
-}
-
-
-//user_data contains the card to place as a string
-static void
-place_player_card (NewGameWindow *window, gpointer user_data) {
-    g_print("Placing card\n");
-    GtkBox *player_cards = scopa_window_get_player_cards (main_window);;
-    char *card_name = user_data;
-    GtkImage *last_card = NULL;
-    if ((last_card = (GtkImage*)gtk_widget_get_last_child((GtkWidget*)player_cards))!=NULL){
-
-    } else {
-        GtkWidget *image = gtk_image_new_from_icon_name (card_name);
-    }
 }
 
 static const GActionEntry app_actions[] = {

@@ -22,6 +22,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "local_game.h"
+#include "scopa-window.h"
+#include "scopa-application.h"
 #include "engine/game-helper.h"
 #include "engine/game-assets.h"
 
@@ -30,7 +32,6 @@ struct CardNode {
   struct CardNode * next;
   struct CardNode * previous;
 };
-
 /**
  Linked list of the memorized cards that the algorithm
  can use against the player, the difficulty regulates the
@@ -98,11 +99,6 @@ bool has_card (struct Card * player_card[],struct Card * card) {
     return false;
 }
 
-//tells which card to place in the player's'
-void player_add_card(struct Card card) {
-
-}
-
 //Random number generator using /dev/random
 int get_random_integer(void)
 {
@@ -116,6 +112,15 @@ int get_random_integer(void)
     return randval%100;
 }
 
+void send_player_card(struct Card * card) {
+  char *path;
+  asprintf(&path, "images/DalNegro_Cards/%c_%c.png", suit_strings[card->suit],  card->value);
+  int i = 0;
+  while (player_cards[i]==NULL && i<3)
+    i++;
+
+  place_player_card (main_window, path,i);
+}
 
 /*
  * Run through the whole linked list and with a probability decided by
