@@ -32,6 +32,10 @@ struct _ScopaApplication
 
 G_DEFINE_FINAL_TYPE (ScopaApplication, scopa_application, ADW_TYPE_APPLICATION)
 
+static void on_start_local (NewGameWindow *window, gpointer user_data);
+static void on_start_network (NewGameWindow *window, gpointer user_data);
+static void on_start_server (NewGameWindow *window, gpointer user_data);
+
 ScopaApplication *
 scopa_application_new (const char        *application_id,
                        GApplicationFlags  flags)
@@ -125,40 +129,42 @@ scopa_application_new_game_action (GSimpleAction *action,
                            "modal", TRUE,
                            NULL);
 
+    g_signal_connect (window, "start-local", G_CALLBACK (on_start_local), self);
+    g_signal_connect (window, "start-network", G_CALLBACK (on_start_network), self);
+    g_signal_connect (window, "start-network", G_CALLBACK (on_start_server), self);
+
     gtk_window_present (GTK_WINDOW (window));
 }
 
 static void
-scopa_application_start_game_action (GSimpleAction *action,
-                                   GVariant      *parameter,
-                                   gpointer       user_data)
+on_start_local (NewGameWindow *window, gpointer user_data)
 {
-
+    ScopaApplication *self = user_data;
+    int difficulty = new_game_window_get_difficulty (window);
+    gtk_window_close (GTK_WINDOW (window));
+    // start local game with difficulty...
 }
 
 static void
-scopa_application_connect_game_action (GSimpleAction *action,
-                                   GVariant      *parameter,
-                                   gpointer       user_data)
+on_start_network (NewGameWindow *window, gpointer user_data)
 {
-
+    ScopaApplication *self = user_data;
+    gtk_window_close (GTK_WINDOW (window));
+    // start network game...
 }
 
 static void
-scopa_application_start_server_action (GSimpleAction *action,
-                                   GVariant      *parameter,
-                                   gpointer       user_data)
+on_start_server (NewGameWindow *window, gpointer user_data)
 {
-
+    ScopaApplication *self = user_data;
+    gtk_window_close (GTK_WINDOW (window));
+    // start network game...
 }
 
 static const GActionEntry app_actions[] = {
 	{ "quit", scopa_application_quit_action },
 	{ "about", scopa_application_about_action },
         { "new_game", scopa_application_new_game_action },
-        { "start_game", scopa_application_start_game_action },
-        { "connect_game", scopa_application_connect_game_action },
-        { "start_server", scopa_application_start_server_action },
 };
 
 static void

@@ -64,7 +64,7 @@
                                 <property name="valign">end</property>
                                 <property name="vexpand">True</property>
                                 <property name="vexpand-set">True</property>
-                                <property name="action-name">app.start_game</property>
+                                <signal name="clicked" handler="on_start_local_clicked" swapped="no"/>
                                 <style>
                                   <class name="suggested-action"/>
                                 </style>
@@ -141,7 +141,7 @@
                                                   </object>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkSpinButton" id="server_port_number">
+                                                  <object class="GtkSpinButton" id="connect_port_number">
                                                     <property name="halign">start</property>
                                                     <property name="hexpand">True</property>
                                                     <property name="hexpand-set">True</property>
@@ -157,6 +157,7 @@
                                                 <property name="valign">end</property>
                                                 <property name="vexpand">True</property>
                                                 <property name="vexpand-set">True</property>
+                                                <signal name="clicked" handler="on_start_network_clicked" swapped="no"/>
                                                 <style>
                                                   <class name="suggested-action"/>
                                                 </style>
@@ -190,7 +191,7 @@
                                                   </object>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkSpinButton" id="connect_port_number">
+                                                  <object class="GtkSpinButton" id="server_port_number">
                                                     <property name="halign">start</property>
                                                     <property name="hexpand">True</property>
                                                     <property name="hexpand-set">True</property>
@@ -207,6 +208,7 @@
                                                 <property name="valign">end</property>
                                                 <property name="vexpand">True</property>
                                                 <property name="vexpand-set">True</property>
+                                                <signal name="clicked" handler="on_start_server_clicked" swapped="no"/>
                                                 <style>
                                                   <class name="suggested-action"/>
                                                 </style>

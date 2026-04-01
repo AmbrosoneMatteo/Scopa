@@ -20,4 +20,28 @@
 
 #include "local_game.h"
 
+struct CardNode {
+  Card card;
+  Card *next;
+  Card * previous;
+}
 
+/**
+ Linked list of the memorized cards that the algorithm
+ can use against the player, the difficulty regulates the
+ probability of the algorithm to forget a card
+ After each card the whole list is passed through this probability
+*/
+Cardnode * memorized_card = NULL;
+
+void start_game(int difficulty) {
+
+}
+
+Card * get_next_card(Card card) {
+    return card->next;
+}
+
+Card * get_previous_card(Card card) {
+    return card->next;
+}

@@ -3,7 +3,7 @@
 #include "game-helper.h"
 #include "engine/game-assets.h"
 
-// Fucntion that initializes a deck structure with all the cards
+// Function that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.
 // Returned is a pointer to the deck structure
 struct Deck *deck_init(void){
