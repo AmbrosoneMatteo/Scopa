@@ -5,6 +5,7 @@ scopa_sources = [
   'server/server.c',
   'server/game-manager.c',
   'engine/game-helper.c',
+  'local/local_game.c',
   'new-game.c'
 ]
 

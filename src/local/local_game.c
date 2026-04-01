@@ -17,14 +17,17 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
+#include <stddef.h>
+#include <stdbool.h>
 #include "local_game.h"
+#include "engine/game-helper.h"
+#include "engine/game-assets.h"
 
 struct CardNode {
-  Card card;
-  Card *next;
-  Card * previous;
-}
+  struct Card * card;
+  struct CardNode * next;
+  struct CardNode * previous;
+};
 
 /**
  Linked list of the memorized cards that the algorithm
@@ -32,16 +35,62 @@ struct CardNode {
  probability of the algorithm to forget a card
  After each card the whole list is passed through this probability
 */
-Cardnode * memorized_card = NULL;
+struct CardNode * memorized_card = NULL;
+struct Card * player_cards[3];
+struct Card * bot_cards[3];
 
-void start_game(int difficulty) {
+void start_local_game(int difficulty) {
+    struct Deck * deck = deck_init ();
+    shuffle_deck (deck);
+    for (int i = 0; i<6;i++) {
+        if (i%2==0)
+            player_cards[i]=draw_card (deck);
+        else
+            bot_cards[i]=draw_card (deck);
 
+    }
 }
 
-Card * get_next_card(Card card) {
-    return card->next;
+struct CardNode * get_next_memorized_card(struct CardNode * node) {
+    return node->next;
 }
 
-Card * get_previous_card(Card card) {
-    return card->next;
+struct CardNode * get_previous_memorized_card(struct CardNode * node) {
+    return node->next;
+}
+
+void append_node (struct Card * card) {
+  if (memorized_card == NULL) {
+      struct CardNode node = {card, NULL, NULL};
+      memorized_card = &node;
+  } else {
+      struct CardNode * current = NULL;
+      while ((current = get_next_memorized_card (current)) != NULL)
+          ; // get to the last card in the linked lisk
+      struct CardNode node = {card, NULL, current};
+      current->next = &node;
+  }
+}
+
+bool has_card (struct Card * player_card[],struct Card * card) {
+    for (int i = 0;i<3;i++)
+        if (player_card[i]->suit == card->suit &&
+            player_card[i]->suit == card->value)
+            return true;
+    return false;
+}
+
+/*
+ * Run through the whole linked list and with a probability decided by
+ * the difficulty variable remove a node, substitute the previous node
+ * next address with the next node address and viceversa
+ **/
+void rerun_probability (int difficulty) {
+    while (memorized_card->next != NULL) {
+        if (!has_card(bot_cards, memorized_card->card)) {
+
+
+        }
+
+    }
 }

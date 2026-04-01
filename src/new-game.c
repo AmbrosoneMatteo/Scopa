@@ -53,7 +53,7 @@ new_game_window_class_init (NewGameWindowClass *klass)
     gtk_widget_class_bind_template_callback (widget_class, on_start_network_clicked);
     gtk_widget_class_bind_template_callback (widget_class, on_start_server_clicked);
 
-    signals[SIGNAL_START_LOCAL] = g_signal_new ("start_game",
+    signals[SIGNAL_START_LOCAL] = g_signal_new ("start-local",
                                              G_TYPE_FROM_CLASS (klass),
                                              G_SIGNAL_RUN_LAST,
                                              0, NULL, NULL, NULL,

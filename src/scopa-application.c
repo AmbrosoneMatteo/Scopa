@@ -24,6 +24,7 @@
 #include "scopa-application.h"
 #include "scopa-window.h"
 #include "new-game.h"
+#include "local/local_game.h"
 
 struct _ScopaApplication
 {
@@ -142,7 +143,9 @@ on_start_local (NewGameWindow *window, gpointer user_data)
     ScopaApplication *self = user_data;
     int difficulty = new_game_window_get_difficulty (window);
     gtk_window_close (GTK_WINDOW (window));
-    // start local game with difficulty...
+    g_print("starting local game with difficulty: %d\n", difficulty);
+
+    start_local_game (difficulty);
 }
 
 static void
