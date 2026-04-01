@@ -38,7 +38,6 @@ gboolean incoming_callback  (GSocketService *service, GSocketConnection *connect
 }
 
 void start_server(void) {
-  g_type_init();
   GError *error = NULL;
   GSocketService *service = g_socket_service_new();
   g_socket_listener_add_inet_port((GSocketListener*)service, SRV_PORT, NULL, &error);

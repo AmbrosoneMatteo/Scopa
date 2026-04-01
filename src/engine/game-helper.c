@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "game-helper.h"
-#include "game/game-assets.h"
+#include "engine/game-assets.h"
 
 // Fucntion that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.

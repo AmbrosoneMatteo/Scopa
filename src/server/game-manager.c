@@ -2,8 +2,8 @@
 #include <gio/gio.h>
 
 #include "game-manager.h"
-#include "game-helper.h"
-#include "game/game-assets.h"
+#include "engine/game-helper.h"
+#include "engine/game-assets.h"
 #include "netutils/communication.h"
 
 struct GameContext {
