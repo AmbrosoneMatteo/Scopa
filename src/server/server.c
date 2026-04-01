@@ -18,7 +18,7 @@ gboolean incoming_callback  (GSocketService *service, GSocketConnection *connect
   connection_counter++;
 
   if (error != NULL){
-    g_printerr("%s\n", error->message);
+    g_error("%s\n", error->message);
     return FALSE;
   }
 
@@ -43,7 +43,7 @@ void start_server(void) {
   g_socket_listener_add_inet_port((GSocketListener*)service, SRV_PORT, NULL, &error);
 
   if (error != NULL){
-      g_printerr("%s\n", error->message);
+    g_error("%s\n", error->message);
   }
 
   g_signal_connect(service, "incoming", G_CALLBACK (incoming_callback),NULL);
