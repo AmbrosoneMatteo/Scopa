@@ -27,5 +27,6 @@ G_BEGIN_DECLS
 #define SCOPA_TYPE_WINDOW (scopa_window_get_type())
 
 G_DECLARE_FINAL_TYPE (ScopaWindow, scopa_window, SCOPA, WINDOW, AdwApplicationWindow)
+GtkBox *scopa_window_get_player_cards (ScopaWindow *self);
 
 G_END_DECLS

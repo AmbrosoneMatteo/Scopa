@@ -72,7 +72,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkBox">
+              <object class="GtkBox" id="player_cards">
                 <property name="halign">center</property>
                 <property name="margin-top">10</property>
                 <property name="spacing">10</property>

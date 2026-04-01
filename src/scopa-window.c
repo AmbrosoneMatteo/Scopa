@@ -28,6 +28,7 @@ struct _ScopaWindow
 
 	/* Template widgets */
         GtkImage        *stack_card_image;
+        GtkBox          *player_cards;
 };
 
 G_DEFINE_FINAL_TYPE (ScopaWindow, scopa_window, ADW_TYPE_APPLICATION_WINDOW)
@@ -39,6 +40,13 @@ scopa_window_class_init (ScopaWindowClass *klass)
 
 	gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Example/scopa-window.ui");
 	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, stack_card_image);
+}
+
+GtkBox *
+scopa_window_get_player_cards (ScopaWindow *self)
+{
+    g_return_val_if_fail (SCOPA_IS_WINDOW (self), NULL);
+    return self->player_cards;
 }
 
 static void

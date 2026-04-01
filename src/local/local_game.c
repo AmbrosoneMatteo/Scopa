@@ -98,6 +98,11 @@ bool has_card (struct Card * player_card[],struct Card * card) {
     return false;
 }
 
+//tells which card to place in the player's'
+void player_add_card(struct Card card) {
+
+}
+
 //Random number generator using /dev/random
 int get_random_integer(void)
 {

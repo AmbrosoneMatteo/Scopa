@@ -5,9 +5,15 @@
   <project_license>GPL-3.0-or-later</project_license>
 
   <name>Scopa</name>
-  <summary>Keep the summary shorter, between 10 and 35 characters</summary>
+  <summary>the classic italian card game</summary>
   <description>
-    <p>No description</p>
+    <p>Scopa is an italian card game where to win, each player has to get more
+      points as possible. The available points are for: the most cards, the most
+      'Ori' (a suit), the 'Settebello' (the seven of 'Ori'), and 'Scope'. Each
+      Scopa is a point, a player earns a Scopa when he clears the table of cards.
+      To grab a card from the table, a player needs to put down a card with the
+      same value of the card he wants to take, or the sum of 2 or more cards.
+    </p>
   </description>
 
   <developer id="tld.vendor">

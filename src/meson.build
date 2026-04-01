@@ -16,7 +16,10 @@ scopa_deps = [
 
 scopa_sources += gnome.compile_resources('scopa-resources',
   'scopa.gresource.xml',
-  c_name: 'scopa'
+  c_name: 'scopa',
+  source_dir: [
+    meson.project_source_root() / 'data',
+  ],
 )
 
 executable('scopa', scopa_sources,
