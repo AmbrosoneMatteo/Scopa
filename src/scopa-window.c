@@ -30,6 +30,8 @@ struct _ScopaWindow
         GtkImage        *stack_card_image;
         GtkBox          *player_cards;
         GtkBox          *adversary_cards;
+        GtkBox          *table_top;
+        GtkBox          *table_bottom;
 };
 
 G_DEFINE_FINAL_TYPE (ScopaWindow, scopa_window, ADW_TYPE_APPLICATION_WINDOW)
@@ -43,6 +45,8 @@ scopa_window_class_init (ScopaWindowClass *klass)
 	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, stack_card_image);
   	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player_cards);
     	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, adversary_cards);
+    	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table_top);
+    	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table_bottom);
 }
 
 void
@@ -66,6 +70,17 @@ void place_adversary_card(ScopaWindow *window) {
     gtk_widget_set_hexpand_set (image, true);
     gtk_image_set_pixel_size ((GtkImage*)image, 160);
     gtk_box_append (window->adversary_cards, image);
+}
+
+void place_card_on_table(ScopaWindow *window, char *path, int index) {
+    g_print("Placing card on the table: %s\n", path);
+    GtkWidget *image = gtk_image_new_from_resource (path);
+    gtk_widget_set_vexpand (image, true);
+    gtk_widget_set_hexpand (image, true);
+    gtk_widget_set_vexpand_set (image, true);
+    gtk_widget_set_hexpand_set (image, true);
+    gtk_image_set_pixel_size ((GtkImage*)image, 160);
+    gtk_box_append (window->table_top, image);
 }
 
 static void

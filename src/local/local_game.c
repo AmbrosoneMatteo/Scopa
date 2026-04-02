@@ -34,6 +34,7 @@ struct CardNode {
 };
 
 void send_player_card(struct Card * card);
+void append_node (struct CardNode * list,struct Card * card);
 
 /**
  Linked list of the memorized cards that the algorithm
@@ -44,37 +45,59 @@ void send_player_card(struct Card * card);
 struct CardNode * memorized_card = NULL;
 struct Card * player_cards[3];
 struct Card * bot_cards[3];
+struct CardNode * deck_cards = NULL;
 
 void start_local_game(int difficulty) {
     struct Deck * deck = deck_init ();
     shuffle_deck (deck);
     for (int i = 0; i<6;i++) {
         if (i%2==0) {
-            player_cards[i]=draw_card (deck);
+            player_cards[i%3]=draw_card (deck);
             send_player_card (player_cards[i]);
 
         }else {
-            bot_cards[i]=draw_card (deck);
+            bot_cards[i%3]=draw_card (deck);
             place_adversary_card(main_window);
         }
     }
+    for (int i = 0; i<4; i++) {
+        struct Card * card = draw_card (deck);
+        append_node (deck_cards,card);
+        char *path;
+        asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+                      card->value,
+                      suit_strings[card->suit]);
+        place_card_on_table (main_window, path, card->value);
+    }
 }
 
-struct CardNode * get_next_memorized_card(struct CardNode * node) {
+struct CardNode * get_next_node(struct CardNode * node) {
     return node->next;
 }
 
-struct CardNode * get_previous_memorized_card(struct CardNode * node) {
+struct CardNode * get_previous_node(struct CardNode * node) {
     return node->next;
 }
 
-void append_node (struct Card * card) {
-  if (memorized_card == NULL) {
+int get_node_number(struct CardNode * node) {
+    if (node==NULL)
+        return 0;
+    int out = 1;
+    while (node->next!=NULL) {
+         node = node->next;
+          out++;
+    }
+
+    return out;
+}
+
+void append_node (struct CardNode * list,struct Card * card) {
+  if (list == NULL) {
       struct CardNode node = {card, NULL, NULL};
-      memorized_card = &node;
+      list = &node;
   } else {
       struct CardNode * current = NULL;
-      while ((current = get_next_memorized_card (current)) != NULL)
+      while ((current = get_next_node (current)) != NULL)
           ; // get to the last card in the linked lisk
       struct CardNode node = {card, NULL, current};
       current->next = &node;
@@ -83,7 +106,7 @@ void append_node (struct Card * card) {
 
 //removes a node from the linked list, and updates the chain
 void remove_node (struct CardNode * node) {
-  if (node->next!=NULL && node->previous!=NULL) {
+  if (node->next!=NULL && node->previous==NULL) {
       node->next->previous = node->previous;
       node->previous->next = node->next;
   } else if (node->next!=NULL && node->previous==NULL) {
@@ -94,6 +117,7 @@ void remove_node (struct CardNode * node) {
       node->previous->next = NULL;
   }
   //the last case is where the node is the only one in the chain
+  free(node->card);
   free(node);
 }
 
