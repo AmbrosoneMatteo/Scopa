@@ -28,5 +28,6 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (ScopaWindow, scopa_window, SCOPA, WINDOW, AdwApplicationWindow)
 void place_player_card (ScopaWindow *window, char *path, int index);
+void place_adversary_card(ScopaWindow *window);
 
 G_END_DECLS

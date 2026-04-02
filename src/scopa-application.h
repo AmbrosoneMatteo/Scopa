@@ -31,4 +31,4 @@ G_DECLARE_FINAL_TYPE (ScopaApplication, scopa_application, SCOPA, APPLICATION, A
 
 ScopaApplication *scopa_application_new (const char        *application_id,
                                          GApplicationFlags  flags);
-ScopaWindow *main_window;
+extern ScopaWindow *main_window;

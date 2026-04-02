@@ -25,6 +25,8 @@
 #include "new-game.h"
 #include "local/local_game.h"
 
+ScopaWindow *main_window = NULL;
+
 struct _ScopaApplication
 {
 	AdwApplication parent_instance;

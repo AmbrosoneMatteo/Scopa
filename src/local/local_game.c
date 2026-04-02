@@ -32,6 +32,9 @@ struct CardNode {
   struct CardNode * next;
   struct CardNode * previous;
 };
+
+void send_player_card(struct Card * card);
+
 /**
  Linked list of the memorized cards that the algorithm
  can use against the player, the difficulty regulates the
@@ -46,11 +49,14 @@ void start_local_game(int difficulty) {
     struct Deck * deck = deck_init ();
     shuffle_deck (deck);
     for (int i = 0; i<6;i++) {
-        if (i%2==0)
+        if (i%2==0) {
             player_cards[i]=draw_card (deck);
-        else
-            bot_cards[i]=draw_card (deck);
+            send_player_card (player_cards[i]);
 
+        }else {
+            bot_cards[i]=draw_card (deck);
+            place_adversary_card(main_window);
+        }
     }
 }
 
@@ -114,7 +120,8 @@ int get_random_integer(void)
 
 void send_player_card(struct Card * card) {
   char *path;
-  asprintf(&path, "images/DalNegro_Cards/%c_%c.png", suit_strings[card->suit],  card->value);
+  asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png", card->value,
+              suit_strings[card->suit]);
   int i = 0;
   while (player_cards[i]==NULL && i<3)
     i++;

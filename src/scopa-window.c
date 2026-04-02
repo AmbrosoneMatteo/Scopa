@@ -29,6 +29,7 @@ struct _ScopaWindow
 	/* Template widgets */
         GtkImage        *stack_card_image;
         GtkBox          *player_cards;
+        GtkBox          *adversary_cards;
 };
 
 G_DEFINE_FINAL_TYPE (ScopaWindow, scopa_window, ADW_TYPE_APPLICATION_WINDOW)
@@ -40,20 +41,31 @@ scopa_window_class_init (ScopaWindowClass *klass)
 
 	gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Example/scopa-window.ui");
 	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, stack_card_image);
+  	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player_cards);
+    	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, adversary_cards);
 }
 
-//user_data contains the card to place as a string
-static void
+void
 place_player_card (ScopaWindow *window, char *path, int index) {
-    g_print("Placing card\n");
-    GtkBox *player_cards = window->player_cards;
-    GtkImage *last_card = NULL;
-    if ((last_card = (GtkImage*)gtk_widget_get_last_child((GtkWidget*)player_cards))!=NULL){
+    g_print("Placing card: %s\n", path);
+    GtkWidget *image = gtk_image_new_from_resource (path);
+    gtk_widget_set_vexpand (image, true);
+    gtk_widget_set_hexpand (image, true);
+    gtk_widget_set_vexpand_set (image, true);
+    gtk_widget_set_hexpand_set (image, true);
+    gtk_image_set_pixel_size ((GtkImage*)image, 160);
+    gtk_box_append (window->player_cards, image);
+}
 
-    } else {
-        GtkWidget *image = gtk_image_new_from_icon_name (path);
-        gtk_box_insert_child_after (player_cards, image, gtk_widget_get_last_child ((GtkWidget*)player_cards));
-    }
+void place_adversary_card(ScopaWindow *window) {
+    g_print("Placing adversary card");
+    GtkWidget *image = gtk_image_new_from_resource ("/org/gnome/Example/images/retro.svg");
+    gtk_widget_set_vexpand (image, true);
+    gtk_widget_set_hexpand (image, true);
+    gtk_widget_set_vexpand_set (image, true);
+    gtk_widget_set_hexpand_set (image, true);
+    gtk_image_set_pixel_size ((GtkImage*)image, 160);
+    gtk_box_append (window->adversary_cards, image);
 }
 
 static void
