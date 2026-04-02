@@ -54,7 +54,11 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
         }
         g_print("Player 1 played: %d of %d\n", card->value, card->suit); // Temp debug info
 
-        // TODO: Check if the card is contained in the player's hand
+        if(!hand_has_card(player1_hand, card)){
+          g_error("Error: card played not found in user's hand, game aborted\n");
+          return;
+        }
+
         // TODO: Calculate what the player takes from the table
 
         send_packet(player2_out, OPPONENT_CARD, card, sizeof(struct Card));
@@ -68,7 +72,11 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
         }
         g_print("Player 2 played: %d of %d\n", card->value, card->suit); // Temp debug info
 
-        // TODO: Check if the card is contained in the player's hand
+        if(!hand_has_card(player2_hand, card)){
+          g_error("Error: card played not found in user's hand, game aborted\n");
+          return;
+        }
+
         // TODO: Calculate what the player takes from the table
 
         send_packet(player1_out, OPPONENT_CARD, card, sizeof(struct Card));
@@ -114,10 +122,13 @@ void* receive_packet(GInputStream *in, struct GamePacket *out_header) {
     &error
   );
 
-  if (!success || bytes_read == 0) {
-    g_error("Error receiving packet from the client: %s", error->message);
-    return NULL;
-  }
+    if (!success) {
+      if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT)) {
+        g_error("Player timeout exceeded\n");
+      }
+      g_error_free(error);
+      return NULL;
+    }
 
   void *payload = NULL;
   // Reading the payload (played card)

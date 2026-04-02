@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "game-helper.h"
 #include "engine/game-assets.h"
@@ -71,4 +72,15 @@ struct Hand *get_hand(struct Deck *deck, struct Hand *hand){
   }
   hand->count = HAND_SIZE;
   return hand;
+}
+
+// Function that checks if the card played by the player is effectively
+// in the player's hand
+bool hand_has_card(struct Hand *hand, struct Card *card){
+  for(int i = 0; i < hand->count; i++){
+    if(hand->cards[i].value == card->value && hand->cards[i].suit == card->suit){
+      return true;
+    }
+  }
+  return false;
 }
