@@ -3,12 +3,19 @@
 #define DECK_SIZE 40
 #define HAND_SIZE 3 // Number of cards in a player's hand
 #define MAX_TABLE_SIZE 12
+#define TABLE_SIZE 4
 
 enum Suit {
   CLUBS,
   DIAMONDS,
   HEARTS,
   SPADES
+};
+
+struct CardNode {
+  struct Card * card;
+  struct CardNode * next;
+  struct CardNode * previous;
 };
 
 //this array is only used to create the path of the images
@@ -28,7 +35,7 @@ struct Deck {
 
 // Struct that represents the table where the cards are played
 struct Table {
-  struct Card cards[MAX_TABLE_SIZE];
+  struct CardNode * node;
   int count; // Keeping track of how many cards are there on the table
 };
 

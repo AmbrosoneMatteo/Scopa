@@ -25,16 +25,6 @@
 #include "scopa-window.h"
 #include "scopa-application.h"
 #include "engine/game-helper.h"
-#include "engine/game-assets.h"
-
-struct CardNode {
-  struct Card * card;
-  struct CardNode * next;
-  struct CardNode * previous;
-};
-
-void send_player_card(struct Card * card);
-void append_node (struct CardNode * list,struct Card * card);
 
 /**
  Linked list of the memorized cards that the algorithm
@@ -43,40 +33,17 @@ void append_node (struct CardNode * list,struct Card * card);
  After each card the whole list is passed through this probability
 */
 struct CardNode * memorized_card = NULL;
-struct Card * player_cards[3];
-struct Card * bot_cards[3];
-struct CardNode * deck_cards = NULL;
+struct Hand * player_hand = NULL;
+struct Hand * bot_hand = NULL;
+struct Deck * deck = NULL;
+struct Deck * table = NULL;
 
 void start_local_game(int difficulty) {
     struct Deck * deck = deck_init ();
     shuffle_deck (deck);
-    for (int i = 0; i<6;i++) {
-        if (i%2==0) {
-            player_cards[i%3]=draw_card (deck);
-            send_player_card (player_cards[i]);
-
-        }else {
-            bot_cards[i%3]=draw_card (deck);
-            place_adversary_card(main_window);
-        }
-    }
-    for (int i = 0; i<4; i++) {
-        struct Card * card = draw_card (deck);
-        append_node (deck_cards,card);
-        char *path;
-        asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
-                      card->value,
-                      suit_strings[card->suit]);
-        place_card_on_table (main_window, path, card->value);
-    }
-}
-
-struct CardNode * get_next_node(struct CardNode * node) {
-    return node->next;
-}
-
-struct CardNode * get_previous_node(struct CardNode * node) {
-    return node->next;
+    get_hand(deck, player_hand);
+    get_hand(deck, bot_hand);
+    table_init (deck)
 }
 
 int get_node_number(struct CardNode * node) {
@@ -89,36 +56,6 @@ int get_node_number(struct CardNode * node) {
     }
 
     return out;
-}
-
-void append_node (struct CardNode * list,struct Card * card) {
-  if (list == NULL) {
-      struct CardNode node = {card, NULL, NULL};
-      list = &node;
-  } else {
-      struct CardNode * current = NULL;
-      while ((current = get_next_node (current)) != NULL)
-          ; // get to the last card in the linked lisk
-      struct CardNode node = {card, NULL, current};
-      current->next = &node;
-  }
-}
-
-//removes a node from the linked list, and updates the chain
-void remove_node (struct CardNode * node) {
-  if (node->next!=NULL && node->previous==NULL) {
-      node->next->previous = node->previous;
-      node->previous->next = node->next;
-  } else if (node->next!=NULL && node->previous==NULL) {
-      //In this case the node is at the start of the chain
-      node->next->previous = NULL;
-  } else if (node->next==NULL && node->previous!=NULL) {
-      //In this case the node is at the end of the chain
-      node->previous->next = NULL;
-  }
-  //the last case is where the node is the only one in the chain
-  free(node->card);
-  free(node);
 }
 
 bool has_card (struct Card * player_card[],struct Card * card) {
@@ -160,15 +97,16 @@ void send_player_card(struct Card * card) {
  **/
 void rerun_probability (int difficulty) {
     int threshold = difficulty*10;
-    struct CardNode * index = memorized_card;
-    while (index->next != NULL) {
-        if (!has_card(bot_cards, index->card)) {
-            if (threshold-get_random_integer()<=0) {
-                struct CardNode * next = index->next;
-                remove_node (index);
-                index = next;
+    if ((struct CardNode * index = memorized_card) != NULL) {
+        while (index->next != NULL) {
+            if (!has_card(bot_hand, index->card)) {
+                if (threshold-get_random_integer()<=0) {
+                    struct CardNode * next = index->next;
+                    remove_node (index);
+                    index = next;
+                }
             }
-        }
 
+        }
     }
 }

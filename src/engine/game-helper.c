@@ -48,7 +48,16 @@ struct Card *draw_card(struct Deck *deck){
   return NULL;
 }
 
-// Function that initializes the table with 4 cards
+struct CardNode * get_next_node(struct CardNode * node) {
+    return node->next;
+}
+
+struct CardNode * get_previous_node(struct CardNode * node) {
+    return node->next;
+}
+
+
+// Function that initializes the table with TABLE_SIZE cards
 // Returned is the pointer to the table structure
 struct Table *table_init(struct Deck *deck){
   struct Table *table = calloc(1, sizeof(struct Table));
@@ -56,19 +65,56 @@ struct Table *table_init(struct Deck *deck){
     return NULL;
   }
   
-  for(int i = 0; i < 4; i++){
-    table->cards[i] = *(draw_card(deck));
+  for(int i = 0; i < TABLE_SIZE; i++){
+    append_node (table->node, draw_card(deck));
   }
-  table->count = 4; // Initial size of the table
+  table->count = TABLE_SIZE; // Initial size of the table
   return table;
+}
+
+void append_node (struct CardNode * list,struct Card * card) {
+    if (list == NULL) {
+        struct CardNode node = {card, NULL, NULL};
+        list = &node;
+    } else {
+        struct CardNode * current = NULL;
+        while ((current = get_next_node (current)) != NULL)
+            ; // get to the last card in the linked lisk
+        struct CardNode node = {card, NULL, current};
+        current->next = &node;
+    }
+}
+
+/**
+ * this method removes a node from the linked list using the function
+ * remove_node, and then proceeds to free the pointer to the card, and the pointer
+ * to the node
+ */
+void delete_node (struct CardNode * node) {
+    remove_node (node);
+    free(node->card);
+    free(node);
+}
+
+//removes a node from the linked list, and updates the chain
+void remove_node (struct CardNode * node) {
+    if (node->next!=NULL && node->previous==NULL) {
+        node->next->previous = node->previous;
+        node->previous->next = node->next;
+    } else if (node->next!=NULL && node->previous==NULL) {
+        //In this case the node is at the start of the chain
+        node->next->previous = NULL;
+    } else if (node->next==NULL && node->previous!=NULL) {
+        //In this case the node is at the end of the chain
+        node->previous->next = NULL;
+    }
 }
 
 // Function that gets a new 3 card hand for the player
 // Returned is the pointer to the hand structure
-struct Hand *get_hand(struct Deck *deck, struct Hand *hand){
+void * get_hand(struct Deck *deck, struct Hand *hand){
   for(int i = 0; i < HAND_SIZE; i++){
     hand->cards[i] = *(draw_card(deck));
   }
   hand->count = HAND_SIZE;
-  return hand;
 }
