@@ -70,6 +70,16 @@ bool is_not_known(struct Card * card) {
     return false;
 }
 
+// This simple function checks if the bot is able to pick the cards in the
+// combination with one of his
+bool can_play_this_combination(int sum) {
+    for (int i = 0; i<HAND_SIZE; i++) {
+        if(bot_hand->cards[i]->value == sum)
+            return true;
+    }
+    return false;
+}
+
 /*
  * This function uses an array list to calculate the possible cards in
  * the player's hand, and with that it determines the best card to play
@@ -113,7 +123,7 @@ struct Card * decide_move(void) {
     // this variable holds a pointer to a temporary preferred
     // card in the hand, while the algorithm tries to determine
     // a better choice
-    struct CardNode * preferred_card;
+    //struct CardNode * preferred_card;
     int table_combinations[20][3];
     int count = 0;
     int sum = 0;
@@ -126,7 +136,7 @@ struct Card * decide_move(void) {
             // if the sum of the value of two cards is more than 10, it cannot
             // legally be taken from the table, as the maximum value of a
             // card is 10 (which is the king)
-            if(sum<=10) {
+            if(sum<=10 && can_play_this_combination(sum)) {
                 table_combinations[count][0] = i;
                 table_combinations[count][1] = l;
                 table_combinations[count][2] = sum;
@@ -134,7 +144,6 @@ struct Card * decide_move(void) {
             }
         }
     }
-
 
     return NULL;
 }
