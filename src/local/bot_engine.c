@@ -76,7 +76,7 @@ bool is_not_known(struct Card * card) {
  **/
 struct Card * decide_move(void) {
     struct Card * not_placed_cards[DECK_SIZE];
-    int count = 0;
+    int card_count = 0;
     int spades_count = 0;
     int clubs_count = 0;
     int diamonds_count = 0;
@@ -104,7 +104,7 @@ struct Card * decide_move(void) {
     }
     // this variable holds the probability of a card that
     // has not come out yet, to be played
-    float card_probability = 1/count;
+    float card_probability = 1/card_count;
     float spades_probability = 0/spades_count;
     float clubs_probability = 0/clubs_count;
     float diamonds_probability = 0/diamonds_count;
@@ -114,6 +114,25 @@ struct Card * decide_move(void) {
     // card in the hand, while the algorithm tries to determine
     // a better choice
     struct CardNode * preferred_card;
+    int table_combinations[20][3];
+    int count = 0;
+    int sum = 0;
+
+    for(int i=0; i<table->count; i++) {
+        for(int l=0; l<table->count; l++) {
+            sum = get_node_at_index (table->node, i)->card->value +
+                  get_node_at_index (table->node, l)->card->value;
+
+            // if the sum of the value of two cards is more than 10, it cannot
+            // legally be taken from the table, as the maximum value of a
+            // card is 10 (which is the king)
+            if(sum<=10) {
+                table_combinations[count][0] = i;
+                 table_combinations[count][1] = l;
+                 table_combinations[count][2] = sum;
+            }
+        }
+    }
 
     return NULL;
 }
