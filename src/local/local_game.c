@@ -22,10 +22,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "local_game.h"
-#include "scopa-window.h"
-#include "scopa-application.h"
 #include "engine/game-helper.h"
 #include "engine/game-assets.h"
+#include "scopa-application.h"
 
 /**
  Linked list of the memorized cards that the algorithm
@@ -37,7 +36,7 @@ struct CardNode * memorized_card = NULL;
 struct Hand * player_hand = NULL;
 struct Hand * bot_hand = NULL;
 struct Deck * deck = NULL;
-struct Deck * table = NULL;
+struct Table * table = NULL;
 
 void start_local_game(int difficulty) {
     deck = deck_init ();
@@ -45,18 +44,10 @@ void start_local_game(int difficulty) {
     player_hand = get_hand(deck);
     bot_hand = get_hand(deck);
     table_init (deck);
-}
-
-int get_node_number(struct CardNode * node) {
-    if (node==NULL)
-        return 0;
-    int out = 1;
-    while (node->next!=NULL) {
-         node = node->next;
-          out++;
+    for(int i = 0; i<HAND_SIZE; i++) {
+        send_player_card (player_hand->cards[i], i);
     }
-
-    return out;
+    place_adversary_card (main_window);
 }
 
 bool has_card (struct Hand * hand,struct Card * card) {
@@ -78,15 +69,6 @@ int get_random_integer(void)
     fclose(f);
 
     return randval%100;
-}
-
-void send_player_card(struct Card * card) {
-  char *path;
-  asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png", card->value,
-              suit_strings[card->suit]);
-  player_hand->cards[player_hand->count-1] = card;
-
-  place_player_card (main_window, path, player_hand->count-1);
 }
 
 /*

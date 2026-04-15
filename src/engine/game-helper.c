@@ -1,7 +1,10 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "game-helper.h"
 #include "engine/game-assets.h"
+#include "scopa-application.h"
+#include "scopa-window.h"
 
 // Function that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.
@@ -36,6 +39,19 @@ void shuffle_deck(struct Deck *deck){
   }
 }
 
+// returns the number of nodes in the array list
+int get_node_number(struct CardNode * node) {
+    if (node==NULL)
+        return 0;
+    int out = 1;
+    while (node->next!=NULL) {
+         node = node->next;
+          out++;
+    }
+
+    return out;
+}
+
 // Function that draws a card from the top of the deck
 // Returned is the pointer to the card
 struct Card *draw_card(struct Deck *deck){
@@ -55,6 +71,21 @@ struct CardNode * get_previous_node(struct CardNode * node) {
     return node->next;
 }
 
+struct CardNode * get_node_at_index(struct CardNode * node, int index) {
+    struct CardNode * current = node;
+    int i = 0;
+    while(i<index && current->next!=NULL) {
+        i++;
+        current = current->next;
+    }
+    if (i==index && current->next != NULL) {
+        current = current->next;
+    } else {
+       current = NULL;
+    }
+    return current;
+}
+
 
 // Function that initializes the table with TABLE_SIZE cards
 // Returned is the pointer to the table structure
@@ -65,7 +96,14 @@ struct Table *table_init(struct Deck *deck){
   }
   
   for(int i = 0; i < TABLE_SIZE; i++){
-    append_node (table->node, draw_card(deck));
+      struct Card * card = draw_card(deck);
+      append_node (table->node, card);
+      char *path;
+      asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+                      card->value,
+                      suit_strings[card->suit]);
+      place_card_on_table (main_window,
+                             path, i);
   }
   table->count = TABLE_SIZE; // Initial size of the table
   return table;
@@ -82,6 +120,14 @@ void append_node (struct CardNode * list,struct Card * card) {
         struct CardNode node = {card, NULL, current};
         current->next = &node;
     }
+}
+
+void send_player_card(struct Card * card, int index) {
+  char *path;
+  asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png", card->value,
+              suit_strings[card->suit]);
+
+  place_player_card (main_window, path, index);
 }
 
 /**
