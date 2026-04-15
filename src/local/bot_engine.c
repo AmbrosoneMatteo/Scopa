@@ -84,7 +84,7 @@ struct Card * decide_move(void) {
 
     for (int i = 0; i<DECK_SIZE; i++) {
         if (is_not_known(&deck->cards[i])) {
-            not_placed_cards[count++] = &deck->cards[i];
+            not_placed_cards[card_count++] = &deck->cards[i];
             switch (deck->cards[i].suit) {
                 case CLUBS:
                     clubs_count++;
@@ -128,11 +128,24 @@ struct Card * decide_move(void) {
             // card is 10 (which is the king)
             if(sum<=10) {
                 table_combinations[count][0] = i;
-                 table_combinations[count][1] = l;
-                 table_combinations[count][2] = sum;
+                table_combinations[count][1] = l;
+                table_combinations[count][2] = sum;
+                count++;
             }
         }
     }
 
+    int bot_hand_combination[6][3];
+    count = 0;
+    for(int i = 0; i<2;i++) {
+        for(int l = i+1; i<HAND_SIZE; i++) {
+            sum = bot_hand->cards[i]->value + bot_hand->cards[l]->value;
+            if(sum <= 10) {
+                bot_hand_combination[count++][0] = i;
+                bot_hand_combination[count++][1] = l;
+                bot_hand_combination[count++][2] = sum;
+            }
+        }
+    }
     return NULL;
 }
