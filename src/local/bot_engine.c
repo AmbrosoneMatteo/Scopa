@@ -135,17 +135,6 @@ struct Card * decide_move(void) {
         }
     }
 
-    int bot_hand_combination[6][3];
-    count = 0;
-    for(int i = 0; i<2;i++) {
-        for(int l = i+1; i<HAND_SIZE; i++) {
-            sum = bot_hand->cards[i]->value + bot_hand->cards[l]->value;
-            if(sum <= 10) {
-                bot_hand_combination[count++][0] = i;
-                bot_hand_combination[count++][1] = l;
-                bot_hand_combination[count++][2] = sum;
-            }
-        }
-    }
+
     return NULL;
 }
