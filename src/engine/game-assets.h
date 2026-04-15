@@ -12,11 +12,11 @@ enum Suit {
   SPADES
 };
 
-struct CardNode {
+typedef struct CardNode {
   struct Card * card;
   struct CardNode * next;
   struct CardNode * previous;
-};
+} CardNode;
 
 //this array is only used to create the path of the images
 extern char suit_strings[];
@@ -30,7 +30,7 @@ struct Card {
 // Struct that represents the deck
 struct Deck {
   struct Card cards[DECK_SIZE];
-  struct Card *top; // Pointer to the card on top of the deck
+  int count; //counts the number of remaining cards in the array
 };
 
 // Struct that represents the table where the cards are played
@@ -41,7 +41,7 @@ struct Table {
 
 // Struct that represents the player's hand
 struct Hand {
-  struct Card cards[HAND_SIZE];
+  struct Card * cards[HAND_SIZE];
   int count; // Keeping track of how many cards are there in the player's hand
 };
 #endif

@@ -19,7 +19,7 @@ struct Deck *deck_init(void){
       current_index++;
     }
   }
-  deck->top = &deck->cards[current_index - 1];
+  deck->count = DECK_SIZE;
   return deck;
 }
 
@@ -34,15 +34,14 @@ void shuffle_deck(struct Deck *deck){
     deck->cards[i] = deck->cards[j];
     deck->cards[j] = temp;
   }
-  deck->top = &deck->cards[DECK_SIZE - 1]; // Resetting the top of the deck
 }
 
 // Function that draws a card from the top of the deck
 // Returned is the pointer to the card
 struct Card *draw_card(struct Deck *deck){
-  if(deck->top >= &deck->cards[0]){
-    struct Card *card = deck->top;
-    deck->top--;
+  if(deck->count>0){
+    struct Card *card = &deck->cards[deck->count-1];
+    deck->count--;
     return card;
   }
   return NULL;
@@ -112,9 +111,11 @@ void remove_node (struct CardNode * node) {
 
 // Function that gets a new 3 card hand for the player
 // Returned is the pointer to the hand structure
-void * get_hand(struct Deck *deck, struct Hand *hand){
-  for(int i = 0; i < HAND_SIZE; i++){
-    hand->cards[i] = *(draw_card(deck));
-  }
-  hand->count = HAND_SIZE;
+struct Hand * get_hand(struct Deck *deck)  {
+    struct Hand *hand = malloc (sizeof(struct Hand));
+    for(int i = 0; i < HAND_SIZE; i++){
+        hand->cards[i] = draw_card(deck);
+    }
+    hand->count = HAND_SIZE;
+    return hand;
 }

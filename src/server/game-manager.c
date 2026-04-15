@@ -26,10 +26,8 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
   shuffle_deck(deck);
 
   // Player's hands initialization
-  struct Hand *player1_hand = malloc(sizeof(struct Hand));
-  struct Hand *player2_hand = malloc(sizeof(struct Hand));
-  player1_hand = get_hand(deck, player1_hand);
-  player2_hand = get_hand(deck, player2_hand);
+  struct Hand * player1_hand = get_hand(deck);
+  struct Hand * player2_hand = get_hand(deck);
 
   struct Table *table = table_init(deck);
 

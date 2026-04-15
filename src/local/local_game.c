@@ -25,6 +25,7 @@
 #include "scopa-window.h"
 #include "scopa-application.h"
 #include "engine/game-helper.h"
+#include "engine/game-assets.h"
 
 /**
  Linked list of the memorized cards that the algorithm
@@ -39,11 +40,11 @@ struct Deck * deck = NULL;
 struct Deck * table = NULL;
 
 void start_local_game(int difficulty) {
-    struct Deck * deck = deck_init ();
+    deck = deck_init ();
     shuffle_deck (deck);
-    get_hand(deck, player_hand);
-    get_hand(deck, bot_hand);
-    table_init (deck)
+    player_hand = get_hand(deck);
+    bot_hand = get_hand(deck);
+    table_init (deck);
 }
 
 int get_node_number(struct CardNode * node) {
@@ -58,10 +59,10 @@ int get_node_number(struct CardNode * node) {
     return out;
 }
 
-bool has_card (struct Card * player_card[],struct Card * card) {
+bool has_card (struct Hand * hand,struct Card * card) {
     for (int i = 0;i<3;i++)
-        if (player_card[i]->suit == card->suit &&
-            player_card[i]->suit == card->value)
+        if (hand->cards[i]->suit == card->suit &&
+            hand->cards[i]->suit == card->value)
             return true;
     return false;
 }
@@ -83,11 +84,9 @@ void send_player_card(struct Card * card) {
   char *path;
   asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png", card->value,
               suit_strings[card->suit]);
-  int i = 0;
-  while (player_cards[i]==NULL && i<3)
-    i++;
+  player_hand->cards[player_hand->count-1] = card;
 
-  place_player_card (main_window, path,i);
+  place_player_card (main_window, path, player_hand->count-1);
 }
 
 /*
@@ -97,16 +96,17 @@ void send_player_card(struct Card * card) {
  **/
 void rerun_probability (int difficulty) {
     int threshold = difficulty*10;
-    if ((struct CardNode * index = memorized_card) != NULL) {
+    struct CardNode * index = memorized_card;
+    if (index != NULL) {
         while (index->next != NULL) {
             if (!has_card(bot_hand, index->card)) {
-                if (threshold-get_random_integer()<=0) {
+                if (threshold - get_random_integer()<=0) {
                     struct CardNode * next = index->next;
                     remove_node (index);
                     index = next;
                 }
             }
-
         }
     }
 }
+

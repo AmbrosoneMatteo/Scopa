@@ -3,9 +3,9 @@ scopa_sources = [
   'scopa-application.c',
   'scopa-window.c',
   'server/server.c',
+  'engine/game-assets.c',
   'server/game-manager.c',
   'engine/game-helper.c',
-  'engine/game-assets.c',
   'local/local_game.c',
   'new-game.c'
 ]
