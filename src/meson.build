@@ -7,6 +7,7 @@ scopa_sources = [
   'server/game-manager.c',
   'engine/game-helper.c',
   'local/local_game.c',
+  'local/bot_engine.c',
   'new-game.c'
 ]
 

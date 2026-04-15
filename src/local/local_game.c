@@ -19,7 +19,6 @@
  */
 #include <stddef.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include "local_game.h"
 #include "engine/game-helper.h"
@@ -47,7 +46,9 @@ void start_local_game(int difficulty) {
     for(int i = 0; i<HAND_SIZE; i++) {
         send_player_card (player_hand->cards[i], i);
     }
-    place_adversary_card (main_window);
+    for(int i = 0; i < 3; i++) {
+        place_adversary_card (main_window);
+    }
 }
 
 bool has_card (struct Hand * hand,struct Card * card) {
@@ -56,39 +57,5 @@ bool has_card (struct Hand * hand,struct Card * card) {
             hand->cards[i]->suit == card->value)
             return true;
     return false;
-}
-
-//Random number generator using /dev/random
-int get_random_integer(void)
-{
-    unsigned int randval;
-    FILE *f;
-
-    f = fopen("/dev/random", "r");
-    fread(&randval, sizeof(randval), 1, f);
-    fclose(f);
-
-    return randval%100;
-}
-
-/*
- * Run through the whole linked list and with a probability decided by
- * the difficulty variable remove a node, substitute the previous node
- * next address with the next node address and vice versa
- **/
-void rerun_probability (int difficulty) {
-    int threshold = difficulty*10;
-    struct CardNode * index = memorized_card;
-    if (index != NULL) {
-        while (index->next != NULL) {
-            if (!has_card(bot_hand, index->card)) {
-                if (threshold - get_random_integer()<=0) {
-                    struct CardNode * next = index->next;
-                    remove_node (index);
-                    index = next;
-                }
-            }
-        }
-    }
 }
 
