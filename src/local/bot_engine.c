@@ -28,7 +28,8 @@ void rerun_probability (int difficulty);
 bool is_not_known(struct Card * card);
 bool can_play_this_combination(int sum);
 struct Card * decide_move(void);
-
+struct Card * get_card(int value, int suit);
+bool table_has_seven_ori(void);
 
 //Random number generator using /dev/random
 int get_random_integer(void)
@@ -87,6 +88,26 @@ bool can_play_this_combination(int sum) {
     return false;
 }
 
+bool table_has_seven_ori(void) {
+    struct CardNode * current = table->node;
+    while (current->next!=NULL) {
+        if (current->card->value == 7 && current->card->suit == DIAMONDS)
+            return true;
+        else
+            current = current->next;
+    }
+    return false;
+}
+
+struct Card * get_card(int value, int suit) {
+    for(int i = 0; i<HAND_SIZE && bot_hand->cards[i]!=NULL; i++) {
+        struct Card * card = bot_hand->cards[i];
+        if (card->value == value && card->suit == suit)
+            return card;
+    }
+    return NULL;
+}
+
 /*
  * This function uses an array list to calculate the possible cards in
  * the player's hand, and with that it determines the best card to play
@@ -103,7 +124,7 @@ struct Card * decide_move(void) {
             card_values_probability[deck->cards[i].value]++;
         }
     }
-    // this variable holds the probability of a card that
+    // this variable holds the probability of a single card that
     // has not come out yet, to be played
     float card_probability = 1/card_count;
 
@@ -132,7 +153,8 @@ struct Card * decide_move(void) {
         }
 
 
-        minimum_probability_value = 1;
+        minimum_probability_value = 1; // maximize the probability
+
         // If the code reaches this point, it means that the card with the value
         // that has the least of probability is not in the bot's hand. So it needs
         // to determine what card in his hand is the least probable to come out
@@ -180,6 +202,10 @@ struct Card * decide_move(void) {
                 count++;
             }
         }
+    }
+
+    if (table_has_seven_ori() && (preferred_card = get_card (7, DIAMONDS)) != NULL) {
+        return preferred_card;
     }
 
     return NULL;
