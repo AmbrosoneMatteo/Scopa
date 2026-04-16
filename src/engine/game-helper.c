@@ -1,10 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "game-helper.h"
 #include "engine/game-assets.h"
 #include "scopa-application.h"
 #include "scopa-window.h"
+
+int * node_to_array(struct CardNode * node);
+bool can_place_card(struct Card * card, struct Table * table);
 
 // Function that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.
@@ -86,6 +90,46 @@ struct CardNode * get_node_at_index(struct CardNode * node, int index) {
     return current;
 }
 
+// checks if a card can be placed on the table to take someting
+bool can_place_card(struct Card * card, struct Table * table) {
+    struct CardNode * l_node = table->node;
+    while (l_node->next != NULL) {
+        if (l_node->card->value == card->value)
+            return true;
+    }
+
+    return false;
+}
+
+// cycles through the linked list and returns an array with the values in it
+int * node_to_array(struct CardNode * node) {
+    int* array = (int*)malloc(get_node_number (node) * sizeof(int));
+    if (array == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1); // Exit the program if allocation fails
+    }
+
+    int index = 0;
+    while (node->next!=NULL) {
+        array[index] = node->card->value;
+        index++;
+        node = node->next;
+    }
+
+    return array;
+}
+
+/*int * calculate_power_set(int* array, int size) {
+    long powerset_size = (int)pow(2, size)-1;
+    int * power_array = (int*)malloc(powerset_size * sizeof(int));
+    unsigned index;
+
+    for (int i = 0; i<powerset_size; i++) {
+
+    }
+
+    return array;
+}*/
 
 // Function that initializes the table with TABLE_SIZE cards
 // Returned is the pointer to the table structure
