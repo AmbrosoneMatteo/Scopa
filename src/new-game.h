@@ -28,4 +28,5 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (NewGameWindow, new_game_window, NEW, WINDOW, AdwApplicationWindow)
 
+int new_game_window_get_difficulty (NewGameWindow *self);
 G_END_DECLS

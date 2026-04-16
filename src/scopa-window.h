@@ -27,5 +27,8 @@ G_BEGIN_DECLS
 #define SCOPA_TYPE_WINDOW (scopa_window_get_type())
 
 G_DECLARE_FINAL_TYPE (ScopaWindow, scopa_window, SCOPA, WINDOW, AdwApplicationWindow)
+void place_player_card (ScopaWindow *window, char *path, int index);
+void place_adversary_card(ScopaWindow *window);
+void place_card_on_table(ScopaWindow *window, char *path, int index);
 
 G_END_DECLS
