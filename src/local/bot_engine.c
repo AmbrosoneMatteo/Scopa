@@ -129,6 +129,18 @@ struct Card * decide_move(void) {
     int sum = 0;
 
     for(int i=0; i<table->count; i++) {
+        // if a card on the table, value is equal to the value of one of
+        // the card in the bot hand it is added to the array of possible
+        // combinations
+        if (can_play_this_combination(
+              get_node_at_index (table->node, i)->card->value)) {
+              table_combinations[count][0] = i;
+              // tells the engine that this combination has only one card
+              table_combinations[count][1] = -1;
+              table_combinations[count][2] = get_node_at_index
+                                      (table->node, i)->card->value;
+        }
+
         for(int l=0; l<table->count; l++) {
             sum = get_node_at_index (table->node, i)->card->value +
                   get_node_at_index (table->node, l)->card->value;
