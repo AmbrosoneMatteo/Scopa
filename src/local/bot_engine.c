@@ -23,6 +23,13 @@
 #include "engine/game-assets.h"
 #include "engine/game-helper.h"
 
+int get_random_integer(void);
+void rerun_probability (int difficulty);
+bool is_not_known(struct Card * card);
+bool can_play_this_combination(int sum);
+struct Card * decide_move(void);
+
+
 //Random number generator using /dev/random
 int get_random_integer(void)
 {
@@ -86,39 +93,59 @@ bool can_play_this_combination(int sum) {
  **/
 struct Card * decide_move(void) {
     struct Card * not_placed_cards[DECK_SIZE];
+    struct Card * preferred_card = NULL;
+    float card_values_probability[10];
     int card_count = 0;
-    int spades_count = 0;
-    int clubs_count = 0;
-    int diamonds_count = 0;
-    int hearts_count = 0;
 
     for (int i = 0; i<DECK_SIZE; i++) {
         if (is_not_known(&deck->cards[i])) {
             not_placed_cards[card_count++] = &deck->cards[i];
-            switch (deck->cards[i].suit) {
-                case CLUBS:
-                    clubs_count++;
-                    break;
-                case DIAMONDS:
-                    diamonds_count++;
-                    break;
-                case HEARTS:
-                    hearts_count++;
-                    break;
-                case SPADES:
-                    spades_count++;
-                    break;
-                default: break;
-            }
+            card_values_probability[deck->cards[i].value]++;
         }
     }
     // this variable holds the probability of a card that
     // has not come out yet, to be played
     float card_probability = 1/card_count;
-    float spades_probability = 0/spades_count;
-    float clubs_probability = 0/clubs_count;
-    float diamonds_probability = 0/diamonds_count;
-    float hearts_probability = 0/hearts_count;
+
+    // the specific value with the least probability to come out
+    float minimum_probability_value = 1;
+    int least_probable_value = 0;
+
+    // this for cycles calculates the probability of a specific value
+    // to come out, based on the knowledge of the cards that haven't come out
+    for (int i = 0; i<10; i++) {
+        card_values_probability[i] = 1/card_values_probability[i];
+        if (card_values_probability[i]<minimum_probability_value) {
+            minimum_probability_value = card_values_probability[i];
+            least_probable_value = i;
+        }
+    }
+
+    // if the table is NULL, it means that a scopa happened, that means the best
+    // card is the one, which is the least probable to come out
+    if(table->node == NULL) {
+        for (int i = 0; i < DECK_SIZE && bot_hand->cards[i] != NULL; i++) {
+            if (bot_hand->cards[i]->value == least_probable_value) {
+                // the card with the least probability to cause another scopa
+                return bot_hand->cards[i];
+            }
+        }
+
+
+        minimum_probability_value = 1;
+        // If the code reaches this point, it means that the card with the value
+        // that has the least of probability is not in the bot's hand. So it needs
+        // to determine what card in his hand is the least probable to come out
+        for(int i = 0; i < DECK_SIZE && bot_hand->cards[i] != NULL; i++) {
+            if (card_values_probability[bot_hand->cards[i]->value]
+                <minimum_probability_value) {
+                minimum_probability_value = card_values_probability[
+                                                bot_hand->cards[i]->value];
+                preferred_card = bot_hand->cards[i];
+            }
+        }
+        return preferred_card;
+    }
 
     // this variable holds a pointer to a temporary preferred
     // card in the hand, while the algorithm tries to determine
@@ -135,8 +162,6 @@ struct Card * decide_move(void) {
         if (can_play_this_combination(
               get_node_at_index (table->node, i)->card->value)) {
               table_combinations[count][0] = i;
-              // tells the engine that this combination has only one card
-              table_combinations[count][1] = -1;
               table_combinations[count][2] = get_node_at_index
                                       (table->node, i)->card->value;
         }
