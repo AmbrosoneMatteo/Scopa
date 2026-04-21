@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 
 #include "game-helper.h"
 #include "engine/game-assets.h"
@@ -90,7 +89,7 @@ struct CardNode * get_node_at_index(struct CardNode * node, int index) {
     return current;
 }
 
-// checks if a card can be placed on the table to take someting
+// checks if a card can be placed on the table to take something
 bool can_place_card(struct Card * card, struct Table * table) {
     struct CardNode * l_node = table->node;
     while (l_node->next != NULL) {
@@ -119,17 +118,74 @@ int * node_to_array(struct CardNode * node) {
     return array;
 }
 
-/*int * calculate_power_set(int* array, int size) {
-    long powerset_size = (int)pow(2, size)-1;
-    int * power_array = (int*)malloc(powerset_size * sizeof(int));
-    unsigned index;
+bool is_sum_inside_deck(struct Hand * player_hand, struct CardNode * list) {
+    if (list == NULL)
+        return false;
 
-    for (int i = 0; i<powerset_size; i++) {
-
+    int sum = 0;
+    struct CardNode * current = list;
+    while (current->next != NULL) {
+        sum+=current->card->value;
+        if (sum>10)
+            return false;
+        current = current->next;
     }
 
-    return array;
-}*/
+    for(int i = 0; i<3 && player_hand->cards[i]!=NULL; i++) {
+        if(player_hand->cards[i]->value == sum)
+            return true;
+    }
+
+    return false;
+}
+
+// Primitive implementation of the power function returning an unsigned integer,
+// because the linker can't find the pow function in GLIBC
+unsigned upow(unsigned base, int exponent) {
+    unsigned out = 1;
+    while(exponent>0) {
+        out*=base;
+        exponent--;
+    }
+
+    return out;
+}
+
+/*
+ * This function returns all the possible legal combinations that the user
+ * can take from the table, by comparing every possible card combination
+ * against the player's deck. The function to get the power set is inspired
+ * by this implementation of a powerset in C:
+ * https://learnprogramming.in.net/power-set-generator-in-c/
+ * */
+struct CardNode ** calculate_possible_combination(int* array, int size,
+                                                 struct Hand * player_hand,
+                                                 struct Table * table) {
+    struct CardNode * table_cards = table->node;
+    int list_size = get_node_number (table_cards);
+    unsigned power_set_size = upow(2, list_size);
+
+    struct CardNode * node[list_size];
+    int index = 0;
+
+    for (unsigned int i = 0; i < power_set_size; i++) {
+        //This linked list temporarily stores the nodes of the combination,
+        // if the combination is legal this is then added to the list
+        struct CardNode * tmp_list = NULL;
+        for (int j = 0; j < list_size; j++) {
+            // Check if jth element is included in the current subset
+            if (i & (1 << j)) {
+                 append_node (tmp_list, get_node_at_index (table_cards, j));
+            }
+        }
+        if(is_sum_inside_deck(player_hand, tmp_list)) {
+
+        }
+    }
+
+
+    return node;
+}
 
 // Function that initializes the table with TABLE_SIZE cards
 // Returned is the pointer to the table structure
@@ -141,7 +197,7 @@ struct Table *table_init(struct Deck *deck){
   
   for(int i = 0; i < TABLE_SIZE; i++){
       struct Card * card = draw_card(deck);
-      append_node (table->node, card);
+      append_card (table->node, card);
       char *path;
       asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
                       card->value,
@@ -153,7 +209,7 @@ struct Table *table_init(struct Deck *deck){
   return table;
 }
 
-void append_node (struct CardNode * list,struct Card * card) {
+void append_card (struct CardNode * list,struct Card * card) {
     if (list == NULL) {
         struct CardNode node = {card, NULL, NULL};
         list = &node;
@@ -163,6 +219,17 @@ void append_node (struct CardNode * list,struct Card * card) {
             ; // get to the last card in the linked lisk
         struct CardNode node = {card, NULL, current};
         current->next = &node;
+    }
+}
+
+void append_node (struct CardNode * list,struct CardNode * node) {
+    if (list == NULL) {
+        list = node;
+    } else {
+        struct CardNode * current = NULL;
+        while ((current = get_next_node (current)) != NULL)
+            ; // get to the last card in the linked lisk
+        current->next = node;
     }
 }
 
