@@ -2,10 +2,11 @@
 #include <gio/gio.h>
 #include <stdbool.h>
 
-#include "game-manager.h"
-#include "engine/game-helper.h"
 #include "engine/game-assets.h"
+#include "engine/game-helper.h"
 #include "netutils/communication.h"
+
+#include "game-manager.h"
 
 struct GameContext {
   GSocketConnection *player1;
@@ -29,8 +30,8 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
   // Player's hands initialization
   struct Hand *player1_hand = malloc(sizeof(struct Hand));
   struct Hand *player2_hand = malloc(sizeof(struct Hand));
-  player1_hand = get_hand(deck, player1_hand);
-  player2_hand = get_hand(deck, player2_hand);
+  get_hand(deck, player1_hand);
+  get_hand(deck, player2_hand);
   bool player1_turn = true;
 
   struct Table *table = table_init(deck);

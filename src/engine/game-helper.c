@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "game-helper.h"
 #include "engine/game-assets.h"
+#include "game-helper.h"
 
 // Fucntion that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.
@@ -66,12 +66,11 @@ struct Table *table_init(struct Deck *deck){
 
 // Function that gets a new 3 card hand for the player
 // Returned is the pointer to the hand structure
-struct Hand *get_hand(struct Deck *deck, struct Hand *hand){
+void get_hand(struct Deck *deck, struct Hand *hand){
   for(int i = 0; i < HAND_SIZE; i++){
     hand->cards[i] = *(draw_card(deck));
   }
   hand->count = HAND_SIZE;
-  return hand;
 }
 
 // Function that checks if the card played by the player is effectively
