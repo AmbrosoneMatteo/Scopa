@@ -42,12 +42,21 @@ void start_local_game(int difficulty) {
     shuffle_deck (deck);
     player_hand = get_hand(deck);
     bot_hand = get_hand(deck);
-    table_init (deck);
+    table = table_init (deck);
     for(int i = 0; i<HAND_SIZE; i++) {
         send_player_card (player_hand->cards[i], i);
     }
     for(int i = 0; i < 3; i++) {
         place_adversary_card (main_window);
+    }
+
+   // test code snippet
+    struct CombinationNode * possibilities = calculate_possible_combination(
+                                                  player_hand, table);
+    if(possibilities!=NULL) {
+        print_list(possibilities);
+    } else {
+        g_print("No combination available");
     }
 }
 

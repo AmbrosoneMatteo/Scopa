@@ -104,7 +104,7 @@ bool can_place_card(struct Card * card, struct Table * table) {
 int * node_to_array(struct CardNode * node) {
     int* array = (int*)malloc(get_node_number (node) * sizeof(int));
     if (array == NULL) {
-        printf("Memory allocation failed!\n");
+        g_print("Memory allocation failed!\n");
         exit(1); // Exit the program if allocation fails
     }
 
@@ -151,6 +151,35 @@ unsigned upow(unsigned base, int exponent) {
     return out;
 }
 
+/**
+ * This function as described in the name it prints a linked list in the terminal
+ * This function is only for debugging purposes and must not be used in a
+ * production environment
+ * */
+void print_list(struct CombinationNode * list) {
+    do {
+        struct CardNode * current = list->list;
+        if (current != NULL) {
+            while (current->next !=NULL) {
+                printf("%d%c -", current->card->value,
+                         suit_strings[current->card->suit]);
+            }
+        } else {
+            g_print("empty list of cards\n");
+        }
+        printf("\n");
+    } while(list->next != NULL);
+}
+
+void append_combination(struct CombinationNode * combinations, struct CardNode * list) {
+    struct CombinationNode * node = (struct CombinationNode *)malloc(
+                                              sizeof (struct CombinationNode));
+    node->list = list;
+    while(combinations->next!=NULL)
+        combinations = combinations->next;
+    combinations->next = node;
+}
+
 /*
  * This function returns all the possible legal combinations that the user
  * can take from the table, by comparing every possible card combination
@@ -158,14 +187,13 @@ unsigned upow(unsigned base, int exponent) {
  * by this implementation of a powerset in C:
  * https://learnprogramming.in.net/power-set-generator-in-c/
  * */
-struct CardNode ** calculate_possible_combination(int* array, int size,
-                                                 struct Hand * player_hand,
+struct CombinationNode * calculate_possible_combination(struct Hand * player_hand,
                                                  struct Table * table) {
     struct CardNode * table_cards = table->node;
     int list_size = get_node_number (table_cards);
     unsigned power_set_size = upow(2, list_size);
 
-    struct CardNode * node[list_size];
+    struct CombinationNode * combinations = NULL;
     int index = 0;
 
     for (unsigned int i = 0; i < power_set_size; i++) {
@@ -179,12 +207,16 @@ struct CardNode ** calculate_possible_combination(int* array, int size,
             }
         }
         if(is_sum_inside_deck(player_hand, tmp_list)) {
-
+              if (combinations == NULL)
+                  combinations = (struct CombinationNode *)malloc(sizeof
+                                                  (struct CombinationNode));
+              else {
+                  append_combination(combinations, tmp_list);
+              }
         }
     }
 
-
-    return node;
+    return combinations;
 }
 
 // Function that initializes the table with TABLE_SIZE cards
@@ -197,7 +229,12 @@ struct Table *table_init(struct Deck *deck){
   
   for(int i = 0; i < TABLE_SIZE; i++){
       struct Card * card = draw_card(deck);
-      append_card (table->node, card);
+      printf("%p\n", table->node);
+      if (table->node == NULL)
+        table->node = append_card (table->node, card);
+      else
+        append_card (table->node, card);
+
       char *path;
       asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
                       card->value,
@@ -209,17 +246,24 @@ struct Table *table_init(struct Deck *deck){
   return table;
 }
 
-void append_card (struct CardNode * list,struct Card * card) {
+struct CardNode * append_card (struct CardNode * list,struct Card * card) {
     if (list == NULL) {
-        struct CardNode node = {card, NULL, NULL};
-        list = &node;
+        struct CardNode * node = (struct CardNode *)malloc(sizeof(struct CardNode));
+        node->card = card;
+        node->next = NULL;
+        node->previous = NULL;
+        return node;
     } else {
-        struct CardNode * current = NULL;
-        while ((current = get_next_node (current)) != NULL)
-            ; // get to the last card in the linked lisk
-        struct CardNode node = {card, NULL, current};
-        current->next = &node;
+        while (get_next_node (list) != NULL)
+            list = get_next_node (list); // get to the last card in the linked lisk
+        struct CardNode * node = (struct CardNode *)malloc(sizeof(struct CardNode));
+        node->card = card;
+        node->next = NULL;
+        node->previous = list;
+        list->next = node;
     }
+
+    return NULL;
 }
 
 void append_node (struct CardNode * list,struct CardNode * node) {

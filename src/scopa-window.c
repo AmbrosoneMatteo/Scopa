@@ -62,7 +62,7 @@ place_player_card (ScopaWindow *window, char *path, int index) {
 }
 
 void place_adversary_card(ScopaWindow *window) {
-    g_print("Placing adversary card");
+    g_print("Placing adversary card\n");
     GtkWidget *image = gtk_image_new_from_resource ("/org/gnome/Example/images/retro.svg");
     gtk_widget_set_vexpand (image, true);
     gtk_widget_set_hexpand (image, true);
