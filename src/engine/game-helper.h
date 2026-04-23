@@ -14,7 +14,7 @@ struct CardNode * get_node_at_index(struct CardNode * node, int index);
 struct CardNode * append_card (struct CardNode * list,struct Card * card);
 void append_node (struct CardNode *list, struct CardNode *node);
 void send_player_card(struct Card * card, int index);
-bool is_sum_inside_deck(struct Hand * player_deck, struct CardNode * list);
+bool is_sum_inside_deck(struct Hand * player_hand, struct CombinationList * list);
 struct CombinationNode * calculate_possible_combination(struct Hand * player_hand,
                                                  struct Table * table);
 void print_list(struct CombinationNode * list);

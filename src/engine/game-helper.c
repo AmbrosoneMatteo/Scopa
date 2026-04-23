@@ -71,7 +71,7 @@ struct CardNode * get_next_node(struct CardNode * node) {
 }
 
 struct CardNode * get_previous_node(struct CardNode * node) {
-    return node->next;
+    return node->previous;
 }
 
 struct CardNode * get_node_at_index(struct CardNode * node, int index) {
@@ -81,12 +81,10 @@ struct CardNode * get_node_at_index(struct CardNode * node, int index) {
         i++;
         current = current->next;
     }
-    if (i==index && current->next != NULL) {
-        current = current->next;
-    } else {
-       current = NULL;
+    if (i==index) {
+        return current;
     }
-    return current;
+    return NULL;
 }
 
 // checks if a card can be placed on the table to take something
@@ -95,6 +93,7 @@ bool can_place_card(struct Card * card, struct Table * table) {
     while (l_node->next != NULL) {
         if (l_node->card->value == card->value)
             return true;
+        l_node = l_node->next;
     }
 
     return false;
@@ -118,18 +117,20 @@ int * node_to_array(struct CardNode * node) {
     return array;
 }
 
-bool is_sum_inside_deck(struct Hand * player_hand, struct CardNode * list) {
+bool is_sum_inside_deck(struct Hand * player_hand, struct CombinationList * list) {
     if (list == NULL)
         return false;
 
     int sum = 0;
-    struct CardNode * current = list;
-    while (current->next != NULL) {
-        sum+=current->card->value;
+    do {
+        g_print("Calculating...| list address: %p\n", list);
+        struct CardNode * node = list->node;
+        struct Card * card = node->card;
+        sum+=card->value;
         if (sum>10)
             return false;
-        current = current->next;
-    }
+        list = list->next;
+    } while (list != NULL);
 
     for(int i = 0; i<3 && player_hand->cards[i]!=NULL; i++) {
         if(player_hand->cards[i]->value == sum)
@@ -158,24 +159,39 @@ unsigned upow(unsigned base, int exponent) {
  * */
 void print_list(struct CombinationNode * list) {
     do {
-        struct CardNode * current = list->list;
+        struct CombinationList * current = list->list;
         if (current != NULL) {
-            while (current->next !=NULL) {
-                printf("%d%c -", current->card->value,
-                         suit_strings[current->card->suit]);
-            }
+            do {
+                struct Card * current_card = current->node->card;
+
+                g_print("%d%c -", current_card->value,
+                        suit_strings[current_card->suit]);
+                current = current->next;
+            } while (current !=NULL);
         } else {
             g_print("empty list of cards\n");
         }
         printf("\n");
-    } while(list->next != NULL);
+        list = list->next;
+    } while(list != NULL);
 }
 
-void append_combination(struct CombinationNode * combinations, struct CardNode * list) {
+void append_combination_list(struct CombinationList * combinations, struct CardNode * card_node) {
+    struct CombinationList * node = (struct CombinationList *)malloc(
+                                          sizeof(struct CombinationList));
+    node->node = card_node;
+    node->next = NULL;
+    while(combinations->next != NULL)
+        combinations = combinations->next;
+    combinations->next = node;
+}
+
+void append_combination(struct CombinationNode * combinations, struct CombinationList * list) {
     struct CombinationNode * node = (struct CombinationNode *)malloc(
-                                              sizeof (struct CombinationNode));
+                                          sizeof(struct CombinationNode));
     node->list = list;
-    while(combinations->next!=NULL)
+    node->next = NULL;
+    while(combinations->next != NULL)
         combinations = combinations->next;
     combinations->next = node;
 }
@@ -199,18 +215,29 @@ struct CombinationNode * calculate_possible_combination(struct Hand * player_han
     for (unsigned int i = 0; i < power_set_size; i++) {
         //This linked list temporarily stores the nodes of the combination,
         // if the combination is legal this is then added to the list
-        struct CardNode * tmp_list = NULL;
+        struct CombinationList * tmp_list = NULL;
         for (int j = 0; j < list_size; j++) {
             // Check if jth element is included in the current subset
             if (i & (1 << j)) {
-                 append_node (tmp_list, get_node_at_index (table_cards, j));
+                 struct CardNode * node = get_node_at_index (table_cards, j);
+                 if (tmp_list == NULL && node != NULL) {
+                      tmp_list = (struct CombinationList *)malloc(
+                                              sizeof (struct CombinationList));
+                      tmp_list->node = node;
+                      tmp_list->next = NULL;
+                 }
+                 else if(node != NULL)
+                    append_combination_list (tmp_list, node);
+                 g_print("Card node address: %p\n", node);
             }
         }
         if(is_sum_inside_deck(player_hand, tmp_list)) {
-              if (combinations == NULL)
+              if (combinations == NULL) {
                   combinations = (struct CombinationNode *)malloc(sizeof
                                                   (struct CombinationNode));
-              else {
+                  combinations->list = tmp_list;
+                  combinations->next = NULL;
+              } else {
                   append_combination(combinations, tmp_list);
               }
         }
@@ -267,14 +294,9 @@ struct CardNode * append_card (struct CardNode * list,struct Card * card) {
 }
 
 void append_node (struct CardNode * list,struct CardNode * node) {
-    if (list == NULL) {
-        list = node;
-    } else {
-        struct CardNode * current = NULL;
-        while ((current = get_next_node (current)) != NULL)
-            ; // get to the last card in the linked lisk
-        current->next = node;
-    }
+    while (list->next != NULL)
+        list = get_next_node (list); // get to the last card in the linked lisk
+    list->next = node;
 }
 
 void send_player_card(struct Card * card, int index) {
@@ -298,7 +320,7 @@ void delete_node (struct CardNode * node) {
 
 //removes a node from the linked list, and updates the chain
 void remove_node (struct CardNode * node) {
-    if (node->next!=NULL && node->previous==NULL) {
+    if (node->next!=NULL && node->previous!=NULL) {
         node->next->previous = node->previous;
         node->previous->next = node->next;
     } else if (node->next!=NULL && node->previous==NULL) {

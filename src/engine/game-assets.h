@@ -21,9 +21,14 @@ typedef struct CardNode {
 // This structure stores a linked list of cards that is a combination of possible
 // cards the user can take, and a pointer to the next node in the list
 typedef struct CombinationNode {
-    struct CardNode * list;
+    struct CombinationList * list;
     struct CombinationNode * next;
 } CombinationNode;
+
+typedef struct CombinationList {
+    struct CardNode * node;
+    struct CombinationList * next;
+} CombinationList;
 
 //this array is only used to create the path of the images
 extern char suit_strings[];
