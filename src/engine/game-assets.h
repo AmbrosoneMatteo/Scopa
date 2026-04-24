@@ -3,6 +3,7 @@
 #define DECK_SIZE 40
 #define HAND_SIZE 3 // Number of cards in a player's hand
 #define MAX_TABLE_SIZE 12
+#define TABLE_SIZE 4
 
 enum Suit {
   CLUBS,
@@ -11,27 +12,48 @@ enum Suit {
   SPADES
 };
 
-// Struct that rapresents a card
+typedef struct CardNode {
+  struct Card * card;
+  struct CardNode * next;
+  struct CardNode * previous;
+} CardNode;
+
+// This structure stores a linked list of cards that is a combination of possible
+// cards the user can take, and a pointer to the next node in the list
+typedef struct CombinationNode {
+    struct CombinationList * list;
+    struct CombinationNode * next;
+} CombinationNode;
+
+typedef struct CombinationList {
+    struct CardNode * node;
+    struct CombinationList * next;
+} CombinationList;
+
+//this array is only used to create the path of the images
+extern char suit_strings[];
+
+// Struct that represents a card
 struct Card {
   enum Suit suit;
   int value; // 1-10
 };
 
-// Struct that rapresents the deck
+// Struct that represents the deck
 struct Deck {
   struct Card cards[DECK_SIZE];
-  struct Card *top; // Pointer to the card on top of the deck
+  int count; //counts the number of remaining cards in the array
 };
 
-// Struct that rapresents the table where the cards are played
+// Struct that represents the table where the cards are played
 struct Table {
-  struct Card cards[MAX_TABLE_SIZE];
+  struct CardNode * node;
   int count; // Keeping track of how many cards are there on the table
 };
 
-// Struct that rapresents the player's hand
+// Struct that represents the player's hand
 struct Hand {
-  struct Card cards[HAND_SIZE];
+  struct Card * cards[HAND_SIZE];
   int count; // Keeping track of how many cards are there in the player's hand
 };
 #endif

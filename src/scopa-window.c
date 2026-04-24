@@ -27,7 +27,11 @@ struct _ScopaWindow
 	AdwApplicationWindow  parent_instance;
 
 	/* Template widgets */
-	GtkLabel            *label;
+        GtkImage        *stack_card_image;
+        GtkBox          *player_cards;
+        GtkBox          *adversary_cards;
+        GtkBox          *table_top;
+        GtkBox          *table_bottom;
 };
 
 G_DEFINE_FINAL_TYPE (ScopaWindow, scopa_window, ADW_TYPE_APPLICATION_WINDOW)
@@ -38,7 +42,45 @@ scopa_window_class_init (ScopaWindowClass *klass)
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
 	gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Example/scopa-window.ui");
-	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, label);
+	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, stack_card_image);
+  	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player_cards);
+    	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, adversary_cards);
+    	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table_top);
+    	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table_bottom);
+}
+
+void
+place_player_card (ScopaWindow *window, char *path, int index) {
+    g_print("Placing card: %s\n", path);
+    GtkWidget *image = gtk_image_new_from_resource (path);
+    gtk_widget_set_vexpand (image, true);
+    gtk_widget_set_hexpand (image, true);
+    gtk_widget_set_vexpand_set (image, true);
+    gtk_widget_set_hexpand_set (image, true);
+    gtk_image_set_pixel_size ((GtkImage*)image, 160);
+    gtk_box_append (window->player_cards, image);
+}
+
+void place_adversary_card(ScopaWindow *window) {
+    g_print("Placing adversary card\n");
+    GtkWidget *image = gtk_image_new_from_resource ("/org/gnome/Example/images/retro.svg");
+    gtk_widget_set_vexpand (image, true);
+    gtk_widget_set_hexpand (image, true);
+    gtk_widget_set_vexpand_set (image, true);
+    gtk_widget_set_hexpand_set (image, true);
+    gtk_image_set_pixel_size ((GtkImage*)image, 160);
+    gtk_box_append (window->adversary_cards, image);
+}
+
+void place_card_on_table(ScopaWindow *window, char *path, int index) {
+    g_print("Placing card on the table: %s\n", path);
+    GtkWidget *image = gtk_image_new_from_resource (path);
+    gtk_widget_set_vexpand (image, true);
+    gtk_widget_set_hexpand (image, true);
+    gtk_widget_set_vexpand_set (image, true);
+    gtk_widget_set_hexpand_set (image, true);
+    gtk_image_set_pixel_size ((GtkImage*)image, 160);
+    gtk_box_append (window->table_top, image);
 }
 
 static void

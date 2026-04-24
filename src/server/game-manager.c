@@ -42,7 +42,7 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
   send_packet(player2_out, UPDATE_TABLE, table, sizeof(struct Table));
 
   // Game loop
-  while(deck->top >= &deck->cards[0]){
+  while(deck->count >= 6){ // There are enough cards to deal the last hand
     for(int i = 0; i < 6; i++){
       struct GamePacket header;
       // TODO: Check header

@@ -1,4 +1,4 @@
-/* scopa-application.h
+/* new-game.h
  *
  * Copyright 2026 matteo
  *
@@ -20,15 +20,13 @@
 
 #pragma once
 
-#include "scopa-window.h"
 #include <adwaita.h>
 
 G_BEGIN_DECLS
 
-#define SCOPA_TYPE_APPLICATION (scopa_application_get_type())
+#define NEW_GAME_TYPE_WINDOW (new_game_window_get_type())
 
-G_DECLARE_FINAL_TYPE (ScopaApplication, scopa_application, SCOPA, APPLICATION, AdwApplication)
+G_DECLARE_FINAL_TYPE (NewGameWindow, new_game_window, NEW, WINDOW, AdwApplicationWindow)
 
-ScopaApplication *scopa_application_new (const char        *application_id,
-                                         GApplicationFlags  flags);
-extern ScopaWindow *main_window;
+int new_game_window_get_difficulty (NewGameWindow *self);
+G_END_DECLS
