@@ -38,6 +38,8 @@ struct Deck * deck = NULL;
 struct Table * table = NULL;
 
 void start_local_game(int difficulty) {
+    player_hand = malloc(sizeof(struct Hand));
+    bot_hand = malloc(sizeof(struct Hand));
     deck = deck_init ();
     shuffle_deck (deck);
     get_hand(deck, player_hand);
