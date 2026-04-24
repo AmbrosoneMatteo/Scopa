@@ -22,7 +22,7 @@ struct NetHand *serialize_hand(struct Hand * hand){
 // Function that serializes the Table structure to a structure that
 // does not use pointers so taht can be send over the network
 struct NetTable *serialize_table(struct Table * table){
-  struct NetTable *net_table = malloc(sizeof(struct NetTable));
+  struct NetTable *net_table = calloc(1, sizeof(struct NetTable));
   struct CardNode *node = table->node;
   int counter = 0;
   while(node != NULL){

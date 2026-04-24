@@ -3,6 +3,8 @@
 #include <stdbool.h>
 
 #include "engine/game-assets.h"
+#include "netutils/net-assets.h"
+#include "netutils/serializer.h"
 #include "netutils/communication.h"
 // Function that sends a packet to the client through the output stream
 // The function takes as parameters the output stream, the type of the packet,
@@ -16,6 +18,20 @@ void send_packet(GOutputStream *out, enum MsgType type, void *payload, int paylo
   if (payload_length > 0 && payload != NULL) {
     g_output_stream_write_all(out, payload, payload_length, NULL, NULL, NULL);
   }
+}
+
+// Functions that sends to the player the player's hand after it gets serialized
+void send_packet_hand(GOutputStream *out, struct Hand *hand){
+  struct NetHand *net_hand = serialize_hand(hand);
+  send_packet(out, SET_HAND, net_hand, sizeof(struct NetHand));
+  free(net_hand);
+}
+
+// Functions that sends to the player the game table after it gets serialized
+void send_packet_table(GOutputStream *out, struct Table *table){
+  struct NetTable *net_table = serialize_table(table);
+  send_packet(out, UPDATE_TABLE, net_table, sizeof(struct NetTable));
+  free(net_table);
 }
 
 // Function that waits for a packet from the client

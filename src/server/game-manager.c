@@ -36,10 +36,10 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
 
   struct Table *table = table_init(deck);
 
-  send_packet(player1_out, SET_HAND, player1_hand, sizeof(struct Hand));
-  send_packet(player2_out, SET_HAND, player2_hand, sizeof(struct Hand));
-  send_packet(player1_out, UPDATE_TABLE, table, sizeof(struct Table));
-  send_packet(player2_out, UPDATE_TABLE, table, sizeof(struct Table));
+  send_packet_hand(player1_out, player1_hand);
+  send_packet_hand(player2_out, player2_hand);
+  send_packet_table(player1_out, table);
+  send_packet_table(player2_out, table);
 
   // Game loop
   while(deck->count >= 6){ // There are enough cards to deal the last hand
@@ -83,8 +83,8 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
         send_packet(player1_out, OPPONENT_CARD, card, sizeof(struct Card));
         player1_turn = true;
       }
-      send_packet(player1_out, UPDATE_TABLE, table, sizeof(struct Table));
-      send_packet(player2_out, UPDATE_TABLE, table, sizeof(struct Table));
+      send_packet_table(player1_out, table);
+      send_packet_table(player2_out, table);
     }
     // TODO: Update user hands
   }

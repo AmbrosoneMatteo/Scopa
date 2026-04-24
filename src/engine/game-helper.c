@@ -345,11 +345,12 @@ void get_hand(struct Deck *deck, struct Hand *hand){
 
 // Function that checks if the card played by the player is effectively
 // in the player's hand
-//TODO: needs to be adapted to new struct Hand
 bool hand_has_card(struct Hand *hand, struct Card *card){
-  for(int i = 0; i < hand->count; i++){
-    if(hand->cards[i]->value == card->value && hand->cards[i]->suit == card->suit){
-      return true;
+  for(int i = 0; i < HAND_SIZE; i++){
+    if(hand->cards[i] != NULL){
+      if(hand->cards[i]->value == card->value && hand->cards[i]->suit == card->suit){
+        return true;
+      }
     }
   }
   return false;
