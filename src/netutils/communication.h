@@ -17,4 +17,7 @@ struct GamePacket {
   int payload_length;
 };
 
+void send_packet(GOutputStream *out, enum MsgType type, void *payload, int len);
+void* receive_packet(GInputStream *in, struct GamePacket *out_header);
+
 #endif
