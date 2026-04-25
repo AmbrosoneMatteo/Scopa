@@ -7,7 +7,7 @@
 // Function that serializes the Hand structure to a structure that
 // does not use pointers so taht can be send over the network
 struct NetHand *serialize_hand(struct Hand * hand){
-  struct NetHand *net_hand = malloc(sizeof(struct NetHand));
+  struct NetHand *net_hand = calloc(1, sizeof(struct NetHand));
   int counter = 0;
   for(int i = 0; i < HAND_SIZE; i++){
     if(hand->cards[i] != NULL){

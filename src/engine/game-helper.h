@@ -18,6 +18,11 @@ void send_player_card(struct Card * card, int index);
 bool is_sum_inside_deck(struct Hand * player_hand, struct CombinationList * list);
 struct CombinationNode * calculate_possible_combination(struct Hand * player_hand,
                                                  struct Table * table);
+struct CombinationNode *get_combinations_for_card(struct Card * card, struct Table * table);
+int get_combo_length(struct CombinationList *list);
+struct CombinationList *determine_auto_take(struct CombinationNode *possibilities);
+void remove_combination_from_table(struct Table *table, struct CombinationList *list, struct CardNode **player_pile);
+void remove_card_from_hand(struct Hand *hand, struct Card *card);
 void print_list(struct CombinationNode * list);
 int get_node_number(struct CardNode * node);
 bool hand_has_card(struct Hand *hand, struct Card *card);

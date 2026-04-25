@@ -35,18 +35,19 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
   bool player1_turn = true;
 
   struct Table *table = table_init(deck);
-
-  send_packet_hand(player1_out, player1_hand);
-  send_packet_hand(player2_out, player2_hand);
-  send_packet_table(player1_out, table);
-  send_packet_table(player2_out, table);
-
+  
   GInputStream *in_streams[2] = {player1_in, player2_in};
   GOutputStream *out_streams[2] = {player1_out, player2_out};
   struct Hand *hands[2] = {player1_hand, player2_hand};
+  // Structures to store the cards collected by each player during the game
+  struct CardNode *player_piles[2] = {NULL, NULL};
 
   // Game loop
   while(deck->count >= 6){ // There are enough cards to deal the last hand
+    send_packet_hand(player1_out, player1_hand);
+    send_packet_hand(player2_out, player2_hand);
+    send_packet_table(player1_out, table);
+    send_packet_table(player2_out, table);
     for(int i = 0; i < 6; i++){
       // Calculating who is the current player
       int current_player = (player1_turn) ? 0 : 1;
@@ -70,15 +71,36 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
         return;
       }
 
-      // TODO: Calculate what the player takes from the table
+      // Calculate what the player takes from the table
+      struct CombinationNode *combinations = get_combinations_for_card(card, table);
+      if(combinations != NULL){
+        struct CombinationList *auto_take = determine_auto_take(combinations);
+        if(auto_take != NULL) {
+          remove_combination_from_table(table, auto_take, &player_piles[current_player]);
+          remove_card_from_hand(hands[current_player], card);
+          // Adding the card that the player had in the hand to their pile
+          append_card(player_piles[current_player], card); 
+        }else{
+          // TODO: Ask the user what combination he wants to get
+        }
+      }else{
+        // The player cannot take anything from the table
+        append_card(table->node, card);
+        remove_card_from_hand(hands[current_player], card);
+      }
+
 
       send_packet_oppcard(out_streams[opponent], card);
-      player1_turn = !player1_turn;
+      send_packet_hand(out_streams[current_player], hands[current_player]);
 
-      send_packet_table(player1_out, table);
-      send_packet_table(player2_out, table);
+      send_packet_table(out_streams[current_player], table);
+      send_packet_table(out_streams[opponent], table);
+      player1_turn = !player1_turn;
     }
-    // TODO: Update user hands
+
+    // Update user hands with new cards
+    get_hand(deck, player1_hand);
+    get_hand(deck, player2_hand);
   }
 
   g_print("START\n");
