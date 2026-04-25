@@ -3,7 +3,7 @@
 #define DECK_SIZE 40
 #define HAND_SIZE 3 // Number of cards in a player's hand
 #define MAX_TABLE_SIZE 12
-#define TABLE_SIZE 4
+#define TABLE_SIZE 4 // Initial size of the table
 
 enum Suit {
   CLUBS,

@@ -44,7 +44,7 @@ void start_local_game(int difficulty) {
     shuffle_deck (deck);
     get_hand(deck, player_hand);
     get_hand(deck, bot_hand);
-    table = table_init (deck);
+    table = table_init_display (deck);
     for(int i = 0; i<HAND_SIZE; i++) {
         send_player_card (player_hand->cards[i], i);
     }

@@ -257,22 +257,38 @@ struct Table *table_init(struct Deck *deck){
   }
   
   for(int i = 0; i < TABLE_SIZE; i++){
-      struct Card * card = draw_card(deck);
-      printf("%p\n", table->node);
-      if (table->node == NULL)
-        table->node = append_card (table->node, card);
-      else
-        append_card (table->node, card);
+    struct Card * card = draw_card(deck);
+    printf("%p\n", table->node);
 
-      char *path;
-      asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
-                      card->value,
-                      suit_strings[card->suit]);
-      place_card_on_table (main_window,
-                             path, i);
+    if (table->node == NULL){
+        table->node = append_card (table->node, card);
+    }else{
+        append_card (table->node, card);
+    }
   }
+
   table->count = TABLE_SIZE; // Initial size of the table
   return table;
+}
+
+// Function that initializes the table using the table_init function
+// and then displays the cards on the GUI
+struct Table *table_init_display(struct Deck *deck){
+    struct Table *table = table_init(deck);
+    struct CardNode * l_node = table->node;
+    int i = 0;
+    while(l_node != NULL){
+        struct Card * card = l_node->card;
+            char *path;
+        asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+                        card->value,
+                        suit_strings[card->suit]);
+        place_card_on_table (main_window,
+                                path, i);
+        i++;
+        l_node = l_node->next;
+    }
+    return table;
 }
 
 struct CardNode * append_card (struct CardNode * list,struct Card * card) {
