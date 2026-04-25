@@ -21,5 +21,7 @@ void send_packet(GOutputStream *out, enum MsgType type, void *payload, int len);
 void* receive_packet(GInputStream *in, struct GamePacket *out_header);
 void send_packet_hand(GOutputStream *out, struct Hand *hand);
 void send_packet_table(GOutputStream *out, struct Table *table);
+void send_packet_reqcard(GOutputStream *out);
+void send_packet_oppcard(GOutputStream *out, struct Card *card);
 
 #endif

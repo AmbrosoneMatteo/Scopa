@@ -61,12 +61,3 @@ void start_local_game(int difficulty) {
         g_print("No combination available");
     }
 }
-
-bool has_card (struct Hand * hand,struct Card * card) {
-    for (int i = 0;i<3;i++)
-        if (hand->cards[i]->suit == card->suit &&
-            hand->cards[i]->suit == card->value)
-            return true;
-    return false;
-}
-

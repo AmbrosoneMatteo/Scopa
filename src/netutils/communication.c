@@ -6,18 +6,13 @@
 #include "netutils/net-assets.h"
 #include "netutils/serializer.h"
 #include "netutils/communication.h"
-// Function that sends a packet to the client through the output stream
-// The function takes as parameters the output stream, the type of the packet,
-// the payload and the length of the payload
-void send_packet(GOutputStream *out, enum MsgType type, void *payload, int payload_length) {
-  struct GamePacket header = { .type = type, .payload_length = payload_length };
-  // Sending the header (8 bytes) before the payload
-  g_output_stream_write_all(out, &header, sizeof(header), NULL, NULL, NULL);
 
-  // Sending the payload if set
-  if (payload_length > 0 && payload != NULL) {
-    g_output_stream_write_all(out, payload, payload_length, NULL, NULL, NULL);
-  }
+void send_packet_reqcard(GOutputStream *out){
+  send_packet(out, REQ_CARD, NULL, 0);
+}
+
+void send_packet_oppcard(GOutputStream *out, struct Card *card){
+  send_packet(out, OPPONENT_CARD, card, sizeof(struct Card));
 }
 
 // Functions that sends to the player the player's hand after it gets serialized
@@ -32,6 +27,20 @@ void send_packet_table(GOutputStream *out, struct Table *table){
   struct NetTable *net_table = serialize_table(table);
   send_packet(out, UPDATE_TABLE, net_table, sizeof(struct NetTable));
   free(net_table);
+}
+
+// Function that sends a packet to the client through the output stream
+// The function takes as parameters the output stream, the type of the packet,
+// the payload and the length of the payload
+void send_packet(GOutputStream *out, enum MsgType type, void *payload, int payload_length) {
+  struct GamePacket header = { .type = type, .payload_length = payload_length };
+  // Sending the header (8 bytes) before the payload
+  g_output_stream_write_all(out, &header, sizeof(header), NULL, NULL, NULL);
+
+  // Sending the payload if set
+  if (payload_length > 0 && payload != NULL) {
+    g_output_stream_write_all(out, payload, payload_length, NULL, NULL, NULL);
+  }
 }
 
 // Function that waits for a packet from the client

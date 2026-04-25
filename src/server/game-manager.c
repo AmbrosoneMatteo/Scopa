@@ -41,48 +41,40 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
   send_packet_table(player1_out, table);
   send_packet_table(player2_out, table);
 
+  GInputStream *in_streams[2] = {player1_in, player2_in};
+  GOutputStream *out_streams[2] = {player1_out, player2_out};
+  struct Hand *hands[2] = {player1_hand, player2_hand};
+
   // Game loop
   while(deck->count >= 6){ // There are enough cards to deal the last hand
     for(int i = 0; i < 6; i++){
+      // Calculating who is the current player
+      int current_player = (player1_turn) ? 0 : 1;
+      int opponent = (player1_turn) ? 1 : 0;
+
+      // Receiving player's card
       struct GamePacket header;
-      // TODO: Check header
-      if(player1_turn) {
-        send_packet(player1_out, REQ_CARD, NULL, 0);
-        struct Card *card = (struct Card *)receive_packet(player1_in, &header);
-        if(card == NULL){
-          g_error("Error receiving card, game aborted\n");
-          return;
-        }
-        g_print("Player 1 played: %d of %d\n", card->value, card->suit); // Temp debug info
-
-        if(!hand_has_card(player1_hand, card)){
-          g_error("Error: card played not found in user's hand, game aborted\n");
-          return;
-        }
-
-        // TODO: Calculate what the player takes from the table
-
-        send_packet(player2_out, OPPONENT_CARD, card, sizeof(struct Card));
-        player1_turn = false;
-      }else{
-        send_packet(player2_out, REQ_CARD, NULL, 0);
-        struct Card *card = (struct Card *)receive_packet(player2_in, &header);
-        if(card == NULL){
-          g_error("Error receiving card, game aborted\n");
-          return;
-        }
-        g_print("Player 2 played: %d of %d\n", card->value, card->suit); // Temp debug info
-
-        if(!hand_has_card(player2_hand, card)){
-          g_error("Error: card played not found in user's hand, game aborted\n");
-          return;
-        }
-
-        // TODO: Calculate what the player takes from the table
-
-        send_packet(player1_out, OPPONENT_CARD, card, sizeof(struct Card));
-        player1_turn = true;
+      send_packet_reqcard(out_streams[current_player]);
+      struct Card *card = (struct Card *)receive_packet(in_streams[current_player], &header);
+      if(header.type != PLAY_CARD){
+        g_error("Error receiving card, game aborted\n");
+        return;
       }
+      if(card == NULL){
+        g_error("Error receiving card, game aborted\n");
+        return;
+      }
+      g_print("Player played: %d of %d\n", card->value, card->suit); // Temp debug info
+      if(!hand_has_card(hands[current_player], card)){
+        g_error("Error: card played not found in user's hand, game aborted\n");
+        return;
+      }
+
+      // TODO: Calculate what the player takes from the table
+
+      send_packet_oppcard(out_streams[opponent], card);
+      player1_turn = !player1_turn;
+
       send_packet_table(player1_out, table);
       send_packet_table(player2_out, table);
     }
