@@ -8,6 +8,8 @@ scopa_sources = [
   'engine/game-helper.c',
   'local/local_game.c',
   'local/bot_engine.c',
+  'netutils/communication.c',
+  'netutils/serializer.c',
   'new-game.c'
 ]
 

@@ -38,11 +38,13 @@ struct Deck * deck = NULL;
 struct Table * table = NULL;
 
 void start_local_game(int difficulty) {
+    player_hand = malloc(sizeof(struct Hand));
+    bot_hand = malloc(sizeof(struct Hand));
     deck = deck_init ();
     shuffle_deck (deck);
-    player_hand = get_hand(deck);
-    bot_hand = get_hand(deck);
-    table = table_init (deck);
+    get_hand(deck, player_hand);
+    get_hand(deck, bot_hand);
+    table = table_init_display (deck);
     for(int i = 0; i<HAND_SIZE; i++) {
         send_player_card (player_hand->cards[i], i);
     }
@@ -59,12 +61,3 @@ void start_local_game(int difficulty) {
         g_print("No combination available");
     }
 }
-
-bool has_card (struct Hand * hand,struct Card * card) {
-    for (int i = 0;i<3;i++)
-        if (hand->cards[i]->suit == card->suit &&
-            hand->cards[i]->suit == card->value)
-            return true;
-    return false;
-}
-

@@ -1,13 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
-#include "game-helper.h"
 #include "engine/game-assets.h"
 #include "scopa-application.h"
 #include "scopa-window.h"
+#include "game-helper.h"
 
 int * node_to_array(struct CardNode * node);
 bool can_place_card(struct Card * card, struct Table * table);
+
 
 // Function that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.
@@ -246,6 +248,91 @@ struct CombinationNode * calculate_possible_combination(struct Hand * player_han
     return combinations;
 }
 
+// Function that returns all the combinations that a single card can take from the table
+// The function creates a dummy hand with only the card played by the user and uses
+// the calculate_possible_combination function
+struct CombinationNode *get_combinations_for_card(struct Card * card, struct Table * table) {
+    struct Hand dummy_hand;
+    dummy_hand.cards[0] = card;
+    dummy_hand.cards[1] = NULL;
+    dummy_hand.cards[2] = NULL;
+    dummy_hand.count = 1;
+
+    return calculate_possible_combination(&dummy_hand, table);
+}
+
+// Function that returns how many cards does a possible combination have
+int get_combo_length(struct CombinationList *list) {
+    int count = 0;
+    while(list != NULL){
+        count++;
+        list = list->next;
+    }
+    return count;
+}
+
+// Function to determinate if in all possible combinations there is one that must be taken
+// For example the user is forced to take the direct combination with 1 card if available
+// Returns the combination that must be taken or NULL otherwise
+struct CombinationList *determine_auto_take(struct CombinationNode *possibilities) {
+    if(possibilities == NULL){
+        return NULL;
+    }
+    struct CombinationNode *current_node = possibilities;
+    int total_options = 0;
+    struct CombinationList *current_combo = NULL;
+
+    while (current_node != NULL) {
+        total_options++;
+        current_combo = current_node->list;
+        if (get_combo_length(current_combo) == 1) {
+            return current_combo; // returning combination to take with 1 card
+        }
+        current_node = current_node->next;
+    }
+
+    // If there is only 1 option available we do not need to ask the user which combo to take
+    if (total_options == 1) {
+        return current_combo;
+    }
+    return NULL; // The user needs to be asked what combo to take
+}
+
+// Function that removes all the CardNodes of a combination from the table and adds them to the player's pile
+void remove_combination_from_table(struct Table *table, struct CombinationList *list, struct CardNode **player_pile) {
+    while(list != NULL){
+        struct CardNode *node = list->node;
+        struct CombinationList *tmp = list;
+        list = list->next;
+        if(table->node == node){
+            // Shifting the table starting node if the node to remove is the first one
+            table->node = node->next;
+        }
+        remove_node(node);
+        table->count--;
+        node->next = NULL;
+        node->previous = NULL;
+        if(*player_pile == NULL){
+            // The player is collecting their first card so the pile ie empty
+            *player_pile = node;
+        }else{
+            append_node(*player_pile, node);
+        }
+        free(tmp);
+    }
+}
+
+void remove_card_from_hand(struct Hand *hand, struct Card *card) {
+    for(int i = 0; i < HAND_SIZE; i++){
+        if(hand->cards[i] != NULL){
+            if(hand->cards[i]->value == card->value && hand->cards[i]->suit == card->suit){
+                hand->cards[i] = NULL;
+                hand->count--;
+            }
+        }
+    }
+}
+
 // Function that initializes the table with TABLE_SIZE cards
 // Returned is the pointer to the table structure
 struct Table *table_init(struct Deck *deck){
@@ -255,22 +342,38 @@ struct Table *table_init(struct Deck *deck){
   }
   
   for(int i = 0; i < TABLE_SIZE; i++){
-      struct Card * card = draw_card(deck);
-      printf("%p\n", table->node);
-      if (table->node == NULL)
-        table->node = append_card (table->node, card);
-      else
-        append_card (table->node, card);
+    struct Card * card = draw_card(deck);
+    printf("%p\n", table->node);
 
-      char *path;
-      asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
-                      card->value,
-                      suit_strings[card->suit]);
-      place_card_on_table (main_window,
-                             path, i);
+    if (table->node == NULL){
+        table->node = append_card (table->node, card);
+    }else{
+        append_card (table->node, card);
+    }
   }
+
   table->count = TABLE_SIZE; // Initial size of the table
   return table;
+}
+
+// Function that initializes the table using the table_init function
+// and then displays the cards on the GUI
+struct Table *table_init_display(struct Deck *deck){
+    struct Table *table = table_init(deck);
+    struct CardNode * l_node = table->node;
+    int i = 0;
+    while(l_node != NULL){
+        struct Card * card = l_node->card;
+            char *path;
+        asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+                        card->value,
+                        suit_strings[card->suit]);
+        place_card_on_table (main_window,
+                                path, i);
+        i++;
+        l_node = l_node->next;
+    }
+    return table;
 }
 
 struct CardNode * append_card (struct CardNode * list,struct Card * card) {
@@ -334,11 +437,22 @@ void remove_node (struct CardNode * node) {
 
 // Function that gets a new 3 card hand for the player
 // Returned is the pointer to the hand structure
-struct Hand * get_hand(struct Deck *deck)  {
-    struct Hand *hand = malloc (sizeof(struct Hand));
-    for(int i = 0; i < HAND_SIZE; i++){
-        hand->cards[i] = draw_card(deck);
+void get_hand(struct Deck *deck, struct Hand *hand){
+  for(int i = 0; i < HAND_SIZE; i++){
+    hand->cards[i] = draw_card(deck);
+  }
+  hand->count = HAND_SIZE;
+}
+
+// Function that checks if the card played by the player is effectively
+// in the player's hand
+bool hand_has_card(struct Hand *hand, struct Card *card){
+  for(int i = 0; i < HAND_SIZE; i++){
+    if(hand->cards[i] != NULL){
+      if(hand->cards[i]->value == card->value && hand->cards[i]->suit == card->suit){
+        return true;
+      }
     }
-    hand->count = HAND_SIZE;
-    return hand;
+  }
+  return false;
 }

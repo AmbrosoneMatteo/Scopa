@@ -54,7 +54,7 @@ void rerun_probability (int difficulty) {
     struct CardNode * index = memorized_card;
     if (index != NULL) {
         while (index->next != NULL) {
-            if (!has_card(bot_hand, index->card)) {
+            if (!hand_has_card(bot_hand, index->card)) {
                 if (threshold - get_random_integer()<=0) {
                     struct CardNode * next = index->next;
                     remove_node (index);
