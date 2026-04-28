@@ -403,11 +403,7 @@ void append_node (struct CardNode * list,struct CardNode * node) {
 }
 
 void send_player_card(struct Card * card, int index) {
-  char *path;
-  asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png", card->value,
-              suit_strings[card->suit]);
-
-  place_player_card (main_window, path, index);
+  place_player_card (main_window,  card, index);
 }
 
 /**
