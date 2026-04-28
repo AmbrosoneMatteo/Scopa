@@ -29,6 +29,43 @@ void send_packet_table(GOutputStream *out, struct Table *table){
   free(net_table);
 }
 
+// Function that sends to the player the request to select a possible combination
+void send_packet_reqcombo(GOutputStream *out, struct CombinationNode *combo_list){
+  struct NetCombinationList *net_list = serialize_combination_list(combo_list);
+  send_packet(out, REQ_COMBO, net_list, sizeof(struct NetCombinationList));
+  free(net_list);
+}
+
+// Function that receives the player played card from the input stream
+// and parses it to a struct Card. A pointer to the card is returned
+struct Card *receive_packet_card(GInputStream *in){
+  struct GamePacket header;
+  struct Card *card = (struct Card *)receive_packet(in, &header);
+  if(header.type != PLAY_CARD){
+    g_error("Error receiving card, game aborted\n");
+    return NULL;
+  }
+  if(card == NULL){
+    g_error("Error receiving card, game aborted\n");
+    return NULL;
+  }
+  return card;
+}
+
+int receive_packet_comboselect(GInputStream *in){
+  struct GamePacket header;
+  int *combo_index = (int*)receive_packet(in, &header);
+  if(header.type != PLAY_COMBO){
+    g_error("Error receiving combination, game aborted\n");
+    return -1;
+  }
+  if(combo_index == NULL){
+    g_error("Error receiving combination, game aborted\n");
+    return -1;
+  }
+  return *combo_index;
+}
+
 // Function that sends a packet to the client through the output stream
 // The function takes as parameters the output stream, the type of the packet,
 // the payload and the length of the payload
@@ -60,16 +97,16 @@ void* receive_packet(GInputStream *in, struct GamePacket *out_header) {
     &error
   );
 
-    if (!success) {
-      if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT)) {
-        g_error("Player timeout exceeded\n");
-      }
-      g_error_free(error);
-      return NULL;
+  if (!success) {
+    if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_TIMED_OUT)) {
+      g_error("Player timeout exceeded\n");
     }
+    g_error_free(error);
+    return NULL;
+  }
 
   void *payload = NULL;
-  // Reading the payload (played card)
+  // Reading the received payload
   if (out_header->payload_length > 0) {
     payload = malloc(out_header->payload_length);
     if(payload == NULL){
