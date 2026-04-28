@@ -8,7 +8,9 @@ enum MsgType {
   PLAY_CARD, // Card played by the player
   SET_HAND, // Set the player's hand
   UPDATE_TABLE, // Update the table
-  OPPONENT_CARD // Send to the player the card played by the opponent
+  OPPONENT_CARD, // Send to the player the card played by the opponent
+  REQ_COMBO, // Request the player to select a possible combination when there is more than one possible
+  PLAY_COMBO // Combination played by the player
 };
 
 // Structure used as header of the packets that are sent from and to the server
@@ -23,5 +25,8 @@ void send_packet_hand(GOutputStream *out, struct Hand *hand);
 void send_packet_table(GOutputStream *out, struct Table *table);
 void send_packet_reqcard(GOutputStream *out);
 void send_packet_oppcard(GOutputStream *out, struct Card *card);
+void send_packet_reqcombo(GOutputStream *out, struct CombinationNode *combo_list);
+struct Card *receive_packet_card(GInputStream *in);
+int receive_packet_comboselect(GInputStream *in);
 
 #endif

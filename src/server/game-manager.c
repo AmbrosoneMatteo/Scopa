@@ -41,6 +41,7 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
   struct Hand *hands[2] = {player1_hand, player2_hand};
   // Structures to store the cards collected by each player during the game
   struct CardNode *player_piles[2] = {NULL, NULL};
+  int scope_counter[2] = {0, 0};
 
   // Game loop
   while(deck->count >= 6){ // There are enough cards to deal the last hand
@@ -54,13 +55,8 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
       int opponent = (player1_turn) ? 1 : 0;
 
       // Receiving player's card
-      struct GamePacket header;
       send_packet_reqcard(out_streams[current_player]);
-      struct Card *card = (struct Card *)receive_packet(in_streams[current_player], &header);
-      if(header.type != PLAY_CARD){
-        g_error("Error receiving card, game aborted\n");
-        return;
-      }
+      struct Card *card = receive_packet_card(in_streams[current_player]);
       if(card == NULL){
         g_error("Error receiving card, game aborted\n");
         return;
@@ -81,14 +77,33 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
           // Adding the card that the player had in the hand to their pile
           append_card(player_piles[current_player], card); 
         }else{
-          // TODO: Ask the user what combination he wants to get
+          // Ask the user what combination he wants to get
+          send_packet_reqcombo(out_streams[current_player], combinations);
+          int combo_index = receive_packet_comboselect(in_streams[current_player]);
+          struct CombinationList *combo = get_combination_at_index(combinations, combo_index);
+          if(combo == NULL){
+            g_error("Error receiving combination, game aborted\n");
+            return;
+          }
+          remove_combination_from_table(table, combo, &player_piles[current_player]);
+          remove_card_from_hand(hands[current_player], card);
+          append_card(player_piles[current_player], card);
+        }
+        if(table->count == 0){
+          // If the palyer clears the table, they get a scopa point
+          scope_counter[current_player]++;
         }
       }else{
         // The player cannot take anything from the table
-        append_card(table->node, card);
+        // Adding the card the table
+        if(table->node == NULL){
+          table->node = append_card(NULL, card);
+        }else{
+          append_card(table->node, card);
+        }
+        table->count++;
         remove_card_from_hand(hands[current_player], card);
       }
-
 
       send_packet_oppcard(out_streams[opponent], card);
       send_packet_hand(out_streams[current_player], hands[current_player]);
@@ -98,7 +113,7 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
       player1_turn = !player1_turn;
     }
 
-    // Update user hands with new cards
+    // Update players hands with new cards
     get_hand(deck, player1_hand);
     get_hand(deck, player2_hand);
   }

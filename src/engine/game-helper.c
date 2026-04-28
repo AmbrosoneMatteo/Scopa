@@ -333,6 +333,22 @@ void remove_card_from_hand(struct Hand *hand, struct Card *card) {
     }
 }
 
+struct CombinationList *get_combination_at_index(struct CombinationNode *node, int index) {
+    if(index < 0){
+        return NULL;
+    }
+    struct CombinationNode *current_node = node;
+    int current_index = 0;
+    while(current_index < index && current_node != NULL){
+        current_node = current_node->next;
+        current_index++;
+    }
+    if(current_node == NULL){
+        return NULL;
+    }
+    return current_node->list;
+}
+
 // Function that initializes the table with TABLE_SIZE cards
 // Returned is the pointer to the table structure
 struct Table *table_init(struct Deck *deck){
