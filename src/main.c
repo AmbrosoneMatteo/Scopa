@@ -24,7 +24,6 @@
 #include <time.h>
 
 #include "scopa-application.h"
-#include "server/server.h"
 
 int
 main (int   argc,
@@ -37,10 +36,6 @@ main (int   argc,
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
-
-  // starting the game server
-  // TODO: ask user if they want to host a server or just act as a client
-  start_server();
 
   app = scopa_application_new ("org.gnome.Example", G_APPLICATION_DEFAULT_FLAGS);
   ret = g_application_run (G_APPLICATION (app), argc, argv);

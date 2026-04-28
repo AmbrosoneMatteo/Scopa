@@ -4,7 +4,6 @@
 #include "server.h"
 #include "game-manager.h"
 
-const int SRV_PORT = 8888;
 const int CLIENT_TIMEOUT = 60;
 int connection_counter = 0;
 GSocketConnection *first_client = NULL;
@@ -43,10 +42,10 @@ gboolean incoming_callback  (GSocketService *service, GSocketConnection *connect
 }
 
 // Entry point of the server
-void start_server(void) {
+void start_server(int server_port) {
   GError *error = NULL;
   GSocketService *service = g_socket_service_new();
-  g_socket_listener_add_inet_port((GSocketListener*)service, SRV_PORT, NULL, &error);
+  g_socket_listener_add_inet_port((GSocketListener*)service, server_port, NULL, &error);
 
   if (error != NULL){
     g_error("%s\n", error->message);
@@ -57,7 +56,7 @@ void start_server(void) {
   // Starting the socket service
   g_socket_service_start(service);
 
-  g_print("Server is listening on port %i\n", SRV_PORT);
+  g_print("Server is listening on port %i\n", server_port);
 }
 
 // Function that sets the timeout of a socket

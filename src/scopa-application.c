@@ -24,6 +24,7 @@
 #include "scopa-application.h"
 #include "new-game.h"
 #include "local/local_game.h"
+#include "server/server.h"
 
 ScopaWindow *main_window = NULL;
 
@@ -134,7 +135,7 @@ scopa_application_new_game_action (GSimpleAction *action,
 
     g_signal_connect (window, "start-local", G_CALLBACK (on_start_local), self);
     g_signal_connect (window, "start-network", G_CALLBACK (on_start_network), self);
-    g_signal_connect (window, "start-network", G_CALLBACK (on_start_server), self);
+    g_signal_connect (window, "start-server", G_CALLBACK (on_start_server), self);
 
     gtk_window_present (GTK_WINDOW (window));
 }
@@ -154,15 +155,19 @@ on_start_network (NewGameWindow *window, gpointer user_data)
 {
     ScopaApplication *self = user_data;
     gtk_window_close (GTK_WINDOW (window));
-    // start network game...
+	int connect_port = new_game_window_get_connect_port (window);
+	char *connect_host = new_game_window_get_connect_host (window);
+    // start net client
 }
+
 
 static void
 on_start_server (NewGameWindow *window, gpointer user_data)
 {
     ScopaApplication *self = user_data;
     gtk_window_close (GTK_WINDOW (window));
-    // start network game...
+	int srv_port = new_game_window_get_server_port (window);
+  	start_server(srv_port);
 }
 
 static const GActionEntry app_actions[] = {
