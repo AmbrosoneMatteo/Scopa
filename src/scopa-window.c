@@ -56,8 +56,16 @@ place_card (GtkDropTarget* self, const GValue* ptr, gdouble x, gdouble y, gpoint
     int value = card->value;
     char suit = suit_strings[card->suit];
 
-    GtkImage *image = user_data;
+    struct Card *card_on_table = (struct Card *)user_data;
+    g_print("Address of card: %p\n", card_on_table);
 
+    if(card_on_table->value == card->value) {
+        g_print("user can grub card, player card: %d - %d\n", card->value,
+                  card_on_table->value);
+    } else {
+        g_print("user cannot grub card, player card: %d - %d\n", card->value,
+                  card_on_table->value);
+    }
     return TRUE;
 }
 
@@ -98,8 +106,14 @@ void place_adversary_card(ScopaWindow *window) {
     gtk_box_append (window->adversary_cards, image);
 }
 
-void place_card_on_table(ScopaWindow *window, char *path, int index) {
-    g_print("Placing card on the table: %s\n", path);
+void place_card_on_table(ScopaWindow *window, struct Card * card, int index) {
+    char *path;
+    int value = card->value;
+    char suit = suit_strings[card->suit];
+    asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+             value, suit);
+
+    g_print("Placing card: %s\n", path);
     GtkWidget *image = gtk_image_new_from_resource (path);
     gtk_widget_set_vexpand (image, true);
     gtk_widget_set_hexpand (image, true);
@@ -108,7 +122,7 @@ void place_card_on_table(ScopaWindow *window, char *path, int index) {
     gtk_image_set_pixel_size ((GtkImage*)image, 160);
 
     GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_POINTER, GDK_ACTION_COPY);
-    g_signal_connect (tgt, "drop", G_CALLBACK (place_card), NULL);
+    g_signal_connect (tgt, "drop", G_CALLBACK (place_card), card);
     gtk_widget_add_controller (GTK_WIDGET (image), GTK_EVENT_CONTROLLER (tgt)); // The ownership of tgt is taken by the instance.
 
     gtk_box_append (window->table_top, image);

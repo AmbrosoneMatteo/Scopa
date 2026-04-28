@@ -364,12 +364,8 @@ struct Table *table_init_display(struct Deck *deck){
     int i = 0;
     while(l_node != NULL){
         struct Card * card = l_node->card;
-            char *path;
-        asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
-                        card->value,
-                        suit_strings[card->suit]);
         place_card_on_table (main_window,
-                                path, i);
+                                card, i);
         i++;
         l_node = l_node->next;
     }
