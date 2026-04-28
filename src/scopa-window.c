@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include "scopa-window.h"
+#include "engine/game-helper.h"
 
 struct _ScopaWindow
 {
@@ -33,6 +34,65 @@ struct _ScopaWindow
         GtkBox          *table_top;
         GtkBox          *table_bottom;
 };
+
+struct WidgetLinkedList {
+    GtkWidget *ptr;
+    struct WidgetLinkedList *next;
+};
+
+GtkImage *player_cards[3];
+GtkImage *adversary_cards[3];
+struct WidgetLinkedList *widgets_on_table = NULL;
+
+void append_widget(GtkWidget *widget) {
+    struct WidgetLinkedList *current = widgets_on_table;
+    struct WidgetLinkedList * new_node = (struct WidgetLinkedList*)
+                            malloc(sizeof(struct WidgetLinkedList));
+    new_node->ptr = widget;
+    if(current == NULL) {
+        widgets_on_table = new_node;
+    } else {
+        do {
+            current = current->next;
+        } while (current!=NULL);
+        current->next = new_node;
+    }
+}
+
+struct WidgetLinkedList * get_widget_at_index(int index) {
+    struct WidgetLinkedList *out = widgets_on_table;
+    int count = 0;
+
+    if(out == NULL)
+        return NULL;
+
+    while (count < index && out->next!=NULL) {
+          out = out->next;
+          count++;
+    }
+    if (count==index)
+        return out->next;
+
+    return out;
+}
+
+void remove_widget_at_index(ScopaWindow *window, int index) {
+    if (widgets_on_table==NULL)
+        return ;
+
+    if(index!=0) {
+
+    } else {
+        struct WidgetLinkedList *tmp = widgets_on_table;
+        if(widgets_on_table->next!=NULL)
+            widgets_on_table = widgets_on_table->next;
+        else
+            widgets_on_table = NULL;
+        gtk_box_remove (window->table_top, tmp->ptr);
+        g_free(tmp->ptr); //frees widget from memory
+        free(tmp);  // frees the node from memory
+    }
+}
 
 G_DEFINE_FINAL_TYPE (ScopaWindow, scopa_window, ADW_TYPE_APPLICATION_WINDOW)
 
@@ -51,22 +111,26 @@ scopa_window_class_init (ScopaWindowClass *klass)
 
 static gboolean
 place_card (GtkDropTarget* self, const GValue* ptr, gdouble x, gdouble y, gpointer user_data) {
-    g_print("%p\n",g_value_get_pointer (ptr));
-    struct Card * card = (struct Card *)g_value_get_pointer(ptr);
-    int value = card->value;
-    char suit = suit_strings[card->suit];
+    int player_card_index = g_value_get_int(ptr);
 
-    struct Card *card_on_table = (struct Card *)user_data;
-    g_print("Address of card: %p\n", card_on_table);
+    int table_card_index = g_value_get_int (user_data);
 
-    if(card_on_table->value == card->value) {
-        g_print("user can grub card, player card: %d - %d\n", card->value,
-                  card_on_table->value);
-    } else {
-        g_print("user cannot grub card, player card: %d - %d\n", card->value,
-                  card_on_table->value);
-    }
+    player_play_cards(player_card_index, table_card_index);
+
     return TRUE;
+}
+
+void
+remove_card_from_table(ScopaWindow *window, int index) {
+
+}
+
+void remove_card_from_player_hand(ScopaWindow *window, int index) {
+
+}
+
+void remove_card_from_adversary_hand(ScopaWindow* window, int index) {
+
 }
 
 void
@@ -87,8 +151,7 @@ place_player_card (ScopaWindow *window, struct Card * card, int index) {
     gtk_image_set_pixel_size ((GtkImage*)image, 160);
 
     GtkDragSource *src = gtk_drag_source_new ();
-    int arguments[] = {value, suit};
-    GdkContentProvider *content = gdk_content_provider_new_typed (G_TYPE_POINTER, card);
+    GdkContentProvider *content = gdk_content_provider_new_typed (G_TYPE_INT, index);
     gtk_drag_source_set_content (src, content);
     g_object_unref (content);
     gtk_widget_add_controller (GTK_WIDGET (image), GTK_EVENT_CONTROLLER (src));
@@ -121,8 +184,8 @@ void place_card_on_table(ScopaWindow *window, struct Card * card, int index) {
     gtk_widget_set_hexpand_set (image, true);
     gtk_image_set_pixel_size ((GtkImage*)image, 160);
 
-    GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_POINTER, GDK_ACTION_COPY);
-    g_signal_connect (tgt, "drop", G_CALLBACK (place_card), card);
+    GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_INT, GDK_ACTION_COPY);
+    g_signal_connect (tgt, "drop", G_CALLBACK (place_card), &index);
     gtk_widget_add_controller (GTK_WIDGET (image), GTK_EVENT_CONTROLLER (tgt)); // The ownership of tgt is taken by the instance.
 
     gtk_box_append (window->table_top, image);

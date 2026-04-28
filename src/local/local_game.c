@@ -37,6 +37,25 @@ struct Hand * bot_hand = NULL;
 struct Deck * deck = NULL;
 struct Table * table = NULL;
 
+
+void
+player_play_cards(int player_card_index, int table_card_index) {
+      struct CombinationNode * possibilities = calculate_possible_combination(
+                                                    player_hand, table);
+      if(possibilities!=NULL) {
+          print_list(possibilities);
+      } else {
+          g_print("No combination available");
+      }
+
+      struct CardNode * table_card = get_node_at_index (table->node,
+                                                       table_card_index);
+
+      struct Card * player_card = player_hand->cards[player_card_index];
+
+      struct CombinationNode * combinations = get_combinations_for_card(player_card, table);
+}
+
 void start_local_game(int difficulty) {
     player_hand = malloc(sizeof(struct Hand));
     bot_hand = malloc(sizeof(struct Hand));
@@ -50,14 +69,5 @@ void start_local_game(int difficulty) {
     }
     for(int i = 0; i < 3; i++) {
         place_adversary_card (main_window);
-    }
-
-   // test code snippet
-    struct CombinationNode * possibilities = calculate_possible_combination(
-                                                  player_hand, table);
-    if(possibilities!=NULL) {
-        print_list(possibilities);
-    } else {
-        g_print("No combination available");
     }
 }

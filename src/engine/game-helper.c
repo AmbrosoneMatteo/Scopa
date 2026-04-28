@@ -11,6 +11,7 @@ int * node_to_array(struct CardNode * node);
 bool can_place_card(struct Card * card, struct Table * table);
 
 
+
 // Function that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.
 // Returned is a pointer to the deck structure
