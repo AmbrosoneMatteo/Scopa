@@ -25,6 +25,7 @@
 #include "engine/game-helper.h"
 #include "engine/game-assets.h"
 #include "scopa-application.h"
+#include "scopa-window.h"
 
 /**
  Linked list of the memorized cards that the algorithm
@@ -46,7 +47,7 @@ player_play_card(int player_card_index, int table_card_index) {
                 player_hand->cards[player_card_index], table);
       struct Card * player_card = player_hand->cards[player_card_index];
 
-      remove_all_table_cards(main_window);
+      remove_all_box_cards(main_window->table_top);
       if(combinations != NULL){
           struct CombinationList *auto_take = determine_auto_take(combinations);
           if(auto_take != NULL) {
@@ -79,11 +80,7 @@ void start_local_game(int difficulty) {
     get_hand(deck, player_hand);
     get_hand(deck, bot_hand);
     table = table_init_display (deck);
-    for(int i = 0; i<HAND_SIZE; i++) {
-        send_player_card (player_hand->cards[i], i);
-    }
-    for(int i = 0; i < 3; i++) {
-        place_adversary_card (main_window);
-    }
+    place_all_cards_on_hand (main_window, main_window->player_cards, player_hand);
+    place_all_cards_on_hand (main_window, main_window->adversary_cards, bot_hand);
 }
 

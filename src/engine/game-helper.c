@@ -9,8 +9,15 @@
 
 int * node_to_array(struct CardNode * node);
 bool can_place_card(struct Card * card, struct Table * table);
-
-
+void append_combination(struct CombinationNode *combinations,
+                             struct CombinationList *list);
+void append_combination_list(struct CombinationList *combinations,
+                             struct CardNode        *card_node);
+unsigned upow(unsigned base, int exponent);
+bool can_player_grab_card(struct Card            *player_card,
+                          struct CombinationList *list);
+struct CardNode * get_previous_node(struct CardNode * node);
+struct CardNode * get_next_node(struct CardNode * node);
 
 // Function that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.
@@ -210,7 +217,6 @@ struct CombinationNode *get_combinations_for_card(struct Card * card, struct Tab
     unsigned power_set_size = upow(2, list_size);
 
     struct CombinationNode * combinations = NULL;
-    int index = 0;
 
     for (unsigned int i = 0; i < power_set_size; i++) {
         //This linked list temporarily stores the nodes of the combination,
@@ -397,10 +403,6 @@ void append_node (struct CardNode * list,struct CardNode * node) {
     while (list->next != NULL)
         list = get_next_node (list); // get to the last card in the linked lisk
     list->next = node;
-}
-
-void send_player_card(struct Card * card, int index) {
-  place_player_card (main_window,  card, index);
 }
 
 /**
