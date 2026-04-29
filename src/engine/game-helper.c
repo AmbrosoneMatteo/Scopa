@@ -252,6 +252,35 @@ struct CombinationNode *get_combinations_for_card(struct Card * card, struct Tab
     return combinations;
 }
 
+void local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
+                      struct CombinationNode* combinations,
+                      struct Table *table,
+                      struct Deck *deck) {
+  if(combinations != NULL){
+        struct CombinationList *auto_take = determine_auto_take(combinations);
+        if(auto_take != NULL) {
+          remove_combination_from_table(table, auto_take, &pile);
+          remove_card_from_hand(hand, card);
+          // Adding the card that the player had in the hand to their pile
+          append_card(pile, card);
+        }  else {
+
+        }
+    }else{
+        // The player cannot take anything from the table
+        // Adding the card the table
+        if(table->node == NULL){
+          table->node = append_card(NULL, card);
+        }else{
+          append_card(table->node, card);
+        }
+        table->count++;
+        remove_card_from_hand(hand, card);
+    }
+    if (hand->count == 0) {
+        get_hand (deck, hand);
+    }
+}
 // Function that returns how many cards does a possible combination have
 int get_combo_length(struct CombinationList *list) {
     int count = 0;
@@ -451,3 +480,4 @@ bool hand_has_card(struct Hand *hand, struct Card *card){
   }
   return false;
 }
+
