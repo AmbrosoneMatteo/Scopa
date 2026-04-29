@@ -47,7 +47,6 @@ struct _ScopaWindow
         GtkBox          *player_cards;
         GtkBox          *adversary_cards;
         GtkBox          *table_top;
-        GtkBox          *table_bottom;
 };
 
 G_END_DECLS

@@ -133,7 +133,6 @@ bool can_player_grab_card(struct Card * player_card, struct CombinationList * li
 
     int sum = 0;
     do {
-        g_print("Calculating...| list address: %p\n", list);
         struct CardNode * node = list->node;
         struct Card * card = node->card;
         sum+=card->value;
@@ -234,7 +233,6 @@ struct CombinationNode *get_combinations_for_card(struct Card * card, struct Tab
                  }
                  else if(node != NULL)
                     append_combination_list (tmp_list, node);
-                 g_print("Card node address: %p\n", node);
             }
         }
         if(can_player_grab_card(card, tmp_list)) {
@@ -480,4 +478,5 @@ bool hand_has_card(struct Hand *hand, struct Card *card){
   }
   return false;
 }
+
 

@@ -4,6 +4,7 @@
     <file preprocess="xml-stripblanks">scopa-window.ui</file>
     <file preprocess="xml-stripblanks">new-game.ui</file>
     <file preprocess="xml-stripblanks">shortcuts-dialog.ui</file>
+    <file>window.css</file>
     <file>images/retro.svg</file>
     <file>images/DalNegro_Cards/10_C.png</file>
     <file>images/DalNegro_Cards/10_D.png</file>

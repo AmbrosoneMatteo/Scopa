@@ -149,6 +149,25 @@ struct Card * get_least_probable_card(float *probabilities) {
     return return_card;
 }
 
+int
+get_combination_value(struct CombinationNode * combination) {
+    if (combination==NULL || combination->list == NULL)
+        return 0;
+
+    int value = 0;
+    struct CombinationList *list = combination->list;
+    do {
+        struct Card * card = list->node->card;
+        if (card->value == 7 && card->suit==DIAMONDS)
+            value+=30;
+        else if (card->suit==DIAMONDS)
+            value+=7;
+        else
+            value+=2;
+    } while (list == NULL);
+    return value;
+}
+
 /*
  * This function uses an array list to calculate the possible cards in
  * the player's hand, and with that it determines the best card to play
@@ -199,12 +218,22 @@ struct Card * decide_move(void) {
         }
     }
 
+    int combination_value = 0;
     for (int i = 0; i<3; i++) {
         if(combinations[i]==NULL)
             continue;
+        int tmp = get_combination_value(combinations[i]);
+        if (tmp>combination_value) {
+            combination_value = tmp;
+            preferred_card = cards[i];
+        }
     }
 
-    // No card has been chosen, so place the one that has the least of probability
-    // to come out
-    return get_least_probable_card(card_values_probability);
+    if (preferred_card!=NULL)
+        return preferred_card;
+    else {
+        // No card has been chosen, so place the one that has the least of probability
+        // to come out
+        return get_least_probable_card(card_values_probability);
+    }
 }

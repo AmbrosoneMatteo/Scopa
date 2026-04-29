@@ -61,7 +61,7 @@ void free_combination_linkedlist(struct CombinationNode* node) {
 }
 
 void
-player_play_card(int player_card_index, int table_card_index) {
+player_play_card(int player_card_index) {
       memorize_cards_from_array (player_hand->cards);
       memorize_cards (table->node);
 

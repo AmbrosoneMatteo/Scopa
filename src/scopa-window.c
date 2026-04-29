@@ -48,11 +48,9 @@ place_all_cards_on_hand(ScopaWindow *window, GtkBox *box, struct Hand* hand) {
               char suit = suit_strings[card->suit];
               asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
                        value, suit);
-              g_print("passing pointer: %p\n", card);
             } else {
               path = "/org/gnome/Example/images/retro.svg";
             }
-            g_print("Placing card: %s\n", path);
             GtkWidget *image = gtk_image_new_from_resource (path);
             gtk_widget_set_vexpand (image, true);
             gtk_widget_set_hexpand (image, true);
@@ -98,16 +96,13 @@ scopa_window_class_init (ScopaWindowClass *klass)
   	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player_cards);
     	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, adversary_cards);
     	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table_top);
-    	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table_bottom);
 }
 
 static gboolean
 place_card (GtkDropTarget* self, const GValue* ptr, gdouble x, gdouble y, gpointer user_data) {
     int player_card_index = g_value_get_int(ptr);
 
-    int table_card_index = *((int*)user_data);
-
-    player_play_card(player_card_index, table_card_index);
+    player_play_card(player_card_index);
 
     return TRUE;
 }
@@ -127,17 +122,12 @@ void place_card_on_table(ScopaWindow *window, struct Card * card, int index) {
     asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
              value, suit);
 
-    g_print("Placing card: %s\n", path);
     GtkWidget *image = gtk_image_new_from_resource (path);
     gtk_widget_set_vexpand (image, true);
     gtk_widget_set_hexpand (image, true);
     gtk_widget_set_vexpand_set (image, true);
     gtk_widget_set_hexpand_set (image, true);
     gtk_image_set_pixel_size ((GtkImage*)image, 160);
-
-    GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_INT, GDK_ACTION_COPY);
-    g_signal_connect (tgt, "drop", G_CALLBACK (place_card), card);
-    gtk_widget_add_controller (GTK_WIDGET (image), GTK_EVENT_CONTROLLER (tgt)); // The ownership of tgt is taken by the instance.
 
     gtk_box_append (window->table_top, image);
 }
@@ -146,5 +136,22 @@ static void
 scopa_window_init (ScopaWindow *self)
 {
 	gtk_widget_init_template (GTK_WIDGET (self));
+
+    GtkCssProvider *css = gtk_css_provider_new();
+    GError *err = NULL;
+    gtk_css_provider_load_from_resource(css,"/org/gnome/Example/window.css");
+    if (err) { g_printerr("CSS load error: %s\n", err->message); g_clear_error(&err); }
+    gtk_style_context_add_provider_for_display(gdk_display_get_default(),
+                                                             GTK_STYLE_PROVIDER(css),
+                                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    g_object_unref(css);
+
+    gtk_widget_set_name(GTK_WIDGET(self->table_top), "table_top");
+
+    GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_INT, GDK_ACTION_COPY);
+    g_signal_connect (tgt, "drop", G_CALLBACK (place_card), self->table_top);
+    // The ownership of tgt is taken by the instance.
+    gtk_widget_add_controller (GTK_WIDGET (self->table_top), GTK_EVENT_CONTROLLER (tgt));
 }
+
 
