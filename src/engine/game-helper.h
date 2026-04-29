@@ -16,7 +16,6 @@ struct CardNode * append_card (struct CardNode * list,struct Card * card);
 void append_node (struct CardNode *list, struct CardNode *node);
 void send_player_card(struct Card * card, int index);
 bool is_sum_inside_deck(struct Hand * player_hand, struct CombinationList * list);
-struct CombinationNode * calculate_possible_combination(struct Hand * player_hand,struct Table * table);
 struct CombinationNode *get_combinations_for_card(struct Card * card, struct Table * table);
 int get_combo_length(struct CombinationList *list);
 struct CombinationList *determine_auto_take(struct CombinationNode *possibilities);
@@ -26,6 +25,5 @@ struct CombinationList *get_combination_at_index(struct CombinationNode *node, i
 void print_list(struct CombinationNode * list);
 int get_node_number(struct CardNode * node);
 bool hand_has_card(struct Hand *hand, struct Card *card);
-void player_play_cards(int player_card_index, int table_card_index);
 
 #endif

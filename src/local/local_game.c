@@ -17,6 +17,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -37,23 +38,28 @@ struct Hand * bot_hand = NULL;
 struct Deck * deck = NULL;
 struct Table * table = NULL;
 
-
 void
-player_play_cards(int player_card_index, int table_card_index) {
-      struct CombinationNode * possibilities = calculate_possible_combination(
-                                                    player_hand, table);
-      if(possibilities!=NULL) {
-          print_list(possibilities);
-      } else {
-          g_print("No combination available");
-      }
-
-      struct CardNode * table_card = get_node_at_index (table->node,
-                                                       table_card_index);
-
+player_play_card(int player_card_index, int table_card_index) {
+      struct CombinationNode * combinations = get_combinations_for_card(
+                player_hand->cards[player_card_index], table);
       struct Card * player_card = player_hand->cards[player_card_index];
 
-      struct CombinationNode * combinations = get_combinations_for_card(player_card, table);
+      if(combinations != NULL){
+          struct CombinationList *auto_take = determine_auto_take(combinations);
+          if(auto_take != NULL) {
+            remove_combination_from_table(table, auto_take, player_hand->cards);
+            remove_card_from_hand(player_hand->cards, card);
+            // Adding the card that the player had in the hand to their pile
+            append_card([current_player], card);
+          }
+      } else {
+
+
+      }
+      struct CardNode * table_card = get_node_at_index (table->node,
+                                                     table_card_index);
+
+      struct Card * player_card = player_hand->cards[player_card_index];
 }
 
 void start_local_game(int difficulty) {
@@ -71,3 +77,4 @@ void start_local_game(int difficulty) {
         place_adversary_card (main_window);
     }
 }
+

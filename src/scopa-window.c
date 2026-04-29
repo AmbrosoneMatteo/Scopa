@@ -22,6 +22,7 @@
 
 #include "scopa-window.h"
 #include "engine/game-helper.h"
+#include "local/local_game.h" // TO remove
 
 struct _ScopaWindow
 {
@@ -113,9 +114,9 @@ static gboolean
 place_card (GtkDropTarget* self, const GValue* ptr, gdouble x, gdouble y, gpointer user_data) {
     int player_card_index = g_value_get_int(ptr);
 
-    int table_card_index = g_value_get_int (user_data);
+    int table_card_index = *((int*)user_data);
 
-    player_play_cards(player_card_index, table_card_index);
+    player_play_card(player_card_index, table_card_index);
 
     return TRUE;
 }
@@ -184,8 +185,8 @@ void place_card_on_table(ScopaWindow *window, struct Card * card, int index) {
     gtk_widget_set_hexpand_set (image, true);
     gtk_image_set_pixel_size ((GtkImage*)image, 160);
 
-    GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_INT, GDK_ACTION_COPY);
-    g_signal_connect (tgt, "drop", G_CALLBACK (place_card), &index);
+    GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_POINTER, GDK_ACTION_COPY);
+    g_signal_connect (tgt, "drop", G_CALLBACK (place_card), card);
     gtk_widget_add_controller (GTK_WIDGET (image), GTK_EVENT_CONTROLLER (tgt)); // The ownership of tgt is taken by the instance.
 
     gtk_box_append (window->table_top, image);

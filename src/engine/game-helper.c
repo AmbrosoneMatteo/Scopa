@@ -120,7 +120,7 @@ int * node_to_array(struct CardNode * node) {
     return array;
 }
 
-bool is_sum_inside_deck(struct Hand * player_hand, struct CombinationList * list) {
+bool can_player_grab_card(struct Card * player_card, struct CombinationList * list) {
     if (list == NULL)
         return false;
 
@@ -135,10 +135,8 @@ bool is_sum_inside_deck(struct Hand * player_hand, struct CombinationList * list
         list = list->next;
     } while (list != NULL);
 
-    for(int i = 0; i<3 && player_hand->cards[i]!=NULL; i++) {
-        if(player_hand->cards[i]->value == sum)
-            return true;
-    }
+    if (player_card->value == sum)
+        return true;
 
     return false;
 }
@@ -201,13 +199,12 @@ void append_combination(struct CombinationNode * combinations, struct Combinatio
 
 /*
  * This function returns all the possible legal combinations that the user
- * can take from the table, by comparing every possible card combination
- * against the player's deck. The function to get the power set is inspired
- * by this implementation of a powerset in C:
+ * can take from the table with a specific card, by comparing every possible
+ * card combination against the player's deck. The function to get the power set
+ * is inspired by this implementation of a powerset in C:
  * https://learnprogramming.in.net/power-set-generator-in-c/
  * */
-struct CombinationNode * calculate_possible_combination(struct Hand * player_hand,
-                                                 struct Table * table) {
+struct CombinationNode *get_combinations_for_card(struct Card * card, struct Table * table) {
     struct CardNode * table_cards = table->node;
     int list_size = get_node_number (table_cards);
     unsigned power_set_size = upow(2, list_size);
@@ -234,7 +231,7 @@ struct CombinationNode * calculate_possible_combination(struct Hand * player_han
                  g_print("Card node address: %p\n", node);
             }
         }
-        if(is_sum_inside_deck(player_hand, tmp_list)) {
+        if(can_player_grab_card(card, tmp_list)) {
               if (combinations == NULL) {
                   combinations = (struct CombinationNode *)malloc(sizeof
                                                   (struct CombinationNode));
@@ -247,19 +244,6 @@ struct CombinationNode * calculate_possible_combination(struct Hand * player_han
     }
 
     return combinations;
-}
-
-// Function that returns all the combinations that a single card can take from the table
-// The function creates a dummy hand with only the card played by the user and uses
-// the calculate_possible_combination function
-struct CombinationNode *get_combinations_for_card(struct Card * card, struct Table * table) {
-    struct Hand dummy_hand;
-    dummy_hand.cards[0] = card;
-    dummy_hand.cards[1] = NULL;
-    dummy_hand.cards[2] = NULL;
-    dummy_hand.count = 1;
-
-    return calculate_possible_combination(&dummy_hand, table);
 }
 
 // Function that returns how many cards does a possible combination have
