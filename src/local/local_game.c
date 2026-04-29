@@ -72,13 +72,9 @@ player_play_card(int player_card_index, int table_card_index) {
 
       local_play_card (player_hand, player_card, player_pile, combinations,
                         table,deck);
-
+      remove_card_from_hand(player_hand, player_card);
       remove_all_box_cards(main_window->table_top);
-
       remove_all_box_cards (main_window->player_cards);
-      remove_all_box_cards (main_window->table_top);
-      place_cards_on_table (main_window, table);
-      place_all_cards_on_hand (main_window, main_window->player_cards,player_hand);
 
       struct Card * played_card = decide_move();
       if(played_card!=NULL) {
@@ -89,16 +85,21 @@ player_play_card(int player_card_index, int table_card_index) {
               played_card, table);
           local_play_card (bot_hand, played_card, bot_pile,
                            combinations, table, deck);
+          remove_card_from_hand(bot_hand, played_card);
 
           remove_all_box_cards (main_window->adversary_cards);
-          remove_all_box_cards (main_window->table_top);
           place_cards_on_table (main_window, table);
-          place_all_cards_on_hand (main_window, main_window->adversary_cards,
-                                   bot_hand);
 
+          if(bot_hand->count == 0) {
+              get_hand (deck, bot_hand);
+              get_hand (deck, player_hand);
+          }
       } else {
           g_print("Something went terribly wrong\n");
       }
+
+      place_all_cards_on_hand(main_window,main_window->adversary_cards,bot_hand);
+      place_all_cards_on_hand(main_window,main_window->player_cards,player_hand);
 
       enable_player_cards (main_window->player_cards);
 }
