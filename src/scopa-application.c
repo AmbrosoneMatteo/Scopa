@@ -25,6 +25,7 @@
 #include "new-game.h"
 #include "local/local_game.h"
 #include "server/server.h"
+#include "client/client.h"
 
 ScopaWindow *main_window = NULL;
 
@@ -32,12 +33,21 @@ struct _ScopaApplication
 {
 	AdwApplication parent_instance;
 };
+struct ServerArgs {
+	int port;
+};
+struct ClientArgs {
+	char *host;
+	int port;
+};
 
 G_DEFINE_FINAL_TYPE (ScopaApplication, scopa_application, ADW_TYPE_APPLICATION)
 
 static void on_start_local (NewGameWindow *window, gpointer user_data);
 static void on_start_network (NewGameWindow *window, gpointer user_data);
 static void on_start_server (NewGameWindow *window, gpointer user_data);
+static gpointer client_thread_func(gpointer data);
+static gpointer server_thread_func(gpointer data);
 
 ScopaApplication *
 scopa_application_new (const char        *application_id,
@@ -157,9 +167,12 @@ on_start_network (NewGameWindow *window, gpointer user_data)
     gtk_window_close (GTK_WINDOW (window));
 	int connect_port = new_game_window_get_connect_port (window);
 	char *connect_host = new_game_window_get_connect_host (window);
-    // start net client
+	struct ClientArgs *args = g_new(struct ClientArgs, 1);
+	args->host = g_strdup(connect_host);
+	args->port = connect_port;
+	// starting client thread
+	g_thread_new("client-thread", client_thread_func, args);
 }
-
 
 static void
 on_start_server (NewGameWindow *window, gpointer user_data)
@@ -167,7 +180,31 @@ on_start_server (NewGameWindow *window, gpointer user_data)
     ScopaApplication *self = user_data;
     gtk_window_close (GTK_WINDOW (window));
 	int srv_port = new_game_window_get_server_port (window);
-  	start_server(srv_port);
+	struct ServerArgs *srv_args = g_new(struct ServerArgs, 1);
+	srv_args->port = srv_port;
+	// starting server thread
+	g_thread_new("server-thread", server_thread_func, srv_args);
+
+	struct ClientArgs *client_args = g_new(struct ClientArgs, 1);
+	client_args->host = g_strdup("127.0.0.1");
+	client_args->port = srv_port;
+	// Starting the client thread that connects to the local server
+	g_thread_new("client-thread", client_thread_func, client_args);
+}
+
+static gpointer client_thread_func(gpointer data) {
+    struct ClientArgs *args = (struct ClientArgs *)data; 
+    start_client(args->host, args->port); 
+    g_free(args->host);
+    g_free(args); 
+    return NULL;
+}
+
+static gpointer server_thread_func(gpointer data) {
+    struct ServerArgs *args = (struct ServerArgs *)data; 
+    start_server(args->port); 
+    g_free(args); 
+    return NULL;
 }
 
 static const GActionEntry app_actions[] = {

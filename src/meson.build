@@ -10,6 +10,7 @@ scopa_sources = [
   'local/bot_engine.c',
   'netutils/communication.c',
   'netutils/serializer.c',
+  'client/client.c',
   'new-game.c'
 ]
 

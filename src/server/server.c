@@ -7,6 +7,10 @@
 const int CLIENT_TIMEOUT = 60;
 int connection_counter = 0;
 GSocketConnection *first_client = NULL;
+struct GameArgs{
+  GSocketConnection *player1;
+  GSocketConnection *player2;
+};
 
 // Callback function called when a client connects to the server
 gboolean incoming_callback  (GSocketService *service, GSocketConnection *connection, GObject *source_object, gpointer user_data) {
@@ -33,7 +37,11 @@ gboolean incoming_callback  (GSocketService *service, GSocketConnection *connect
     set_socket_timeout(connection, CLIENT_TIMEOUT);
 
     g_print("The server is full, starting the game...\n");
-    start_game(first_client, connection);
+    struct GameArgs *args = g_new(struct GameArgs, 1);
+    args->player1 = first_client;
+    args->player2 = connection;
+    // Starting the game loop in another thread
+    g_thread_new("server-game-thread", server_game_thread_func, args);
   }else{
     first_client = connection;
   }
@@ -63,4 +71,11 @@ void start_server(int server_port) {
 void set_socket_timeout(GSocketConnection *conn, guint seconds) {
     GSocket *socket = g_socket_connection_get_socket(conn);
     g_socket_set_timeout(socket, seconds);
+}
+
+static gpointer server_game_thread_func(gpointer data) {
+  struct GameArgs *args = (struct GameArgs *)data;
+  start_game(args->player1, args->player2);
+  g_free(args);
+  return NULL;
 }
