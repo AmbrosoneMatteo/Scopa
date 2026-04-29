@@ -43,56 +43,30 @@ struct WidgetLinkedList {
 
 GtkImage *player_cards[3];
 GtkImage *adversary_cards[3];
-struct WidgetLinkedList *widgets_on_table = NULL;
 
-void append_widget(GtkWidget *widget) {
-    struct WidgetLinkedList *current = widgets_on_table;
-    struct WidgetLinkedList * new_node = (struct WidgetLinkedList*)
-                            malloc(sizeof(struct WidgetLinkedList));
-    new_node->ptr = widget;
-    if(current == NULL) {
-        widgets_on_table = new_node;
-    } else {
-        do {
-            current = current->next;
-        } while (current!=NULL);
-        current->next = new_node;
+void
+remove_all_table_cards(ScopaWindow* window) {
+    GtkBox *box = window->table_top;
+
+    GtkWidget *child;
+    while((child = gtk_widget_get_first_child ((GtkWidget *)box))
+                                                !=NULL) {
+        gtk_box_remove (box, child);
     }
 }
 
-struct WidgetLinkedList * get_widget_at_index(int index) {
-    struct WidgetLinkedList *out = widgets_on_table;
-    int count = 0;
+void
+place_cards_on_table(ScopaWindow* window, struct Table* current_table) {
+    struct CardNode * node = current_table->node;
+    if(node==NULL)
+        return ;// No cards present
 
-    if(out == NULL)
-        return NULL;
-
-    while (count < index && out->next!=NULL) {
-          out = out->next;
-          count++;
-    }
-    if (count==index)
-        return out->next;
-
-    return out;
-}
-
-void remove_widget_at_index(ScopaWindow *window, int index) {
-    if (widgets_on_table==NULL)
-        return ;
-
-    if(index!=0) {
-
-    } else {
-        struct WidgetLinkedList *tmp = widgets_on_table;
-        if(widgets_on_table->next!=NULL)
-            widgets_on_table = widgets_on_table->next;
-        else
-            widgets_on_table = NULL;
-        gtk_box_remove (window->table_top, tmp->ptr);
-        g_free(tmp->ptr); //frees widget from memory
-        free(tmp);  // frees the node from memory
-    }
+    int index = 0;
+    do {
+        place_card_on_table (window, node->card, index);
+        index++;
+        node = node->next;
+    } while (node!=NULL);
 }
 
 G_DEFINE_FINAL_TYPE (ScopaWindow, scopa_window, ADW_TYPE_APPLICATION_WINDOW)
@@ -185,7 +159,7 @@ void place_card_on_table(ScopaWindow *window, struct Card * card, int index) {
     gtk_widget_set_hexpand_set (image, true);
     gtk_image_set_pixel_size ((GtkImage*)image, 160);
 
-    GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_POINTER, GDK_ACTION_COPY);
+    GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_INT, GDK_ACTION_COPY);
     g_signal_connect (tgt, "drop", G_CALLBACK (place_card), card);
     gtk_widget_add_controller (GTK_WIDGET (image), GTK_EVENT_CONTROLLER (tgt)); // The ownership of tgt is taken by the instance.
 

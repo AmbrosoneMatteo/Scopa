@@ -37,6 +37,8 @@ struct Hand * player_hand = NULL;
 struct Hand * bot_hand = NULL;
 struct Deck * deck = NULL;
 struct Table * table = NULL;
+struct CardNode * player_pile = NULL;
+struct CardNode * bot_pile = NULL;
 
 void
 player_play_card(int player_card_index, int table_card_index) {
@@ -44,22 +46,29 @@ player_play_card(int player_card_index, int table_card_index) {
                 player_hand->cards[player_card_index], table);
       struct Card * player_card = player_hand->cards[player_card_index];
 
+      remove_all_table_cards(main_window);
       if(combinations != NULL){
           struct CombinationList *auto_take = determine_auto_take(combinations);
           if(auto_take != NULL) {
-            remove_combination_from_table(table, auto_take, player_hand->cards);
-            remove_card_from_hand(player_hand->cards, card);
+            remove_combination_from_table(table, auto_take, &player_pile);
+            remove_card_from_hand(player_hand, player_card);
             // Adding the card that the player had in the hand to their pile
-            append_card([current_player], card);
+            append_card(player_pile, player_card);
+          }  else {
+
           }
-      } else {
-
-
+      }else{
+          // The player cannot take anything from the table
+          // Adding the card the table
+          if(table->node == NULL){
+            table->node = append_card(NULL, player_card);
+          }else{
+            append_card(table->node, player_card);
+          }
+          table->count++;
+          remove_card_from_hand(player_hand, player_card);
       }
-      struct CardNode * table_card = get_node_at_index (table->node,
-                                                     table_card_index);
-
-      struct Card * player_card = player_hand->cards[player_card_index];
+      place_cards_on_table (main_window, table);
 }
 
 void start_local_game(int difficulty) {
