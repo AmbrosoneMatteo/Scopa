@@ -63,7 +63,7 @@ place_all_cards_on_hand(ScopaWindow *window, GtkBox *box, struct Hand* hand) {
             if(box==window->player_cards) {
                 GtkDragSource *src = gtk_drag_source_new ();
                 GdkContentProvider *content = gdk_content_provider_new_typed
-                                                            (G_TYPE_INT, index);
+                                                            (G_TYPE_INT, i);
                 gtk_drag_source_set_content (src, content);
                 g_object_unref (content);
                 gtk_widget_add_controller (GTK_WIDGET (image),
@@ -110,24 +110,6 @@ place_card (GtkDropTarget* self, const GValue* ptr, gdouble x, gdouble y, gpoint
     player_play_card(player_card_index, table_card_index);
 
     return TRUE;
-}
-
-void
-remove_card_from_table(ScopaWindow *window, int index) {
-
-}
-
-void remove_card_from_player_hand(ScopaWindow *window, int index) {
-
-}
-
-void remove_card_from_adversary_hand(ScopaWindow* window, int index) {
-
-}
-
-void
-place_player_card (ScopaWindow *window, struct Card * card, int index) {
-
 }
 
 void place_card_on_table(ScopaWindow *window, struct Card * card, int index) {

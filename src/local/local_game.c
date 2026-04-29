@@ -69,7 +69,10 @@ player_play_card(int player_card_index, int table_card_index) {
           table->count++;
           remove_card_from_hand(player_hand, player_card);
       }
+      remove_all_box_cards (main_window->player_cards);
+      remove_all_box_cards (main_window->table_top);
       place_cards_on_table (main_window, table);
+      place_all_cards_on_hand (main_window, main_window->player_cards,player_hand);
 }
 
 void start_local_game(int difficulty) {
