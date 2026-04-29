@@ -21,14 +21,31 @@
 #pragma once
 
 #include <adwaita.h>
+#include "engine/game-assets.h"
 
 G_BEGIN_DECLS
 
 #define SCOPA_TYPE_WINDOW (scopa_window_get_type())
 
 G_DECLARE_FINAL_TYPE (ScopaWindow, scopa_window, SCOPA, WINDOW, AdwApplicationWindow)
-void place_player_card (ScopaWindow *window, char *path, int index);
-void place_adversary_card(ScopaWindow *window);
-void place_card_on_table(ScopaWindow *window, char *path, int index);
+void place_player_card (ScopaWindow *window, struct Card * card, int index);
+void place_card_on_table(ScopaWindow *window, struct Card * card, int index);
+void remove_all_box_cards(GtkBox* box);
+void place_all_cards_on_hand(ScopaWindow *window,
+                             GtkBox      *box,
+                             struct Hand *hand);
+void place_cards_on_table(ScopaWindow* window, struct Table* current_table);
+
+struct _ScopaWindow
+{
+	AdwApplicationWindow  parent_instance;
+
+	/* Template widgets */
+        GtkImage        *stack_card_image;
+        GtkBox          *player_cards;
+        GtkBox          *adversary_cards;
+        GtkBox          *table_top;
+        GtkBox          *table_bottom;
+};
 
 G_END_DECLS
