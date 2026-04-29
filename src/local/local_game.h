@@ -7,5 +7,7 @@ extern struct CardNode * memorized_card;
 extern struct Hand * bot_hand;
 extern struct Table * table;
 void player_play_card(int player_card_index);
+void free_combination_linkedlist(struct CombinationNode* node);
+
 
 extern int difficulty;

@@ -173,10 +173,19 @@ get_combination_value(struct CombinationNode * combination) {
  * the player's hand, and with that it determines the best card to play
  **/
 struct Card * decide_move(void) {
+    struct Card * preferred_card = NULL;
+    if(bot_hand->count==1) {
+        for (int i = 0; i<3; i++) {
+            if(bot_hand->cards[i]!=NULL) {
+                preferred_card = bot_hand->cards[i];
+                goto end_fun;
+            }
+        }
+    }
+
     rerun_probability ();
 
     struct Card * not_placed_cards[DECK_SIZE];
-    struct Card * preferred_card = NULL;
     float card_values_probability[10];
     int card_count = 0;
 
@@ -203,18 +212,19 @@ struct Card * decide_move(void) {
         return get_least_probable_card (card_values_probability);
     }
 
-    struct CombinationNode *combinations[3];
+    struct CombinationNode *combinations[3] = {NULL, NULL, NULL};
     struct Card **cards = bot_hand->cards;
 
     // Il sett da ür sovra tutci
     if (table_has_seven_ori() && (preferred_card = get_card (7, DIAMONDS)) != NULL) {
-        return preferred_card;
+          goto end_fun;
     }
 
     // Get all the possibilities for the current hand
     for(int i = 0; i<3; i++) {
         if (cards[i]!=NULL) {
-            combinations[i] = get_combinations_for_card (cards[i], table);
+            struct CombinationNode *node = get_combinations_for_card (cards[i], table);
+            combinations[i] = node;
         }
     }
 
@@ -230,10 +240,18 @@ struct Card * decide_move(void) {
     }
 
     if (preferred_card!=NULL)
-        return preferred_card;
+        goto end_fun;
     else {
         // No card has been chosen, so place the one that has the least of probability
         // to come out
-        return get_least_probable_card(card_values_probability);
+        preferred_card = get_least_probable_card(card_values_probability);
     }
+
+end_fun:
+    for(int i = 0; i < 3; i++) {
+        free_combination_linkedlist(combinations[i]);
+        if (combinations[i]!=NULL)
+            combinations[i] = NULL;
+    }
+    return preferred_card;
 }
