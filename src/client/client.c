@@ -4,6 +4,8 @@
 
 #include "netutils/net-assets.h"
 #include "netutils/communication.h"
+#include "netutils/serializer.h"
+#include "client-ui-manager.h"
 #include "client.h"
 
 // Function that starts the client socket and connects to
@@ -18,7 +20,7 @@ void start_client(char *host, int port){
         NULL,
         &error
     );
-    
+
     if(error != NULL){
         g_error("Error connecting to server: %s\n", error->message);
         g_object_unref(connection);
@@ -57,9 +59,15 @@ void run_game(GSocketConnection *connection){
                 break;
             case SET_HAND:
                 g_print("SET_HAND\n");
+                payload = (struct NetHand*)payload;
+                struct Hand *hand = deserialize_hand(payload);
+                update_ui_hand(hand);
                 break;
             case UPDATE_TABLE:
                 g_print("UPDATE_TABLE\n");
+                payload = (struct NetTable*)payload;
+                struct Table *table = deserialize_table(payload);
+                update_ui_table(table);
                 break;
             case OPPONENT_CARD:
                 g_print("OPPONENT_CARD\n");
@@ -68,5 +76,7 @@ void run_game(GSocketConnection *connection){
                 g_print("REQ_COMBO\n");
                 break;
         }
+
+        free(payload);
     }
 }

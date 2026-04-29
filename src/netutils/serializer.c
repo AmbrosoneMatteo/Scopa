@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "netutils/net-assets.h"
+#include "engine/game-helper.h"
 #include "netutils/serializer.h"
 
 // Function that serializes the Hand structure to a structure that
@@ -54,4 +55,40 @@ struct NetCombinationList *serialize_combination_list(struct CombinationNode *li
   }
   net_list->count = combo_counter;
   return net_list;
+}
+
+// Function that deserializes the NetHand structure received from
+// the network to a Hand structure
+struct Hand *deserialize_hand(struct NetHand *net_hand){
+  struct Hand *hand = calloc(1, sizeof(struct Hand));
+  if(hand == NULL){
+    return NULL;
+  }
+  for(int i = 0; i < net_hand->count; i++){
+    struct Card *card = malloc(sizeof(struct Card));
+    *card = net_hand->cards[i];
+    hand->cards[i] = card;
+  }
+  hand->count = net_hand->count;
+  return hand;
+}
+
+// Function that deserializes the NetTable structure received from
+// the network to a Table structure
+struct Table *deserialize_table(struct NetTable *net_table){
+  struct Table *table = calloc(1, sizeof(struct Table));
+  if(table == NULL){
+    return NULL;
+  }
+  for(int i = 0; i < net_table->count; i++){
+    struct Card *card = malloc(sizeof(struct Card));
+    *card = net_table->cards[i];
+    if (table->node == NULL){
+      table->node = append_card(table->node, card);
+    }else{
+      append_card(table->node, card);
+    }
+  }
+  table->count = net_table->count;
+  return table;
 }
