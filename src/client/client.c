@@ -41,6 +41,7 @@ void run_game(GSocketConnection *connection){
     GOutputStream *out = g_io_stream_get_output_stream(G_IO_STREAM (connection));
     g_print("Client successfully connected to the server\n");
 
+    int cards_in_hand = 3;
     bool game_over = false;
     while(!game_over){
         struct GamePacket header;
@@ -52,7 +53,7 @@ void run_game(GSocketConnection *connection){
 
         switch(header.type){
             case INIT:
-                g_print("Game started\n");
+                update_ui_opponent_hand_cards_count(cards_in_hand);
                 break;
             case REQ_CARD:
                 g_print("REQ_CARD\n");
@@ -61,6 +62,7 @@ void run_game(GSocketConnection *connection){
                 g_print("SET_HAND\n");
                 payload = (struct NetHand*)payload;
                 struct Hand *hand = deserialize_hand(payload);
+                cards_in_hand = hand->count;
                 update_ui_hand(hand);
                 break;
             case UPDATE_TABLE:
@@ -70,7 +72,7 @@ void run_game(GSocketConnection *connection){
                 update_ui_table(table);
                 break;
             case OPPONENT_CARD:
-                g_print("OPPONENT_CARD\n");
+                update_ui_opponent_hand_cards_count(cards_in_hand);
                 break;
             case REQ_COMBO:
                 g_print("REQ_COMBO\n");

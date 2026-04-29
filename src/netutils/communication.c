@@ -15,6 +15,10 @@ void send_packet_oppcard(GOutputStream *out, struct Card *card){
   send_packet(out, OPPONENT_CARD, card, sizeof(struct Card));
 }
 
+void send_packet_init(GOutputStream *out){
+  send_packet(out, INIT, NULL, 0);
+}
+
 // Functions that sends to the player the player's hand after it gets serialized
 void send_packet_hand(GOutputStream *out, struct Hand *hand){
   struct NetHand *net_hand = serialize_hand(hand);

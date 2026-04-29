@@ -42,6 +42,8 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
   // Structures to store the cards collected by each player during the game
   struct CardNode *player_piles[2] = {NULL, NULL};
   int scope_counter[2] = {0, 0};
+  send_packet_init(player1_out);
+  send_packet_init(player2_out);
 
   // Game loop
   while(deck->count >= 6){ // There are enough cards to deal the last hand
@@ -104,9 +106,9 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
         table->count++;
         remove_card_from_hand(hands[current_player], card);
       }
-
-      send_packet_oppcard(out_streams[opponent], card);
+      
       send_packet_hand(out_streams[current_player], hands[current_player]);
+      send_packet_oppcard(out_streams[opponent], card);
 
       send_packet_table(out_streams[current_player], table);
       send_packet_table(out_streams[opponent], table);
