@@ -112,6 +112,14 @@ place_card (GtkDropTarget* self, const GValue* ptr, gdouble x, gdouble y, gpoint
     return TRUE;
 }
 
+void disable_player_cards(GtkBox *box) {
+    gtk_widget_set_sensitive ((GtkWidget *) box, false);
+}
+
+void enable_player_cards(GtkBox *box) {
+    gtk_widget_set_sensitive ((GtkWidget *) box, true);
+}
+
 void place_card_on_table(ScopaWindow *window, struct Card * card, int index) {
     char *path;
     int value = card->value;
@@ -139,3 +147,4 @@ scopa_window_init (ScopaWindow *self)
 {
 	gtk_widget_init_template (GTK_WIDGET (self));
 }
+

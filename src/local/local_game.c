@@ -22,6 +22,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "local_game.h"
+#include "bot_engine.h"
 #include "engine/game-helper.h"
 #include "engine/game-assets.h"
 #include "scopa-application.h"
@@ -43,6 +44,10 @@ struct CardNode * bot_pile = NULL;
 
 void
 player_play_card(int player_card_index, int table_card_index) {
+      memorize_cards_from_array (player_hand->cards);
+      memorize_cards (table->node);
+
+      disable_player_cards(main_window->player_cards);
       struct CombinationNode * combinations = get_combinations_for_card(
                 player_hand->cards[player_card_index], table);
       struct Card * player_card = player_hand->cards[player_card_index];
@@ -69,13 +74,25 @@ player_play_card(int player_card_index, int table_card_index) {
           table->count++;
           remove_card_from_hand(player_hand, player_card);
       }
+      if (player_hand->count == 0) {
+          get_hand (deck, player_hand);
+      }
       remove_all_box_cards (main_window->player_cards);
       remove_all_box_cards (main_window->table_top);
       place_cards_on_table (main_window, table);
       place_all_cards_on_hand (main_window, main_window->player_cards,player_hand);
+
+      struct Card * played_card = decide_move();
+      if(played_card!=NULL) {
+            g_print("Played card value: %d and suit: %c\n", played_card->value,
+                suit_strings[played_card->suit]);
+      } else {
+          g_print("Something went terribly wrong\n");
+      }
 }
 
-void start_local_game(int difficulty) {
+void start_local_game(int diff) {
+    difficulty = diff;
     player_hand = malloc(sizeof(struct Hand));
     bot_hand = malloc(sizeof(struct Hand));
     deck = deck_init ();

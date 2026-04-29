@@ -35,6 +35,8 @@ void place_all_cards_on_hand(ScopaWindow *window,
                              GtkBox      *box,
                              struct Hand *hand);
 void place_cards_on_table(ScopaWindow* window, struct Table* current_table);
+void disable_player_cards(GtkBox *box);
+void enable_player_cards(GtkBox *box);
 
 struct _ScopaWindow
 {

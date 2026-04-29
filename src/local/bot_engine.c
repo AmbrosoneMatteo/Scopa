@@ -24,12 +24,13 @@
 #include "engine/game-helper.h"
 
 int get_random_integer(void);
-void rerun_probability (int difficulty);
-bool is_not_known(struct Card * card);
+void rerun_probability (void);
+bool is_known(struct Card * card);
 bool can_play_this_combination(int sum);
 struct Card * decide_move(void);
 struct Card * get_card(int value, int suit);
 bool table_has_seven_ori(void);
+int difficulty;
 
 //Random number generator using /dev/random
 int get_random_integer(void)
@@ -49,7 +50,7 @@ int get_random_integer(void)
  * the difficulty variable remove a node, substitute the previous node
  * next address with the next node address and vice versa
  **/
-void rerun_probability (int difficulty) {
+void rerun_probability (void) {
     int threshold = difficulty*10;
     struct CardNode * index = memorized_card;
     if (index != NULL) {
@@ -65,16 +66,40 @@ void rerun_probability (int difficulty) {
     }
 }
 
+
+// Memorizes the cards in the linked list
+void memorize_cards_from_array(struct Card **cards) {
+    for(int i = 0; i<3; i++) {
+        if (cards[i] != NULL && is_known (cards[i])) {
+            append_card (memorized_card, cards[i]);
+        }
+    }
+}
+
+// Memorizes the cards in the linked list
+void memorize_cards(struct CardNode *node) {
+    do {
+        if (is_known (node->card)) {
+            append_card (memorized_card, node->card);
+        }
+        node = node->next;
+    } while (node!=NULL);
+}
+
 /**
  * Checks if a card is not already been played
  * */
-bool is_not_known(struct Card * card) {
+bool is_known(struct Card * card) {
     struct CardNode * current = memorized_card;
-    while(current->next != NULL) {
+    if (current==NULL)
+        return false;
+
+    do {
         if (card->suit == current->card->suit &&
               card->value == current->card->value)
             return true;
-    }
+        current = current->next;
+    } while (current!= NULL);
     return false;
 }
 
@@ -108,18 +133,36 @@ struct Card * get_card(int value, int suit) {
     return NULL;
 }
 
+struct Card * get_least_probable_card(float *probabilities) {
+    int minimum_probability_value = 1; // maximize the probability
+    struct Card * return_card = NULL;
+    struct Card **cards= bot_hand->cards;
+
+    for (int i = 0; i<3; i++) {
+        if(cards[i]!=NULL &&
+                    probabilities[cards[i]->value]<minimum_probability_value) {
+            minimum_probability_value = probabilities[cards[i]->value];
+            return_card = cards[i];
+        }
+    }
+
+    return return_card;
+}
+
 /*
  * This function uses an array list to calculate the possible cards in
  * the player's hand, and with that it determines the best card to play
  **/
 struct Card * decide_move(void) {
+    rerun_probability ();
+
     struct Card * not_placed_cards[DECK_SIZE];
     struct Card * preferred_card = NULL;
     float card_values_probability[10];
     int card_count = 0;
 
     for (int i = 0; i<DECK_SIZE; i++) {
-        if (is_not_known(&deck->cards[i])) {
+        if (!is_known(&deck->cards[i])) {
             not_placed_cards[card_count++] = &deck->cards[i];
             card_values_probability[deck->cards[i].value]++;
         }
@@ -128,85 +171,40 @@ struct Card * decide_move(void) {
     // has not come out yet, to be played
     float card_probability = 1/card_count;
 
-    // the specific value with the least probability to come out
-    float minimum_probability_value = 1;
-    int least_probable_value = 0;
 
     // this for cycles calculates the probability of a specific value
     // to come out, based on the knowledge of the cards that haven't come out
     for (int i = 0; i<10; i++) {
         card_values_probability[i] = 1/card_values_probability[i];
-        if (card_values_probability[i]<minimum_probability_value) {
-            minimum_probability_value = card_values_probability[i];
-            least_probable_value = i;
-        }
     }
 
     // if the table is NULL, it means that a scopa happened, that means the best
     // card is the one, which is the least probable to come out
     if(table->node == NULL) {
-        for (int i = 0; i < DECK_SIZE && bot_hand->cards[i] != NULL; i++) {
-            if (bot_hand->cards[i]->value == least_probable_value) {
-                // the card with the least probability to cause another scopa
-                return bot_hand->cards[i];
-            }
-        }
-
-
-        minimum_probability_value = 1; // maximize the probability
-
-        // If the code reaches this point, it means that the card with the value
-        // that has the least of probability is not in the bot's hand. So it needs
-        // to determine what card in his hand is the least probable to come out
-        for(int i = 0; i < DECK_SIZE && bot_hand->cards[i] != NULL; i++) {
-            if (card_values_probability[bot_hand->cards[i]->value]
-                <minimum_probability_value) {
-                minimum_probability_value = card_values_probability[
-                                                bot_hand->cards[i]->value];
-                preferred_card = bot_hand->cards[i];
-            }
-        }
-        return preferred_card;
+        return get_least_probable_card (card_values_probability);
     }
 
-    // this variable holds a pointer to a temporary preferred
-    // card in the hand, while the algorithm tries to determine
-    // a better choice
-    //struct CardNode * preferred_card;
-    int table_combinations[20][3];
-    int count = 0;
-    int sum = 0;
+    struct CombinationNode *combinations[3];
+    struct Card **cards = bot_hand->cards;
 
-    for(int i=0; i<table->count; i++) {
-        // if a card on the table, value is equal to the value of one of
-        // the card in the bot hand it is added to the array of possible
-        // combinations
-        if (can_play_this_combination(
-              get_node_at_index (table->node, i)->card->value)) {
-              table_combinations[count][0] = i;
-              table_combinations[count][2] = get_node_at_index
-                                      (table->node, i)->card->value;
-        }
-
-        for(int l=0; l<table->count; l++) {
-            sum = get_node_at_index (table->node, i)->card->value +
-                  get_node_at_index (table->node, l)->card->value;
-
-            // if the sum of the value of two cards is more than 10, it cannot
-            // legally be taken from the table, as the maximum value of a
-            // card is 10 (which is the king)
-            if(sum<=10 && can_play_this_combination(sum)) {
-                table_combinations[count][0] = i;
-                table_combinations[count][1] = l;
-                table_combinations[count][2] = sum;
-                count++;
-            }
-        }
-    }
-
+    // Il sett da ür sovra tutci
     if (table_has_seven_ori() && (preferred_card = get_card (7, DIAMONDS)) != NULL) {
         return preferred_card;
     }
 
-    return NULL;
+    // Get all the possibilities for the current hand
+    for(int i = 0; i<3; i++) {
+        if (cards[i]!=NULL) {
+            combinations[i] = get_combinations_for_card (cards[i], table);
+        }
+    }
+
+    for (int i = 0; i<3; i++) {
+        if(combinations[i]==NULL)
+            continue;
+    }
+
+    // No card has been chosen, so place the one that has the least of probability
+    // to come out
+    return get_least_probable_card(card_values_probability);
 }
