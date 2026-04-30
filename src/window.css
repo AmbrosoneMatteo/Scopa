@@ -13,3 +13,9 @@
     border: 2px solid #ffff1a;
     border-radius: 15px;
 }
+
+.empty-pile {
+    background-color: #006e13;
+    border: 2px solid #ffff1a;
+    border-radius: 15px;
+}

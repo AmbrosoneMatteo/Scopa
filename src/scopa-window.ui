@@ -77,6 +77,34 @@
                     </child>
                   </object>
                 </child>
+                <child>
+                  <object class="GtkBox" id="pile_box">
+                    <property name="halign">center</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkImage" id="player2_pile">
+                        <property name="halign">start</property>
+                        <property name="hexpand">True</property>
+                        <property name="hexpand-set">True</property>
+                        <property name="pixel-size">160</property>
+                        <property name="vexpand">True</property>
+                        <property name="vexpand-set">True</property>
+                        <property name="width-request">0</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImage" id="player1_pile">
+                        <property name="halign">start</property>
+                        <property name="hexpand">True</property>
+                        <property name="hexpand-set">True</property>
+                        <property name="pixel-size">160</property>
+                        <property name="vexpand">True</property>
+                        <property name="vexpand-set">True</property>
+                        <property name="width-request">0</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
@@ -98,7 +126,6 @@
     </property>
     <property name="default-height">810</property>
     <property name="default-width">930</property>
-    <property name="resizable">False</property>
     <property name="title" translatable="yes">Scopa</property>
   </template>
   <menu id="primary_menu">

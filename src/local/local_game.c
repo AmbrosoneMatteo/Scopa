@@ -89,8 +89,10 @@ player_play_card(int player_card_index) {
       struct Card * player_card = player_hand->cards[player_card_index];
 
       if (local_play_card (player_hand, player_card, player_pile, combinations,
-                        table,deck, &player_scope))
+                        table,deck, &player_scope)) {
           last_grabber = player_pile;
+          place_card_on_pile(main_window->player1_pile, player_card);
+      }
 
       remove_card_from_hand(player_hand, player_card);
       remove_all_box_cards(main_window->table_top);
@@ -108,8 +110,10 @@ player_play_card(int player_card_index) {
       combinations = get_combinations_for_card(
           played_card, table);
       if (local_play_card (bot_hand, played_card, bot_pile,
-                       combinations, table, deck, &bot_scope))
+                       combinations, table, deck, &bot_scope)) {
           last_grabber = bot_pile;
+          place_card_on_pile(main_window->player2_pile, played_card);
+      }
       remove_card_from_hand(bot_hand, played_card);
 
       remove_all_box_cards (main_window->adversary_cards);
