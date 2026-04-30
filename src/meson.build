@@ -10,7 +10,8 @@ scopa_sources = [
   'local/bot_engine.c',
   'netutils/communication.c',
   'netutils/serializer.c',
-  'new-game.c'
+  'new-game.c',
+  'select-combination.c'
 ]
 
 scopa_deps = [

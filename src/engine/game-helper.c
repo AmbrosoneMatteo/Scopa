@@ -6,6 +6,7 @@
 #include "scopa-application.h"
 #include "scopa-window.h"
 #include "game-helper.h"
+#include "select-combination.h"
 
 int * node_to_array(struct CardNode * node);
 bool can_place_card(struct Card * card, struct Table * table);
@@ -18,6 +19,8 @@ bool can_player_grab_card(struct Card            *player_card,
                           struct CombinationList *list);
 struct CardNode * get_previous_node(struct CardNode * node);
 struct CardNode * get_next_node(struct CardNode * node);
+
+int combination_index = 0;
 
 // Function that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.
@@ -250,6 +253,12 @@ struct CombinationNode *get_combinations_for_card(struct Card * card, struct Tab
     return combinations;
 }
 
+
+void selection_made(SelectCombinationWindow *window, gpointer user_data) {
+    combination_index = select_combination_get_index();
+}
+
+
 bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
                       struct CombinationNode* combinations,
                       struct Table *table,
@@ -258,14 +267,27 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
   if(combinations != NULL){
         struct CombinationList *auto_take = determine_auto_take(combinations);
         if(auto_take != NULL) {
-          remove_combination_from_table(table, auto_take, &pile);
+            remove_combination_from_table(table, auto_take, &pile);
 
-          if(table->count == 0)
-              (*scopa_counter)++;
-          remove_card_from_hand(hand, card);
-          // Adding the card that the player had in the hand to their pile
-          append_card(pile, card);
+            if(table->count == 0)
+                (*scopa_counter)++;
+            remove_card_from_hand(hand, card);
+            // Adding the card that the player had in the hand to their pile
+            append_card(pile, card);
         }  else {
+            // open dialog to ask user which combination to take
+            GtkWindow *parent;
+            SelectCombinationWindow *window;
+
+            g_assert (SCOPA_IS_APPLICATION (main_window));
+            parent = gtk_application_get_active_window (GTK_APPLICATION (main_window));
+            window = g_object_new (SELECT_COMBINATION_TYPE_WINDOW,
+                                   "application", main_window,
+                                   "transient-for", parent,
+                                   "modal", TRUE,
+                                   NULL);
+            g_signal_connect (window, "start-network", G_CALLBACK (selection_made), main_window);
+            gtk_window_present (GTK_WINDOW (window));
 
         }
         if (hand->count == 0)
@@ -286,6 +308,7 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
         get_hand (deck, hand);
     return false;
 }
+
 // Function that returns how many cards does a possible combination have
 int get_combo_length(struct CombinationList *list) {
     int count = 0;
