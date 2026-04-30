@@ -22,6 +22,7 @@
 
 #include "scopa-window.h"
 #include "engine/game-helper.h"
+#include "client/client.h"
 #include "local/local_game.h" // TO remove
 
 
@@ -101,9 +102,18 @@ scopa_window_class_init (ScopaWindowClass *klass)
 static gboolean
 place_card (GtkDropTarget* self, const GValue* ptr, gdouble x, gdouble y, gpointer user_data) {
     int player_card_index = g_value_get_int(ptr);
-
-    player_play_card(player_card_index);
-
+    // If the game is over the network the dropped card must be sent
+    // to the client thread through the queue
+    if(is_network_game){
+        // Allocating memory for the integer index because passing it
+        // by GINT_TO_POINTER will be NULL if the integer is equal to 0
+        int *index = malloc(sizeof(int));
+        *index = player_card_index;
+        // Sending card into the queue
+        g_async_queue_push (player_card_queue, index);
+    }else{
+        player_play_card(player_card_index);
+    }
     return TRUE;
 }
 

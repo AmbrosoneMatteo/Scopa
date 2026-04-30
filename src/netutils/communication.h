@@ -27,6 +27,7 @@ void send_packet_reqcard(GOutputStream *out);
 void send_packet_oppcard(GOutputStream *out, struct Card *card);
 void send_packet_reqcombo(GOutputStream *out, struct CombinationNode *combo_list);
 void send_packet_init(GOutputStream *out);
+void send_packet_playcard(GOutputStream *out, struct Card *card);
 struct Card *receive_packet_card(GInputStream *in);
 int receive_packet_comboselect(GInputStream *in);
 

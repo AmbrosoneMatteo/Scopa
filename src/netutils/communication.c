@@ -40,6 +40,11 @@ void send_packet_reqcombo(GOutputStream *out, struct CombinationNode *combo_list
   free(net_list);
 }
 
+// Function that sends to the server the card played by the player
+void send_packet_playcard(GOutputStream *out, struct Card *card){
+  send_packet(out, PLAY_CARD, card, sizeof(struct Card));
+}
+
 // Function that receives the player played card from the input stream
 // and parses it to a struct Card. A pointer to the card is returned
 struct Card *receive_packet_card(GInputStream *in){

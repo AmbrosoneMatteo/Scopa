@@ -1,12 +1,19 @@
 #include <glib.h>
 #include <gio/gio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "netutils/net-assets.h"
 #include "netutils/communication.h"
 #include "netutils/serializer.h"
 #include "client-ui-manager.h"
 #include "client.h"
+
+// Queue to pass the card dropped by the player from
+// the GUI thread to the client thread
+GAsyncQueue *player_card_queue = NULL;
+// Variable to define if the network client is running or if the game is local
+bool is_network_game = false;
 
 // Function that starts the client socket and connects to
 // the peer hosting the server
@@ -39,10 +46,17 @@ void start_client(char *host, int port){
 void run_game(GSocketConnection *connection){
     GInputStream *in = g_io_stream_get_input_stream(G_IO_STREAM (connection));
     GOutputStream *out = g_io_stream_get_output_stream(G_IO_STREAM (connection));
+    if(player_card_queue == NULL){
+        // Creating the queue
+        player_card_queue = g_async_queue_new();
+    }
+    is_network_game = true;
     g_print("Client successfully connected to the server\n");
 
-    int cards_in_hand = 3;
     bool game_over = false;
+    int opponent_cards_count = 3;
+    struct Hand *hand = NULL;
+    update_ui_disable_cards();
     while(!game_over){
         struct GamePacket header;
         void *payload = receive_packet(in, &header);
@@ -53,17 +67,28 @@ void run_game(GSocketConnection *connection){
 
         switch(header.type){
             case INIT:
-                update_ui_opponent_hand_cards_count(cards_in_hand);
+                update_ui_opponent_hand_cards_count(opponent_cards_count);
                 break;
             case REQ_CARD:
                 g_print("REQ_CARD\n");
+                update_ui_enable_cards();
+                // Waiting for the player card to be received in the queue
+                gpointer queue_card = g_async_queue_pop(player_card_queue);
+                int *index = (int*)queue_card;
+                // Sending played card back to the server
+                send_packet_playcard(out, hand->cards[*index]);
+                free(index);
+                update_ui_disable_cards();
                 break;
             case SET_HAND:
                 g_print("SET_HAND\n");
                 payload = (struct NetHand*)payload;
-                struct Hand *hand = deserialize_hand(payload);
-                cards_in_hand = hand->count;
+                hand = deserialize_hand(payload);
                 update_ui_hand(hand);
+                if(hand->count == 3){
+                    opponent_cards_count = 3;
+                    update_ui_opponent_hand_cards_count(opponent_cards_count);
+                }
                 break;
             case UPDATE_TABLE:
                 g_print("UPDATE_TABLE\n");
@@ -72,7 +97,8 @@ void run_game(GSocketConnection *connection){
                 update_ui_table(table);
                 break;
             case OPPONENT_CARD:
-                update_ui_opponent_hand_cards_count(cards_in_hand);
+                opponent_cards_count--;
+                update_ui_opponent_hand_cards_count(opponent_cards_count);
                 break;
             case REQ_COMBO:
                 g_print("REQ_COMBO\n");

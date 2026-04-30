@@ -51,9 +51,19 @@ void update_ui_opponent_hand_cards_count(int cards_in_hand){
     g_idle_add(client_place_all_cards_on_hand, data);
 }
 
+void update_ui_enable_cards(void){
+    g_idle_add(client_enable_player_cards, main_window->player_cards);
+}
+
+void update_ui_disable_cards(void){
+    g_idle_add(client_disable_player_cards, main_window->player_cards);
+}
+
+// Function called through g_idle_add that updates the table
 gboolean client_place_cards_on_table(gpointer user_data){
     struct TableUiData *data = (struct TableUiData*)user_data;
     // Calling function from scopa-window
+    remove_all_box_cards(data->window->table_top);
     place_cards_on_table(data->window, data->table);
     free(data);
 
@@ -62,6 +72,7 @@ gboolean client_place_cards_on_table(gpointer user_data){
 
 gboolean client_place_all_cards_on_hand(gpointer user_data){
     struct HandUiData *data = (struct HandUiData*)user_data;
+    remove_all_box_cards(data->player_hand_box);
     place_all_cards_on_hand(data->window, data->player_hand_box, data->hand);
     if(data->is_opponent){
         for(int i = 0; i < data->hand->count; i++){
@@ -71,5 +82,15 @@ gboolean client_place_all_cards_on_hand(gpointer user_data){
     }
     free(data);
 
+    return G_SOURCE_REMOVE;
+}
+
+gboolean client_enable_player_cards(gpointer user_data){
+    enable_player_cards((GtkBox *) user_data);
+    return G_SOURCE_REMOVE;
+}
+
+gboolean client_disable_player_cards(gpointer user_data){
+    disable_player_cards((GtkBox *) user_data);
     return G_SOURCE_REMOVE;
 }

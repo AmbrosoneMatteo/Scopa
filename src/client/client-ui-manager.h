@@ -15,9 +15,13 @@ struct HandUiData{
 };
 
 void update_ui_table(struct Table * table);
-gboolean client_place_cards_on_table(gpointer user_data);
 void update_ui_hand(struct Hand * hand);
 void update_ui_opponent_hand_cards_count(int cards_in_hand);
+void update_ui_enable_cards(void);
+void update_ui_disable_cards(void);
 gboolean client_place_all_cards_on_hand(gpointer user_data);
+gboolean client_place_cards_on_table(gpointer user_data);
+gboolean client_disable_player_cards(gpointer user_data);
+gboolean client_enable_player_cards(gpointer user_data);
 
 #endif
