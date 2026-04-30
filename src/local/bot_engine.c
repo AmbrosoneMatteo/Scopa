@@ -177,8 +177,7 @@ struct Card * decide_move(void) {
     if(bot_hand->count==1) {
         for (int i = 0; i<3; i++) {
             if(bot_hand->cards[i]!=NULL) {
-                preferred_card = bot_hand->cards[i];
-                goto end_fun;
+                return bot_hand->cards[i];
             }
         }
     }
@@ -255,3 +254,4 @@ end_fun:
     }
     return preferred_card;
 }
+
