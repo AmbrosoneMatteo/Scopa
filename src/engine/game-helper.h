@@ -27,5 +27,6 @@ bool hand_has_card(struct Hand *hand, struct Card *card);
 void local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
                       struct CombinationNode* combinations,
                       struct Table *table,
-                      struct Deck *deck);
+                      struct Deck *deck,
+                      int *scopa_counter);
 #endif

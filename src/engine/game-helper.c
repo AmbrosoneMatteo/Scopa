@@ -253,11 +253,14 @@ struct CombinationNode *get_combinations_for_card(struct Card * card, struct Tab
 void local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
                       struct CombinationNode* combinations,
                       struct Table *table,
-                      struct Deck *deck) {
+                      struct Deck *deck,
+                      int *scopa_counter) {
   if(combinations != NULL){
         struct CombinationList *auto_take = determine_auto_take(combinations);
         if(auto_take != NULL) {
           remove_combination_from_table(table, auto_take, &pile);
+          if(table->count == 0)
+              (*scopa_counter)++;
           remove_card_from_hand(hand, card);
           // Adding the card that the player had in the hand to their pile
           append_card(pile, card);
@@ -478,5 +481,6 @@ bool hand_has_card(struct Hand *hand, struct Card *card){
   }
   return false;
 }
+
 
 

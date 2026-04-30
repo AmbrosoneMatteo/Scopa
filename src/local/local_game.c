@@ -41,6 +41,8 @@ struct Deck * deck = NULL;
 struct Table * table = NULL;
 struct CardNode * player_pile = NULL;
 struct CardNode * bot_pile = NULL;
+int player_scope = 0;
+int bot_scope = 0;
 
 void free_combination_linkedlist(struct CombinationNode* node) {
     if(node == NULL)
@@ -71,7 +73,7 @@ player_play_card(int player_card_index) {
       struct Card * player_card = player_hand->cards[player_card_index];
 
       local_play_card (player_hand, player_card, player_pile, combinations,
-                        table,deck);
+                        table,deck, &player_scope);
 
       remove_card_from_hand(player_hand, player_card);
       remove_all_box_cards(main_window->table_top);
@@ -84,7 +86,7 @@ player_play_card(int player_card_index) {
           combinations = get_combinations_for_card(
               played_card, table);
           local_play_card (bot_hand, played_card, bot_pile,
-                           combinations, table, deck);
+                           combinations, table, deck, &bot_scope);
           remove_card_from_hand(bot_hand, played_card);
 
           remove_all_box_cards (main_window->adversary_cards);
@@ -100,8 +102,11 @@ player_play_card(int player_card_index) {
 
       place_all_cards_on_hand(main_window,main_window->adversary_cards,bot_hand);
       place_all_cards_on_hand(main_window,main_window->player_cards,player_hand);
-
-      enable_player_cards (main_window->player_cards);
+      if (deck->count==0) {
+          // end game and show stats
+      } else {
+          enable_player_cards (main_window->player_cards);
+      }
 }
 
 void start_local_game(int diff) {
