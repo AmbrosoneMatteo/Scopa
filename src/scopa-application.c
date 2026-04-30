@@ -154,10 +154,10 @@ static void
 on_start_local (NewGameWindow *window, gpointer user_data)
 {
     ScopaApplication *self = user_data;
-    int difficulty = new_game_window_get_difficulty (window);
+    int diff = new_game_window_get_difficulty (window);
     gtk_window_close (GTK_WINDOW (window));
-    g_print("starting local game with difficulty: %d\n", difficulty);
-    start_local_game (difficulty);
+    g_print("starting local game with difficulty: %d\n", diff);
+    start_local_game (diff);
 }
 
 static void

@@ -34,18 +34,24 @@
             <child>
               <object class="GtkBox" id="adversary_cards">
                 <property name="halign">center</property>
+                <property name="height-request">100</property>
+                <property name="hexpand">True</property>
+                <property name="hexpand-set">True</property>
                 <property name="spacing">10</property>
+                <property name="vexpand">True</property>
+                <property name="vexpand-set">True</property>
+                <property name="width-request">600</property>
               </object>
             </child>
             <child>
               <object class="GtkBox">
                 <child>
                   <object class="GtkImage" id="stack_card_image">
-                    <property name="resource">/org/gnome/Example/images/retro.svg</property>
                     <property name="halign">start</property>
                     <property name="hexpand">True</property>
                     <property name="hexpand-set">True</property>
                     <property name="pixel-size">120</property>
+                    <property name="resource">/org/gnome/Example/images/retro.svg</property>
                     <property name="vexpand">True</property>
                     <property name="vexpand-set">True</property>
                     <property name="width-request">0</property>
@@ -57,14 +63,15 @@
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkBox" id="table_top">
-                        <property name="halign">start</property>
+                        <property name="halign">center</property>
+                        <property name="height-request">100</property>
+                        <property name="hexpand">True</property>
+                        <property name="hexpand-set">True</property>
                         <property name="margin-top">10</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkBox" id="table_bottom">
-                        <property name="halign">start</property>
-                        <property name="margin-top">10</property>
+                        <property name="name">table_top </property>
+                        <property name="vexpand">True</property>
+                        <property name="vexpand-set">True</property>
+                        <property name="width-request">600</property>
                       </object>
                     </child>
                   </object>
@@ -74,8 +81,14 @@
             <child>
               <object class="GtkBox" id="player_cards">
                 <property name="halign">center</property>
+                <property name="height-request">100</property>
+                <property name="hexpand">True</property>
+                <property name="hexpand-set">True</property>
                 <property name="margin-top">10</property>
                 <property name="spacing">10</property>
+                <property name="vexpand">True</property>
+                <property name="vexpand-set">True</property>
+                <property name="width-request">600</property>
               </object>
             </child>
           </object>
