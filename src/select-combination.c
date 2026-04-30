@@ -113,6 +113,7 @@ factory_bind(GtkListItemFactory *factory,
              gpointer            user_data)
 {
     (void)factory;
+    g_print("factory_bind called\n");
 
     SelectCombinationWindow *self = (SelectCombinationWindow *)user_data;
 
@@ -162,8 +163,8 @@ void add_combinations(SelectCombinationWindow * self, struct CombinationNode * n
     g_signal_connect(factory, "bind",  G_CALLBACK(factory_bind),  self);
 
     GtkNoSelection *selection = gtk_no_selection_new(G_LIST_MODEL(store));
-    g_object_unref(store); // safe now: selection holds the ref
 
+    gtk_list_view_set_factory(self->list_view, factory);
     gtk_list_view_set_model(self->list_view, GTK_SELECTION_MODEL(selection));
     g_object_unref(selection); // safe now: list_view holds the ref
 

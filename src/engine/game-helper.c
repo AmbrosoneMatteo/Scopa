@@ -256,6 +256,7 @@ struct CombinationNode *get_combinations_for_card(struct Card * card, struct Tab
 
 void selection_made(SelectCombinationWindow *window, guint index, GMainLoop *loop) {
     combination_index = select_combination_get_index();
+    g_main_loop_quit(loop);
 }
 
 static void
@@ -300,7 +301,7 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
                 NULL, G_CONNECT_DEFAULT
             );
 
-            g_signal_connect(window, "destroy",
+            g_signal_connect(window, "delete-event",
                  G_CALLBACK(on_window_closed), loop);
 
             add_combinations(window, combinations);
