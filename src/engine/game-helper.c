@@ -528,7 +528,7 @@ void get_hand(struct Deck *deck, struct Hand *hand){
       }
       hand->count = HAND_SIZE;
   } else {
-      g_print("Fuck you: %d\n", deck->count);
+      g_print("Remaining count: %d\n", deck->count);
   }
 }
 

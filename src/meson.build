@@ -11,7 +11,8 @@ scopa_sources = [
   'netutils/communication.c',
   'netutils/serializer.c',
   'new-game.c',
-  'select-combination.c'
+  'select-combination.c',
+  'endgame-dialog.c'
 ]
 
 scopa_deps = [
