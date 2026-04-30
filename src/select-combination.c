@@ -1,5 +1,4 @@
 #include "config.h"
-#include "engine/game-assets.h"
 #include "select-combination.h"
 
 #define COMBO_TYPE_ITEM (combo_item_get_type())
@@ -35,24 +34,26 @@ static guint signals[1];
 static void
 select_combination_window_class_init (SelectCombinationWindowClass *klass)
 {
-	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+    GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-	gtk_widget_class_set_template_from_resource (widget_class,
+    gtk_widget_class_set_template_from_resource (widget_class,
                           "/org/gnome/Example/select-combination.ui");
 
-    gtk_widget_class_bind_template_callback (widget_class, on_combination_clicked);
+    gtk_widget_class_bind_template_child (widget_class, SelectCombinationWindow, list_view);
 
     signals[0] = g_signal_new ("return-index",
-                                       G_TYPE_FROM_CLASS (klass),
-                                       G_SIGNAL_RUN_LAST,
-                                       0, NULL, NULL, NULL,
-                                       G_TYPE_NONE, 0);
+                                G_TYPE_FROM_CLASS (klass),
+                                G_SIGNAL_RUN_LAST,
+                                0, NULL, NULL, NULL,
+                                G_TYPE_NONE, 0);
 }
 
 static GtkWidget *
 build_card_row(struct CombinationList *combo_list)
 {
     GtkWidget *hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+    gtk_widget_set_vexpand(hbox, TRUE);
+    gtk_widget_set_hexpand(hbox, TRUE);
 
     for (struct CombinationList *cl = combo_list; cl != NULL; cl = cl->next) {
         if (cl->node == NULL) continue;
@@ -160,18 +161,18 @@ void add_combinations(SelectCombinationWindow * self, struct CombinationNode * n
     g_signal_connect(factory, "setup", G_CALLBACK(factory_setup), NULL);
     g_signal_connect(factory, "bind",  G_CALLBACK(factory_bind),  self);
 
-    /* Attach model + factory to the list view that lives on self */
-    gtk_list_view_set_model(self->list_view,
-                            GTK_SELECTION_MODEL(
-                                gtk_no_selection_new(G_LIST_MODEL(store))));
-    gtk_list_view_set_factory(self->list_view, factory);
+    GtkNoSelection *selection = gtk_no_selection_new(G_LIST_MODEL(store));
+    g_object_unref(store); // safe now: selection holds the ref
+
+    gtk_list_view_set_model(self->list_view, GTK_SELECTION_MODEL(selection));
+    g_object_unref(selection); // safe now: list_view holds the ref
 
     g_object_unref(factory);
-    g_object_unref(store);
 }
 
 static void
 select_combination_window_init (SelectCombinationWindow *self)
 {
     gtk_widget_init_template (GTK_WIDGET (self));
+    g_assert(self->list_view != NULL);
 }

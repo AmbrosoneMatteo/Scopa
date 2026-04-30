@@ -258,6 +258,12 @@ void selection_made(SelectCombinationWindow *window, guint index, GMainLoop *loo
     combination_index = select_combination_get_index();
 }
 
+static void
+on_window_closed(SelectCombinationWindow *window, GMainLoop *loop)
+{
+    combination_index = 0; // if the user closes the dialog, use the first combination
+    g_main_loop_quit(loop);
+}
 
 bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
                       struct CombinationNode* combinations,
@@ -273,15 +279,16 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
                 (*scopa_counter)++;
         }  else {
             // open dialog to ask user which combination to take
+            ScopaApplication *app = SCOPA_APPLICATION(g_application_get_default());
             GtkWindow *parent;
             SelectCombinationWindow *window;
 
             GMainLoop *loop = g_main_loop_new(NULL, FALSE);
 
             g_assert (SCOPA_IS_WINDOW (main_window));
-            parent = gtk_application_get_active_window (GTK_APPLICATION (main_window));
+            parent = gtk_application_get_active_window (GTK_APPLICATION (app));
             window = g_object_new (SELECT_COMBINATION_TYPE_WINDOW,
-                                   "application", main_window,
+                                   "application", app,
                                    "transient-for", parent,
                                    "modal", TRUE,
                                    NULL);
@@ -293,6 +300,10 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
                 NULL, G_CONNECT_DEFAULT
             );
 
+            g_signal_connect(window, "destroy",
+                 G_CALLBACK(on_window_closed), loop);
+
+            add_combinations(window, combinations);
             gtk_window_present (GTK_WINDOW (window));
 
             // this loop is created because the function needs to wait for the

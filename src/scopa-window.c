@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+#include <gtk/gtk.h>
 
 #include "scopa-window.h"
 #include "engine/game-helper.h"
@@ -94,6 +95,11 @@ show_stats(ScopaWindow *window, struct Hand* hand_top, struct Hand *hand_bottom,
 
 }
 
+gboolean
+close_request(GtkWindow* self, gpointer user_data) {
+    g_print("fottiti\n");
+    return false;
+}
 
 static void
 scopa_window_class_init (ScopaWindowClass *klass)
@@ -160,7 +166,6 @@ scopa_window_init (ScopaWindow *self)
                                                              GTK_STYLE_PROVIDER(css),
                                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     g_object_unref(css);
-
     gtk_widget_set_name(GTK_WIDGET(self->table_top), "table_top");
     gtk_widget_set_name(GTK_WIDGET(self->player_cards), "hand");
     gtk_widget_set_name(GTK_WIDGET(self->adversary_cards), "hand");
