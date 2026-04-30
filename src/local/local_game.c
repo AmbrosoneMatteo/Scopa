@@ -72,6 +72,7 @@ player_play_card(int player_card_index) {
 
       local_play_card (player_hand, player_card, player_pile, combinations,
                         table,deck);
+
       remove_card_from_hand(player_hand, player_card);
       remove_all_box_cards(main_window->table_top);
       remove_all_box_cards (main_window->player_cards);
@@ -80,7 +81,6 @@ player_play_card(int player_card_index) {
       if(played_card!=NULL) {
           g_print("Played card value: %d and suit: %c\n", played_card->value,
               suit_strings[played_card->suit]);
-          free_combination_linkedlist(combinations);
           combinations = get_combinations_for_card(
               played_card, table);
           local_play_card (bot_hand, played_card, bot_pile,
@@ -116,4 +116,5 @@ void start_local_game(int diff) {
     place_all_cards_on_hand (main_window, main_window->player_cards, player_hand);
     place_all_cards_on_hand (main_window, main_window->adversary_cards, bot_hand);
 }
+
 

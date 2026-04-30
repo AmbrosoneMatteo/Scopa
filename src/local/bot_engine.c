@@ -78,6 +78,9 @@ void memorize_cards_from_array(struct Card **cards) {
 
 // Memorizes the cards in the linked list
 void memorize_cards(struct CardNode *node) {
+    if(node == NULL)
+        return;
+
     do {
         if (is_known (node->card)) {
             append_card (memorized_card, node->card);
