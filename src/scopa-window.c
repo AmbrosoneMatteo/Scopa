@@ -86,6 +86,15 @@ place_cards_on_table(ScopaWindow* window, struct Table* current_table) {
     } while (node!=NULL);
 }
 
+void
+show_stats(ScopaWindow *window, struct Hand* hand_top, struct Hand *hand_bottom,
+          int player1_scope, int player2_scope) {
+
+
+
+}
+
+
 static void
 scopa_window_class_init (ScopaWindowClass *klass)
 {
@@ -147,11 +156,15 @@ scopa_window_init (ScopaWindow *self)
     g_object_unref(css);
 
     gtk_widget_set_name(GTK_WIDGET(self->table_top), "table_top");
+    gtk_widget_set_name(GTK_WIDGET(self->player_cards), "hand");
+    gtk_widget_set_name(GTK_WIDGET(self->adversary_cards), "hand");
+    gtk_widget_set_name(GTK_WIDGET(self), "window");
 
     GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_INT, GDK_ACTION_COPY);
     g_signal_connect (tgt, "drop", G_CALLBACK (place_card), self->table_top);
     // The ownership of tgt is taken by the instance.
     gtk_widget_add_controller (GTK_WIDGET (self->table_top), GTK_EVENT_CONTROLLER (tgt));
 }
+
 
 

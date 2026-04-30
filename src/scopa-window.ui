@@ -63,12 +63,13 @@
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkBox" id="table_top">
-                        <property name="halign">center</property>
+                        <property name="halign">fill</property>
                         <property name="height-request">100</property>
                         <property name="hexpand">True</property>
                         <property name="hexpand-set">True</property>
                         <property name="margin-top">10</property>
                         <property name="name">table_top </property>
+                        <property name="valign">fill</property>
                         <property name="vexpand">True</property>
                         <property name="vexpand-set">True</property>
                         <property name="width-request">600</property>
@@ -96,7 +97,7 @@
       </object>
     </property>
     <property name="default-height">810</property>
-    <property name="default-width">830</property>
+    <property name="default-width">930</property>
     <property name="resizable">False</property>
     <property name="title" translatable="yes">Scopa</property>
   </template>
@@ -117,3 +118,4 @@
     </section>
   </menu>
 </interface>
+
