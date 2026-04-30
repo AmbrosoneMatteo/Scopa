@@ -254,7 +254,7 @@ struct CombinationNode *get_combinations_for_card(struct Card * card, struct Tab
 }
 
 
-void selection_made(SelectCombinationWindow *window, gpointer user_data) {
+void selection_made(SelectCombinationWindow *window, guint index, GMainLoop *loop) {
     combination_index = select_combination_get_index();
 }
 
@@ -271,25 +271,46 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
 
             if(table->count == 0)
                 (*scopa_counter)++;
-            remove_card_from_hand(hand, card);
-            // Adding the card that the player had in the hand to their pile
-            append_card(pile, card);
         }  else {
             // open dialog to ask user which combination to take
             GtkWindow *parent;
             SelectCombinationWindow *window;
 
-            g_assert (SCOPA_IS_APPLICATION (main_window));
+            GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+
+            g_assert (SCOPA_IS_WINDOW (main_window));
             parent = gtk_application_get_active_window (GTK_APPLICATION (main_window));
             window = g_object_new (SELECT_COMBINATION_TYPE_WINDOW,
                                    "application", main_window,
                                    "transient-for", parent,
                                    "modal", TRUE,
                                    NULL);
-            g_signal_connect (window, "start-network", G_CALLBACK (selection_made), main_window);
+
+            g_signal_connect_data(
+                window, "return-index",
+                G_CALLBACK(selection_made),
+                loop,   /* user_data = the loop */
+                NULL, G_CONNECT_DEFAULT
+            );
+
             gtk_window_present (GTK_WINDOW (window));
 
+            // this loop is created because the function needs to wait for the
+            // user to make a choice about the desired combination to grab before
+            // resuming
+            g_main_loop_run(loop);
+            g_main_loop_unref(loop);
+            gtk_window_close (GTK_WINDOW (window));
+
+            struct CombinationList *list = get_combination_at_index (combinations
+                                                             , combination_index);
+            remove_combination_from_table (table, list, &pile);
+
         }
+        remove_card_from_hand(hand, card);
+        // Adding the card that the player had in the hand to their pile
+        append_card(pile, card);
+
         if (hand->count == 0)
             get_hand (deck, hand);
         return true;

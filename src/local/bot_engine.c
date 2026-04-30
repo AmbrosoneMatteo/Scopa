@@ -33,19 +33,6 @@ struct Card * get_card(int value, int suit);
 bool table_has_seven_ori(void);
 int difficulty;
 
-//Random number generator using /dev/random
-int get_random_integer(void)
-{
-    unsigned int randval;
-    FILE *f;
-
-    f = fopen("/dev/random", "r");
-    fread(&randval, sizeof(randval), 1, f);
-    fclose(f);
-
-    return randval%100;
-}
-
 /*
  * Run through the whole linked list and with a probability decided by
  * the difficulty variable remove a node, substitute the previous node
@@ -57,7 +44,7 @@ void rerun_probability (void) {
     if (index != NULL) {
         while (index->next != NULL) {
             if (!hand_has_card(bot_hand, index->card)) {
-                if (threshold - get_random_integer()<=0) {
+                if (threshold - get_random_integer()%100<=0) {
                     struct CardNode * next = index->next;
                     remove_node (index);
                     index = next;

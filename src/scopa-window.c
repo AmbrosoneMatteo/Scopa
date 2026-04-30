@@ -107,11 +107,17 @@ scopa_window_class_init (ScopaWindowClass *klass)
     	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table_top);
 }
 
+static gboolean play_card_idle(gpointer user_data) {
+    int index = GPOINTER_TO_INT(user_data);
+    player_play_card(index);
+    return G_SOURCE_REMOVE;
+}
+
 static gboolean
 place_card (GtkDropTarget* self, const GValue* ptr, gdouble x, gdouble y, gpointer user_data) {
     int player_card_index = g_value_get_int(ptr);
 
-    player_play_card(player_card_index);
+    g_idle_add(play_card_idle, GINT_TO_POINTER(player_card_index));
 
     return TRUE;
 }

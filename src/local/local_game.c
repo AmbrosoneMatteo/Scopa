@@ -38,12 +38,27 @@ struct CardNode * memorized_card = NULL;
 struct Hand * player_hand = NULL;
 struct Hand * bot_hand = NULL;
 struct Deck * deck = NULL;
+
+
 struct Table * table = NULL;
 struct CardNode * player_pile = NULL;
 struct CardNode * bot_pile = NULL;
 int player_scope = 0;
 int bot_scope = 0;
 struct CardNode * last_grabber = NULL;
+
+//Random number generator using /dev/random
+unsigned get_random_integer(void)
+{
+    unsigned int randval;
+    FILE *f;
+
+    f = fopen("/dev/random", "r");
+    fread(&randval, sizeof(randval), 1, f);
+    fclose(f);
+
+    return randval;
+}
 
 void free_combination_linkedlist(struct CombinationNode* node) {
     if(node == NULL)
@@ -82,21 +97,23 @@ player_play_card(int player_card_index) {
       remove_all_box_cards (main_window->player_cards);
 
       struct Card * played_card = decide_move();
-      if(played_card!=NULL) {
-          g_print("Played card value: %d and suit: %c\n", played_card->value,
-              suit_strings[played_card->suit]);
-          combinations = get_combinations_for_card(
-              played_card, table);
-          if (local_play_card (bot_hand, played_card, bot_pile,
-                           combinations, table, deck, &bot_scope))
-              last_grabber = bot_pile;
-          remove_card_from_hand(bot_hand, played_card);
-
-          remove_all_box_cards (main_window->adversary_cards);
-          place_cards_on_table (main_window, table);
-      } else {
-          g_print("Something went terribly wrong\n");
+      if(played_card==NULL) {
+          g_print("Something went terribly wrong, grabbing random card\n");
+          unsigned random_index = get_random_integer ()%3;
+          played_card = bot_hand->cards[random_index];
       }
+
+      g_print("Played card value: %d and suit: %c\n", played_card->value,
+      suit_strings[played_card->suit]);
+      combinations = get_combinations_for_card(
+          played_card, table);
+      if (local_play_card (bot_hand, played_card, bot_pile,
+                       combinations, table, deck, &bot_scope))
+          last_grabber = bot_pile;
+      remove_card_from_hand(bot_hand, played_card);
+
+      remove_all_box_cards (main_window->adversary_cards);
+      place_cards_on_table (main_window, table);
 
       if (deck->count==0 && bot_hand->count == 0 && player_hand->count == 0) {
           g_print("game ended, showing results\n");
