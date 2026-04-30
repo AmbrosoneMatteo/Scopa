@@ -43,6 +43,7 @@ struct CardNode * player_pile = NULL;
 struct CardNode * bot_pile = NULL;
 int player_scope = 0;
 int bot_scope = 0;
+struct CardNode * last_grabber = NULL;
 
 void free_combination_linkedlist(struct CombinationNode* node) {
     if(node == NULL)
@@ -72,8 +73,9 @@ player_play_card(int player_card_index) {
                 player_hand->cards[player_card_index], table);
       struct Card * player_card = player_hand->cards[player_card_index];
 
-      local_play_card (player_hand, player_card, player_pile, combinations,
-                        table,deck, &player_scope);
+      if (local_play_card (player_hand, player_card, player_pile, combinations,
+                        table,deck, &player_scope))
+          last_grabber = player_pile;
 
       remove_card_from_hand(player_hand, player_card);
       remove_all_box_cards(main_window->table_top);
@@ -85,26 +87,24 @@ player_play_card(int player_card_index) {
               suit_strings[played_card->suit]);
           combinations = get_combinations_for_card(
               played_card, table);
-          local_play_card (bot_hand, played_card, bot_pile,
-                           combinations, table, deck, &bot_scope);
+          if (local_play_card (bot_hand, played_card, bot_pile,
+                           combinations, table, deck, &bot_scope))
+              last_grabber = bot_pile;
           remove_card_from_hand(bot_hand, played_card);
 
           remove_all_box_cards (main_window->adversary_cards);
           place_cards_on_table (main_window, table);
-
-          if(bot_hand->count == 0) {
-              get_hand (deck, bot_hand);
-              get_hand (deck, player_hand);
-          }
       } else {
           g_print("Something went terribly wrong\n");
       }
 
-      place_all_cards_on_hand(main_window,main_window->adversary_cards,bot_hand);
-      place_all_cards_on_hand(main_window,main_window->player_cards,player_hand);
-      if (deck->count==0) {
+      if (deck->count==0 && bot_hand->count == 0 && player_hand->count == 0) {
+          g_print("game ended, showing results\n");
           // end game and show stats
       } else {
+          place_all_cards_on_hand(main_window,main_window->adversary_cards,bot_hand);
+          place_all_cards_on_hand(main_window,main_window->player_cards,player_hand);
+          g_print("re-enabling cards: %d - %d - %d\n", deck->count, bot_hand->count, player_hand->count);
           enable_player_cards (main_window->player_cards);
       }
 }
@@ -121,5 +121,6 @@ void start_local_game(int diff) {
     place_all_cards_on_hand (main_window, main_window->player_cards, player_hand);
     place_all_cards_on_hand (main_window, main_window->adversary_cards, bot_hand);
 }
+
 
 

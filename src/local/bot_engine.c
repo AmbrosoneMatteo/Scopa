@@ -17,6 +17,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+#include <glib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "local_game.h"
@@ -197,15 +198,13 @@ struct Card * decide_move(void) {
             card_values_probability[deck->cards[i].value]++;
         }
     }
-    // this variable holds the probability of a single card that
-    // has not come out yet, to be played
-    float card_probability = 1/card_count;
-
 
     // this for cycles calculates the probability of a specific value
     // to come out, based on the knowledge of the cards that haven't come out
     for (int i = 0; i<10; i++) {
-        card_values_probability[i] = 1/card_values_probability[i];
+        if (card_values_probability[i]!=0)  {
+            card_values_probability[i] = 1/card_values_probability[i];
+        }
     }
 
     // if the table is NULL, it means that a scopa happened, that means the best
@@ -247,6 +246,7 @@ struct Card * decide_move(void) {
         // No card has been chosen, so place the one that has the least of probability
         // to come out
         preferred_card = get_least_probable_card(card_values_probability);
+        if (preferred_card==NULL) g_print("Err: 1213\n");
     }
 
 end_fun:
@@ -257,4 +257,5 @@ end_fun:
     }
     return preferred_card;
 }
+
 

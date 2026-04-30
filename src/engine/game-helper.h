@@ -24,7 +24,7 @@ struct CombinationList *get_combination_at_index(struct CombinationNode *node, i
 void print_list(struct CombinationNode * list);
 int get_node_number(struct CardNode * node);
 bool hand_has_card(struct Hand *hand, struct Card *card);
-void local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
+bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
                       struct CombinationNode* combinations,
                       struct Table *table,
                       struct Deck *deck,

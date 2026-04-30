@@ -250,7 +250,7 @@ struct CombinationNode *get_combinations_for_card(struct Card * card, struct Tab
     return combinations;
 }
 
-void local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
+bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
                       struct CombinationNode* combinations,
                       struct Table *table,
                       struct Deck *deck,
@@ -259,6 +259,7 @@ void local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
         struct CombinationList *auto_take = determine_auto_take(combinations);
         if(auto_take != NULL) {
           remove_combination_from_table(table, auto_take, &pile);
+
           if(table->count == 0)
               (*scopa_counter)++;
           remove_card_from_hand(hand, card);
@@ -267,6 +268,9 @@ void local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
         }  else {
 
         }
+        if (hand->count == 0)
+            get_hand (deck, hand);
+        return true;
     }else{
         // The player cannot take anything from the table
         // Adding the card the table
@@ -278,9 +282,9 @@ void local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
         table->count++;
         remove_card_from_hand(hand, card);
     }
-    if (hand->count == 0) {
+    if (hand->count == 0)
         get_hand (deck, hand);
-    }
+    return false;
 }
 // Function that returns how many cards does a possible combination have
 int get_combo_length(struct CombinationList *list) {
@@ -380,7 +384,6 @@ struct Table *table_init(struct Deck *deck){
   
   for(int i = 0; i < TABLE_SIZE; i++){
     struct Card * card = draw_card(deck);
-    printf("%p\n", table->node);
 
     if (table->node == NULL){
         table->node = append_card (table->node, card);
@@ -463,10 +466,14 @@ void remove_node (struct CardNode * node) {
 // Function that gets a new 3 card hand for the player
 // Returned is the pointer to the hand structure
 void get_hand(struct Deck *deck, struct Hand *hand){
-  for(int i = 0; i < HAND_SIZE; i++){
-    hand->cards[i] = draw_card(deck);
+  if (deck->count>0) {
+      for(int i = 0; i < HAND_SIZE; i++){
+          hand->cards [i] = draw_card(deck);
+      }
+      hand->count = HAND_SIZE;
+  } else {
+      g_print("Fuck you: %d\n", deck->count);
   }
-  hand->count = HAND_SIZE;
 }
 
 // Function that checks if the card played by the player is effectively
@@ -481,6 +488,3 @@ bool hand_has_card(struct Hand *hand, struct Card *card){
   }
   return false;
 }
-
-
-
