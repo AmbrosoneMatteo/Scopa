@@ -49,18 +49,6 @@
                       <object class="GtkBox">
                         <child>
                           <object class="GtkLabel">
-                            <property name="label">player 2 settebello:</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="player2_scope_count"/>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <child>
-                          <object class="GtkLabel">
                             <property name="label">player 2 sette:</property>
                           </object>
                         </child>
@@ -77,9 +65,24 @@
                           </object>
                         </child>
                         <child>
+                          <object class="GtkLabel" id="player2_scope_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 2 settebello:</property>
+                          </object>
+                        </child>
+                        <child>
                           <object class="GtkLabel" id="player2_settebello"/>
                         </child>
                       </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="player2_win" />
                     </child>
                   </object>
                 </child>
@@ -117,18 +120,6 @@
                       <object class="GtkBox">
                         <child>
                           <object class="GtkLabel">
-                            <property name="label">player 1 scope:</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="player1_scope_count"/>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <child>
-                          <object class="GtkLabel">
                             <property name="label">player 1 sette:</property>
                           </object>
                         </child>
@@ -145,9 +136,24 @@
                           </object>
                         </child>
                         <child>
+                          <object class="GtkLabel" id="player1_scope_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 1 settebello:</property>
+                          </object>
+                        </child>
+                        <child>
                           <object class="GtkLabel" id="player1_settebello"/>
                         </child>
                       </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="player1_win" />
                     </child>
                   </object>
                 </child>
@@ -202,4 +208,5 @@
     <property name="default-width">800</property>
   </template>
 </interface>
+
 
