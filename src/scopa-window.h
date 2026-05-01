@@ -37,7 +37,7 @@ void place_all_cards_on_hand(ScopaWindow *window,
 void place_cards_on_table(ScopaWindow* window, struct Table* current_table);
 void disable_player_cards(GtkBox *box);
 void enable_player_cards(GtkBox *box);
-
+void place_card_on_pile(GtkImage* pile, struct Card* card);
 struct _ScopaWindow
 {
 	AdwApplicationWindow  parent_instance;
@@ -47,6 +47,9 @@ struct _ScopaWindow
         GtkBox          *player_cards;
         GtkBox          *adversary_cards;
         GtkBox          *table_top;
+        GtkBox          *pile_box;
+        GtkImage        *player1_pile;
+        GtkImage        *player2_pile;
 };
 
 G_END_DECLS

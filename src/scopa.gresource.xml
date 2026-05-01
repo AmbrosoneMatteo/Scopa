@@ -3,6 +3,8 @@
   <gresource prefix="/org/gnome/Example">
     <file preprocess="xml-stripblanks">scopa-window.ui</file>
     <file preprocess="xml-stripblanks">new-game.ui</file>
+    <file preprocess="xml-stripblanks">select-combination.ui</file>
+    <file preprocess="xml-stripblanks">endgame-dialog.ui</file>
     <file preprocess="xml-stripblanks">shortcuts-dialog.ui</file>
     <file>window.css</file>
     <file>images/retro.svg</file>
@@ -48,4 +50,5 @@
     <file>images/DalNegro_Cards/9_S.png</file>
   </gresource>
 </gresources>
+
 

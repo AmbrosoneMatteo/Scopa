@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+#include <gtk/gtk.h>
 
 #include "scopa-window.h"
 #include "engine/game-helper.h"
@@ -87,6 +88,20 @@ place_cards_on_table(ScopaWindow* window, struct Table* current_table) {
     } while (node!=NULL);
 }
 
+void
+show_stats(ScopaWindow *window, struct Hand* hand_top, struct Hand *hand_bottom,
+          int player1_scope, int player2_scope) {
+
+
+
+}
+
+gboolean
+close_request(GtkWindow* self, gpointer user_data) {
+    g_print("fottiti\n");
+    return false;
+}
+
 static void
 scopa_window_class_init (ScopaWindowClass *klass)
 {
@@ -95,8 +110,17 @@ scopa_window_class_init (ScopaWindowClass *klass)
 	gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Example/scopa-window.ui");
 	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, stack_card_image);
   	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player_cards);
+    	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player1_pile);
+    gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player2_pile);
     	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, adversary_cards);
     	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table_top);
+  	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, pile_box);
+}
+
+static gboolean play_card_idle(gpointer user_data) {
+    int index = GPOINTER_TO_INT(user_data);
+    player_play_card(index);
+    return G_SOURCE_REMOVE;
 }
 
 static gboolean
@@ -112,9 +136,21 @@ place_card (GtkDropTarget* self, const GValue* ptr, gdouble x, gdouble y, gpoint
         // Sending card into the queue
         g_async_queue_push (player_card_queue, index);
     }else{
-        player_play_card(player_card_index);
+        g_idle_add(play_card_idle, GINT_TO_POINTER(player_card_index));
     }
     return TRUE;
+}
+
+void
+place_card_on_pile(GtkImage* pile, struct Card* card) {
+    if(card!=NULL) {
+        char *path;
+        int value = card->value;
+        char suit = suit_strings[card->suit];
+        asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+                 value, suit);
+        gtk_image_set_from_resource (pile, path);
+    }
 }
 
 void disable_player_cards(GtkBox *box) {
@@ -155,13 +191,21 @@ scopa_window_init (ScopaWindow *self)
                                                              GTK_STYLE_PROVIDER(css),
                                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     g_object_unref(css);
-
     gtk_widget_set_name(GTK_WIDGET(self->table_top), "table_top");
+    gtk_widget_set_name(GTK_WIDGET(self->pile_box), "table_top");
+    gtk_widget_set_name(GTK_WIDGET(self->player_cards), "hand");
+    gtk_widget_set_name(GTK_WIDGET(self->adversary_cards), "hand");
+    gtk_widget_set_name(GTK_WIDGET(self), "window");
+    const char *classes[] = {"empty-pile", NULL};
+    gtk_widget_set_css_classes (GTK_WIDGET (self->player1_pile), classes);
+    gtk_widget_set_css_classes (GTK_WIDGET (self->player2_pile), classes);
 
     GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_INT, GDK_ACTION_COPY);
     g_signal_connect (tgt, "drop", G_CALLBACK (place_card), self->table_top);
     // The ownership of tgt is taken by the instance.
     gtk_widget_add_controller (GTK_WIDGET (self->table_top), GTK_EVENT_CONTROLLER (tgt));
 }
+
+
 
 

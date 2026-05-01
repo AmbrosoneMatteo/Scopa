@@ -6,6 +6,7 @@
 #include "scopa-application.h"
 #include "scopa-window.h"
 #include "game-helper.h"
+#include "select-combination.h"
 
 int * node_to_array(struct CardNode * node);
 bool can_place_card(struct Card * card, struct Table * table);
@@ -18,6 +19,8 @@ bool can_player_grab_card(struct Card            *player_card,
                           struct CombinationList *list);
 struct CardNode * get_previous_node(struct CardNode * node);
 struct CardNode * get_next_node(struct CardNode * node);
+
+int combination_index = 0;
 
 // Function that initializes a deck structure with all the cards
 // used in the Scopa game. The cards are inserted in incremental order.
@@ -178,7 +181,7 @@ void print_list(struct CombinationNode * list) {
         } else {
             g_print("empty list of cards\n");
         }
-        printf("\n");
+        g_print("\n");
         list = list->next;
     } while(list != NULL);
 }
@@ -250,20 +253,79 @@ struct CombinationNode *get_combinations_for_card(struct Card * card, struct Tab
     return combinations;
 }
 
-void local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
+
+void selection_made(SelectCombinationWindow *window, guint index, GMainLoop *loop) {
+    combination_index = select_combination_get_index();
+    g_main_loop_quit(loop);
+}
+
+static void
+on_window_closed(SelectCombinationWindow *window, GMainLoop *loop)
+{
+    combination_index = 0; // if the user closes the dialog, use the first combination
+    g_main_loop_quit(loop);
+}
+
+bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode ** pile,
                       struct CombinationNode* combinations,
                       struct Table *table,
-                      struct Deck *deck) {
+                      struct Deck *deck,
+                      int *scopa_counter) {
   if(combinations != NULL){
         struct CombinationList *auto_take = determine_auto_take(combinations);
         if(auto_take != NULL) {
-          remove_combination_from_table(table, auto_take, &pile);
-          remove_card_from_hand(hand, card);
-          // Adding the card that the player had in the hand to their pile
-          append_card(pile, card);
+            remove_combination_from_table(table, auto_take, pile);
+
+            if(table->count == 0)
+                (*scopa_counter)++;
         }  else {
+            // open dialog to ask user which combination to take
+            ScopaApplication *app = SCOPA_APPLICATION(g_application_get_default());
+            GtkWindow *parent;
+            SelectCombinationWindow *window;
+
+            GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+
+            g_assert (SCOPA_IS_WINDOW (main_window));
+            parent = gtk_application_get_active_window (GTK_APPLICATION (app));
+            window = g_object_new (SELECT_COMBINATION_TYPE_WINDOW,
+                                   "application", app,
+                                   "transient-for", parent,
+                                   "modal", TRUE,
+                                   NULL);
+
+            g_signal_connect_data(
+                window, "return-index",
+                G_CALLBACK(selection_made),
+                loop,   /* user_data = the loop */
+                NULL, G_CONNECT_DEFAULT
+            );
+
+            g_signal_connect(window, "delete-event",
+                 G_CALLBACK(on_window_closed), loop);
+
+            add_combinations(window, combinations);
+            gtk_window_present (GTK_WINDOW (window));
+
+            // this loop is created because the function needs to wait for the
+            // user to make a choice about the desired combination to grab before
+            // resuming
+            g_main_loop_run(loop);
+            g_main_loop_unref(loop);
+            gtk_window_close (GTK_WINDOW (window));
+
+            struct CombinationList *list = get_combination_at_index (combinations
+                                                             , combination_index);
+            remove_combination_from_table (table, list, pile);
 
         }
+        remove_card_from_hand(hand, card);
+        // Adding the card that the player had in the hand to their pile
+        append_card(*pile, card);
+
+        if (hand->count == 0)
+            get_hand (deck, hand);
+        return true;
     }else{
         // The player cannot take anything from the table
         // Adding the card the table
@@ -275,10 +337,11 @@ void local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
         table->count++;
         remove_card_from_hand(hand, card);
     }
-    if (hand->count == 0) {
+    if (hand->count == 0)
         get_hand (deck, hand);
-    }
+    return false;
 }
+
 // Function that returns how many cards does a possible combination have
 int get_combo_length(struct CombinationList *list) {
     int count = 0;
@@ -340,6 +403,36 @@ void remove_combination_from_table(struct Table *table, struct CombinationList *
     }
 }
 
+/*
+ * This function removes the first node of a linked list and
+ * returns a pointer to the next one
+ */
+struct CardNode* remove_base_node(struct CardNode *node) {
+    if(node==NULL)
+        return NULL;
+
+    struct CardNode *next = (node->next!=NULL) ? node->next : NULL;
+    remove_node(node);
+    return next;
+}
+
+// For debugging purposes
+void print_pile(struct CardNode *node) {
+    if (node == NULL)
+        return;
+
+    int count = 0;
+    do {
+        count++;
+        if(node->next!=NULL)
+          g_print("%d%c-", node->card->value, suit_strings[node->card->suit]);
+        else
+          g_print("%d%c", node->card->value, suit_strings[node->card->suit]);
+        node = node->next;
+    } while (node!=NULL);
+    g_print("count => %d\n", count);
+}
+
 void remove_card_from_hand(struct Hand *hand, struct Card *card) {
     for(int i = 0; i < HAND_SIZE; i++){
         if(hand->cards[i] != NULL){
@@ -377,7 +470,6 @@ struct Table *table_init(struct Deck *deck){
   
   for(int i = 0; i < TABLE_SIZE; i++){
     struct Card * card = draw_card(deck);
-    printf("%p\n", table->node);
 
     if (table->node == NULL){
         table->node = append_card (table->node, card);
@@ -430,6 +522,8 @@ void append_node (struct CardNode * list,struct CardNode * node) {
     while (list->next != NULL)
         list = get_next_node (list); // get to the last card in the linked lisk
     list->next = node;
+    node->previous = list;
+    node->next = NULL;
 }
 
 /**
@@ -445,6 +539,9 @@ void delete_node (struct CardNode * node) {
 
 //removes a node from the linked list, and updates the chain
 void remove_node (struct CardNode * node) {
+    if(node==NULL)
+        return;
+
     if (node->next!=NULL && node->previous!=NULL) {
         node->next->previous = node->previous;
         node->previous->next = node->next;
@@ -460,10 +557,14 @@ void remove_node (struct CardNode * node) {
 // Function that gets a new 3 card hand for the player
 // Returned is the pointer to the hand structure
 void get_hand(struct Deck *deck, struct Hand *hand){
-  for(int i = 0; i < HAND_SIZE; i++){
-    hand->cards[i] = draw_card(deck);
+  if (deck->count>0) {
+      for(int i = 0; i < HAND_SIZE; i++){
+          hand->cards [i] = draw_card(deck);
+      }
+      hand->count = HAND_SIZE;
+  } else {
+      g_print("Remaining count: %d\n", deck->count);
   }
-  hand->count = HAND_SIZE;
 }
 
 // Function that checks if the card played by the player is effectively
@@ -478,5 +579,4 @@ bool hand_has_card(struct Hand *hand, struct Card *card){
   }
   return false;
 }
-
 

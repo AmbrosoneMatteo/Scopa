@@ -12,7 +12,9 @@ scopa_sources = [
   'netutils/serializer.c',
   'client/client.c',
   'client/client-ui-manager.c',
-  'new-game.c'
+  'new-game.c',
+  'select-combination.c',
+  'endgame-dialog.c'
 ]
 
 scopa_deps = [

@@ -17,6 +17,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+#include <glib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "local_game.h"
@@ -32,19 +33,6 @@ struct Card * get_card(int value, int suit);
 bool table_has_seven_ori(void);
 int difficulty;
 
-//Random number generator using /dev/random
-int get_random_integer(void)
-{
-    unsigned int randval;
-    FILE *f;
-
-    f = fopen("/dev/random", "r");
-    fread(&randval, sizeof(randval), 1, f);
-    fclose(f);
-
-    return randval%100;
-}
-
 /*
  * Run through the whole linked list and with a probability decided by
  * the difficulty variable remove a node, substitute the previous node
@@ -56,7 +44,7 @@ void rerun_probability (void) {
     if (index != NULL) {
         while (index->next != NULL) {
             if (!hand_has_card(bot_hand, index->card)) {
-                if (threshold - get_random_integer()<=0) {
+                if (threshold - get_random_integer()%100<=0) {
                     struct CardNode * next = index->next;
                     remove_node (index);
                     index = next;
@@ -78,6 +66,9 @@ void memorize_cards_from_array(struct Card **cards) {
 
 // Memorizes the cards in the linked list
 void memorize_cards(struct CardNode *node) {
+    if(node == NULL)
+        return;
+
     do {
         if (is_known (node->card)) {
             append_card (memorized_card, node->card);
@@ -177,8 +168,7 @@ struct Card * decide_move(void) {
     if(bot_hand->count==1) {
         for (int i = 0; i<3; i++) {
             if(bot_hand->cards[i]!=NULL) {
-                preferred_card = bot_hand->cards[i];
-                goto end_fun;
+                return bot_hand->cards[i];
             }
         }
     }
@@ -195,15 +185,13 @@ struct Card * decide_move(void) {
             card_values_probability[deck->cards[i].value]++;
         }
     }
-    // this variable holds the probability of a single card that
-    // has not come out yet, to be played
-    float card_probability = 1/card_count;
-
 
     // this for cycles calculates the probability of a specific value
     // to come out, based on the knowledge of the cards that haven't come out
     for (int i = 0; i<10; i++) {
-        card_values_probability[i] = 1/card_values_probability[i];
+        if (card_values_probability[i]!=0)  {
+            card_values_probability[i] = 1/card_values_probability[i];
+        }
     }
 
     // if the table is NULL, it means that a scopa happened, that means the best
@@ -245,6 +233,7 @@ struct Card * decide_move(void) {
         // No card has been chosen, so place the one that has the least of probability
         // to come out
         preferred_card = get_least_probable_card(card_values_probability);
+        if (preferred_card==NULL) g_print("Err: 1213\n");
     }
 
 end_fun:
@@ -255,3 +244,5 @@ end_fun:
     }
     return preferred_card;
 }
+
+

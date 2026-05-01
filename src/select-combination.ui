@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<interface>
+  <requires lib="gtk" version="4.18"/>
+  <requires lib="libadwaita" version="1.4"/>
+  <template class="SelectCombinationWindow" parent="AdwApplicationWindow">
+    <child>
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar"/>
+        </child>
+        <property name="content">
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <property name="hexpand">true</property>
+            <child>
+              <object class="GtkListView" id="list_view">
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </child>
+   <property name="default-height">800</property>
+    <property name="default-width">400</property>
+  </template>
+</interface>

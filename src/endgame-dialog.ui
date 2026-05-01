@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 1.0 -->
+<interface>
+  <!-- interface-name new-game.ui -->
+  <requires lib="gtk" version="4.18"/>
+  <requires lib="libadwaita" version="1.4"/>
+  <template class="EndGameDialogWindow" parent="AdwApplicationWindow">
+    <child>
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar"/>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="name">Player2Stats</property>
+                    <property name="orientation">vertical</property>
+                    <property name="vexpand">True</property>
+                    <property name="vexpand-set">True</property>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 2 cards:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player2_card_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 2 ori:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player2_ori_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 2 settebello:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player2_scope_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 2 sette:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player2_sette_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 2 scope:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player2_settebello"/>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="vexpand">True</property>
+                    <property name="vexpand-set">True</property>
+                    <property name="name">Player1Stats</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 1 cards:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player1_card_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 1 ori:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player1_ori_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 1 scope:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player1_scope_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 1 sette:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player1_sette_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label">player 1 scope:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player1_settebello"/>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkScrolledWindow" id="player2_cards_window">
+                    <property name="has-frame">true</property>
+                    <property name="halign">fill</property>
+                    <property name="valign">fill</property>
+                    <property name="hexpand">true</property>
+                    <property name="vexpand">true</property>
+                    <property name="hexpand-set">true</property>
+                    <property name="vexpand-set">true</property>
+                    <property name="hscrollbar-policy">automatic</property>
+                    <property name="vscrollbar-policy">never</property>
+                    <child>
+                      <object class="GtkListView" id="player2_listview">
+                        <property name="orientation">horizontal</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="player1_cards_window">
+                    <property name="has-frame">true</property>
+                    <property name="halign">fill</property>
+                    <property name="valign">fill</property>
+                    <property name="hexpand">true</property>
+                    <property name="vexpand">true</property>
+                    <property name="hexpand-set">true</property>
+                    <property name="vexpand-set">true</property>
+                    <property name="hscrollbar-policy">automatic</property>
+                    <property name="vscrollbar-policy">never</property>
+                    <child>
+                      <object class="GtkListView" id="player1_listview">
+                        <property name="orientation">horizontal</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <property name="default-height">500</property>
+    <property name="default-width">800</property>
+  </template>
+</interface>
+
