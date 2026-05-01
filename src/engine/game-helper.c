@@ -181,7 +181,7 @@ void print_list(struct CombinationNode * list) {
         } else {
             g_print("empty list of cards\n");
         }
-        printf("\n");
+        g_print("\n");
         list = list->next;
     } while(list != NULL);
 }
@@ -266,7 +266,7 @@ on_window_closed(SelectCombinationWindow *window, GMainLoop *loop)
     g_main_loop_quit(loop);
 }
 
-bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
+bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode ** pile,
                       struct CombinationNode* combinations,
                       struct Table *table,
                       struct Deck *deck,
@@ -274,7 +274,7 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
   if(combinations != NULL){
         struct CombinationList *auto_take = determine_auto_take(combinations);
         if(auto_take != NULL) {
-            remove_combination_from_table(table, auto_take, &pile);
+            remove_combination_from_table(table, auto_take, pile);
 
             if(table->count == 0)
                 (*scopa_counter)++;
@@ -316,12 +316,12 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode* pile,
 
             struct CombinationList *list = get_combination_at_index (combinations
                                                              , combination_index);
-            remove_combination_from_table (table, list, &pile);
+            remove_combination_from_table (table, list, pile);
 
         }
         remove_card_from_hand(hand, card);
         // Adding the card that the player had in the hand to their pile
-        append_card(pile, card);
+        append_card(*pile, card);
 
         if (hand->count == 0)
             get_hand (deck, hand);
@@ -401,6 +401,36 @@ void remove_combination_from_table(struct Table *table, struct CombinationList *
         }
         free(tmp);
     }
+}
+
+/*
+ * This function removes the first node of a linked list and
+ * returns a pointer to the next one
+ */
+struct CardNode* remove_base_node(struct CardNode *node) {
+    if(node==NULL)
+        return NULL;
+
+    struct CardNode *next = (node->next!=NULL) ? node->next : NULL;
+    remove_node(node);
+    return next;
+}
+
+// For debugging purposes
+void print_pile(struct CardNode *node) {
+    if (node == NULL)
+        return;
+
+    int count = 0;
+    do {
+        count++;
+        if(node->next!=NULL)
+          g_print("%d%c-", node->card->value, suit_strings[node->card->suit]);
+        else
+          g_print("%d%c", node->card->value, suit_strings[node->card->suit]);
+        node = node->next;
+    } while (node!=NULL);
+    g_print("count => %d\n", count);
 }
 
 void remove_card_from_hand(struct Hand *hand, struct Card *card) {
@@ -492,6 +522,8 @@ void append_node (struct CardNode * list,struct CardNode * node) {
     while (list->next != NULL)
         list = get_next_node (list); // get to the last card in the linked lisk
     list->next = node;
+    node->previous = list;
+    node->next = NULL;
 }
 
 /**
@@ -507,6 +539,9 @@ void delete_node (struct CardNode * node) {
 
 //removes a node from the linked list, and updates the chain
 void remove_node (struct CardNode * node) {
+    if(node==NULL)
+        return;
+
     if (node->next!=NULL && node->previous!=NULL) {
         node->next->previous = node->previous;
         node->previous->next = node->next;
@@ -544,3 +579,4 @@ bool hand_has_card(struct Hand *hand, struct Card *card){
   }
   return false;
 }
+

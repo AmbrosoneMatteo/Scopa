@@ -79,6 +79,26 @@ void free_combination_linkedlist(struct CombinationNode* node) {
 }
 
 void
+clear_table(struct CardNode **node) {
+    struct CardNode *table_card = table->node;
+
+    if(table_card == NULL)
+        return ;
+
+    if (*node == NULL) {
+        remove_node(table_card);
+        *node = table_card;
+        table_card = table_card->next;
+    }
+
+    do {
+        remove_node (table_card);
+        append_node(*node, table_card);
+        table_card = table_card->next;
+    } while (table_card!=NULL);
+}
+
+void
 player_play_card(int player_card_index) {
       memorize_cards_from_array (player_hand->cards);
       memorize_cards (table->node);
@@ -88,7 +108,7 @@ player_play_card(int player_card_index) {
                 player_hand->cards[player_card_index], table);
       struct Card * player_card = player_hand->cards[player_card_index];
 
-      if (local_play_card (player_hand, player_card, player_pile, combinations,
+      if (local_play_card (player_hand, player_card, &player_pile, combinations,
                         table,deck, &player_scope)) {
           last_grabber = player_pile;
           place_card_on_pile(main_window->player1_pile, player_card);
@@ -100,16 +120,24 @@ player_play_card(int player_card_index) {
 
       struct Card * played_card = decide_move();
       if(played_card==NULL) {
-          g_print("Something went terribly wrong, grabbing random card\n");
-          unsigned random_index = get_random_integer ()%3;
-          played_card = bot_hand->cards[random_index];
+          if(bot_hand->count>0) {
+              g_print("Something went terribly wrong, grabbing random card\n");
+              do {
+                  unsigned random_index = get_random_integer ()%3;
+                  played_card = bot_hand->cards[random_index];
+              } while (played_card==NULL);
+          } else if(bot_hand->count==0) {
+              g_print("Something must have gone terribly wrong\n");
+              g_print("hand counts => bot: %d - player: %d",
+                      bot_hand->count, player_hand->count);
+          }
       }
 
       g_print("Played card value: %d and suit: %c\n", played_card->value,
       suit_strings[played_card->suit]);
       combinations = get_combinations_for_card(
           played_card, table);
-      if (local_play_card (bot_hand, played_card, bot_pile,
+      if (local_play_card (bot_hand, played_card, &bot_pile,
                        combinations, table, deck, &bot_scope)) {
           last_grabber = bot_pile;
           place_card_on_pile(main_window->player2_pile, played_card);
@@ -117,16 +145,23 @@ player_play_card(int player_card_index) {
       remove_card_from_hand(bot_hand, played_card);
 
       remove_all_box_cards (main_window->adversary_cards);
-      place_cards_on_table (main_window, table);
 
       if (deck->count==0 && bot_hand->count == 0 && player_hand->count == 0) {
           g_print("game ended, showing results\n");
-          // end game and show stats
+          if(last_grabber == player_pile)
+              clear_table(&player_pile);
+          else
+              clear_table(&bot_pile);
+          printf("player pile: ");
+          print_pile (player_pile);
+          printf("bot pile: ");
+          print_pile (bot_pile);
       } else {
           place_all_cards_on_hand(main_window,main_window->adversary_cards,bot_hand);
           place_all_cards_on_hand(main_window,main_window->player_cards,player_hand);
           g_print("re-enabling cards: %d - %d - %d\n", deck->count, bot_hand->count, player_hand->count);
           enable_player_cards (main_window->player_cards);
+          place_cards_on_table (main_window, table);
       }
 }
 
