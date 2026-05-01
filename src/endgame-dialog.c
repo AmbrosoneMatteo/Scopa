@@ -47,6 +47,11 @@ endgame_dialog_window_class_init (EndGameDialogWindowClass *klass)
                                           player2_scope_count);
 
     gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
+                                          player1_sette_count);
+    gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
+                                          player2_sette_count);
+
+    gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
                                           player1_settebello);
     gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
                                           player2_settebello);
@@ -55,6 +60,41 @@ endgame_dialog_window_class_init (EndGameDialogWindowClass *klass)
                                           player1_listview);
     gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
                                           player2_listview);
+}
+
+void set_cards(EndGameDialogWindow *self,
+               struct CardNode     *player1_pile,
+               struct CardNode     *player2_pile,
+               int player1_scope,
+               int player2_scope) {
+    set_scope(self, player1_scope, player2_scope);
+    int count = 0;
+    int ori = 0;
+    int sette = 0;
+    bool settebello = false;
+
+    do {
+        count++;
+        struct Card * card = player1_pile->card;
+        if (card->suit==DIAMONDS) {
+            ori++;
+            if (card->value == 7){
+                sette++;
+                set_settebello (self, self->player1_settebello);
+                settebello=true;
+            }
+        } else if (card->value==7 && card->suit!=DIAMONDS)
+            sette++;
+        player1_pile = player1_pile->next;
+    } while(player1_pile!=NULL);
+
+    if(!settebello)
+        set_settebello (self, self->player2_settebello);
+
+    set_card_count(self, count, DECK_SIZE-count);
+    set_ori_count (self, ori, 10-ori);
+    set_sette_count(self, sette, 4-sette);
+
 }
 
 void set_scope(EndGameDialogWindow *self, int player1_count, int player2_count) {
@@ -73,6 +113,15 @@ void set_card_count(EndGameDialogWindow *self, int player1_count, int player2_co
     asprintf(&s2, "%d", player2_count);
     gtk_label_set_text (self->player1_card_count, s1);
     gtk_label_set_text (self->player2_card_count, s2);
+}
+
+void set_sette_count(EndGameDialogWindow *self, int player1_count, int player2_count) {
+    char *s1;
+    char *s2;
+    asprintf(&s1, "%d", player1_count);
+    asprintf(&s2, "%d", player2_count);
+    gtk_label_set_text (self->player1_sette_count, s1);
+    gtk_label_set_text (self->player2_sette_count, s2);
 }
 
 void set_ori_count(EndGameDialogWindow *self, int player1_count, int player2_count) {
@@ -97,3 +146,4 @@ endgame_dialog_window_init (EndGameDialogWindow *self)
 {
     gtk_widget_init_template (GTK_WIDGET (self));
 }
+

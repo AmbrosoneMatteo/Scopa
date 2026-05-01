@@ -57,6 +57,18 @@
                       <object class="GtkBox">
                         <child>
                           <object class="GtkLabel">
+                            <property name="label">player 2 sette:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player2_sette_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
                             <property name="label">player 2 scope:</property>
                           </object>
                         </child>
@@ -111,6 +123,18 @@
                       <object class="GtkBox">
                         <child>
                           <object class="GtkLabel">
+                            <property name="label">player 2 sette:</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="player2_sette_count"/>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <child>
+                          <object class="GtkLabel">
                             <property name="label">player 1 scope:</property>
                           </object>
                         </child>
@@ -158,3 +182,4 @@
     </child>
   </template>
 </interface>
+
