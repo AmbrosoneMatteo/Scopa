@@ -95,6 +95,9 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
           // If the palyer clears the table, they get a scopa point
           scope_counter[current_player]++;
         }
+        // Sending packet to update UI pile if the player took something from the table
+        send_packet_updatepile(out_streams[current_player], card, false);
+        send_packet_updatepile(out_streams[opponent], card, true);
       }else{
         // The player cannot take anything from the table
         // Adding the card the table

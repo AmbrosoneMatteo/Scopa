@@ -5,6 +5,7 @@
 #define MAX_COMBO_SIZE 4
 #define MAX_COMBOS 10
 
+#include <stdbool.h>
 #include "engine/game-assets.h"
 
 struct NetHand {
@@ -21,6 +22,11 @@ struct NetCombinationList {
   struct Card combinations[MAX_COMBOS][MAX_COMBO_SIZE];
   int combo_sizes[MAX_COMBOS];
   int count;
+};
+
+struct NetUpdatePile {
+  struct Card card;
+  bool is_opponent_pile;
 };
 
 #endif

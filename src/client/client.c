@@ -103,6 +103,12 @@ void run_game(GSocketConnection *connection){
             case REQ_COMBO:
                 g_print("REQ_COMBO\n");
                 break;
+            case UPDATE_PILE:
+                struct NetUpdatePile *net_pile = (struct NetUpdatePile*)payload;
+                struct Card *card = calloc(1, sizeof(struct Card));
+                *card = net_pile->card;
+                update_ui_place_on_pile(card, net_pile->is_opponent_pile);
+                break;
         }
 
         free(payload);

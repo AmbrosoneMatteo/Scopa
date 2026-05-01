@@ -1,5 +1,6 @@
 #ifndef COMMUNICATION_H
 #define COMMUNICATION_H
+#include <stdbool.h>
 
 // Enum that rapresents the type of the packet
 enum MsgType {
@@ -10,7 +11,8 @@ enum MsgType {
   UPDATE_TABLE, // Update the table
   OPPONENT_CARD, // Send to the player the card played by the opponent
   REQ_COMBO, // Request the player to select a possible combination when there is more than one possible
-  PLAY_COMBO // Combination played by the player
+  PLAY_COMBO, // Combination played by the player
+  UPDATE_PILE // Update the player or opponent UI pile
 };
 
 // Structure used as header of the packets that are sent from and to the server
@@ -28,6 +30,7 @@ void send_packet_oppcard(GOutputStream *out, struct Card *card);
 void send_packet_reqcombo(GOutputStream *out, struct CombinationNode *combo_list);
 void send_packet_init(GOutputStream *out);
 void send_packet_playcard(GOutputStream *out, struct Card *card);
+void send_packet_updatepile(GOutputStream *out, struct Card *card, bool is_opponent_pile);
 struct Card *receive_packet_card(GInputStream *in);
 int receive_packet_comboselect(GInputStream *in);
 

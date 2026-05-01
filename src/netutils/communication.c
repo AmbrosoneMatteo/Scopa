@@ -45,6 +45,16 @@ void send_packet_playcard(GOutputStream *out, struct Card *card){
   send_packet(out, PLAY_CARD, card, sizeof(struct Card));
 }
 
+// Function that sends to the client the signal to update the UI pile
+// to display the last card played that took a something from the table
+void send_packet_updatepile(GOutputStream *out, struct Card *card, bool is_opponent_pile){
+  struct NetUpdatePile *net_pile = calloc(1, sizeof(struct NetUpdatePile));
+  net_pile->card = *card;
+  net_pile->is_opponent_pile = is_opponent_pile;
+  send_packet(out, UPDATE_PILE, net_pile, sizeof(struct NetUpdatePile));
+  free(net_pile);
+}
+
 // Function that receives the player played card from the input stream
 // and parses it to a struct Card. A pointer to the card is returned
 struct Card *receive_packet_card(GInputStream *in){

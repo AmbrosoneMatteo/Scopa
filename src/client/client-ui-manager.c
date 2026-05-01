@@ -51,6 +51,15 @@ void update_ui_opponent_hand_cards_count(int cards_in_hand){
     g_idle_add(client_place_all_cards_on_hand, data);
 }
 
+// Function that updates the UI with the last card played by the player
+// or opponent. The card played is displayed in the dedicated pile box.
+void update_ui_place_on_pile(struct Card *card, bool is_opponent_pile){
+    struct PileUiData *data = calloc(1, sizeof(struct PileUiData));
+    data->pile = (is_opponent_pile) ? main_window->player2_pile : main_window->player1_pile;
+    data->card = card;
+    g_idle_add(client_place_card_on_pile, data);
+}
+
 void update_ui_enable_cards(void){
     g_idle_add(client_enable_player_cards, main_window->player_cards);
 }
@@ -80,6 +89,15 @@ gboolean client_place_all_cards_on_hand(gpointer user_data){
         }
         free(data->hand);
     }
+    free(data);
+
+    return G_SOURCE_REMOVE;
+}
+
+gboolean client_place_card_on_pile(gpointer user_data){
+    struct PileUiData *data = (struct PileUiData*)user_data;
+    place_card_on_pile(data->pile, data->card);
+    free(data->card);
     free(data);
 
     return G_SOURCE_REMOVE;
