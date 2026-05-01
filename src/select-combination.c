@@ -166,7 +166,7 @@ void add_combinations(SelectCombinationWindow * self, struct CombinationNode * n
 
     gtk_list_view_set_factory(self->list_view, factory);
     gtk_list_view_set_model(self->list_view, GTK_SELECTION_MODEL(selection));
-    g_object_unref(selection); // safe now: list_view holds the ref
+    g_object_unref(selection);
 
     g_object_unref(factory);
 }

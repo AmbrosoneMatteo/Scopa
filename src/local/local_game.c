@@ -27,6 +27,7 @@
 #include "engine/game-assets.h"
 #include "scopa-application.h"
 #include "scopa-window.h"
+#include "endgame-dialog.h"
 
 /**
  Linked list of the memorized cards that the algorithm
@@ -156,6 +157,22 @@ player_play_card(int player_card_index) {
           print_pile (player_pile);
           printf("bot pile: ");
           print_pile (bot_pile);
+
+          // open the endgame dialog
+          ScopaApplication *app = SCOPA_APPLICATION(g_application_get_default());
+                      GtkWindow *parent;
+          EndGameDialogWindow *window;
+
+          g_assert (SCOPA_IS_WINDOW (main_window));
+          parent = gtk_application_get_active_window (GTK_APPLICATION (app));
+          window = g_object_new (ENDGAME_DIALOG_TYPE_WINDOW,
+                                 "application", app,
+                                 "transient-for", parent,
+                                 "modal", TRUE,
+                                 NULL);
+
+          set_cards(window, player_pile, bot_pile, player_scope, bot_scope);
+          gtk_window_present (GTK_WINDOW (window));
       } else {
           place_all_cards_on_hand(main_window,main_window->adversary_cards,bot_hand);
           place_all_cards_on_hand(main_window,main_window->player_cards,player_hand);

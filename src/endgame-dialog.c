@@ -23,6 +23,28 @@
 G_DEFINE_FINAL_TYPE (EndGameDialogWindow, endgame_dialog_window,
                      ADW_TYPE_APPLICATION_WINDOW)
 
+#define CARD_TYPE_ITEM (card_item_get_type())
+G_DECLARE_FINAL_TYPE(CardItem, card_item, CARD, ITEM, GObject)
+
+struct _CardItem {
+    GObject parent;
+    guint   index;
+    struct Card *card;
+};
+
+G_DEFINE_TYPE(CardItem, card_item, G_TYPE_OBJECT)
+
+static void card_item_class_init(CardItemClass *klass) { (void)klass; }
+static void card_item_init(CardItem *self)              { (void)self;  }
+static CardItem *
+card_item_new(guint index, struct Card *card)
+{
+    CardItem *item = g_object_new(CARD_TYPE_ITEM, NULL);
+    item->index = index;
+    item->card  = card;
+    return item;
+}
+
 static void
 endgame_dialog_window_class_init (EndGameDialogWindowClass *klass)
 {
@@ -62,6 +84,49 @@ endgame_dialog_window_class_init (EndGameDialogWindowClass *klass)
                                           player2_listview);
 }
 
+void
+build_card_item(GtkWidget *image, struct Card *card)
+{
+
+    char *path;
+    int value = card->value;
+    char suit = suit_strings[card->suit];
+    asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+             value, suit);
+
+    gtk_image_set_from_resource ((GtkImage *)image, path);
+
+    gtk_widget_set_vexpand (image, true);
+    gtk_widget_set_hexpand (image, true);
+    gtk_widget_set_vexpand_set (image, true);
+    gtk_widget_set_hexpand_set (image, true);
+    gtk_image_set_pixel_size ((GtkImage*)image, 160);
+}
+
+static void
+setup_listitem_cb (GtkListItemFactory *factory,
+                   GtkListItem        *list_item)
+{
+  GtkWidget *image = gtk_image_new();
+  gtk_list_item_set_child (list_item, image);
+}
+
+static void
+bind_listitem_cb (GtkListItemFactory *factory,
+                  GtkListItem        *list_item,
+                  gpointer           *user_data)
+{
+  (void)factory;
+  GtkWidget *image;
+  CardItem *item;
+
+  image = gtk_list_item_get_child (list_item);
+  item = CARD_ITEM(gtk_list_item_get_item(list_item));
+  GtkWidget *list_view = gtk_list_item_get_child(list_item);
+
+  build_card_item(image, item->card);
+}
+
 void set_cards(EndGameDialogWindow *self,
                struct CardNode     *player1_pile,
                struct CardNode     *player2_pile,
@@ -73,20 +138,62 @@ void set_cards(EndGameDialogWindow *self,
     int sette = 0;
     bool settebello = false;
 
-    do {
-        count++;
-        struct Card * card = player1_pile->card;
-        if (card->suit==DIAMONDS) {
-            ori++;
-            if (card->value == 7){
+    self->store1 = g_list_store_new(CARD_TYPE_ITEM);
+    self->store2 = g_list_store_new(CARD_TYPE_ITEM);
+    // assign the scores for the player 1. For the second is sufficient to invert
+    // the scores
+    if (player1_pile!=NULL) {
+        do {
+            count++;
+            struct Card * card = player1_pile->card;
+            if (card->suit==DIAMONDS) {
+                ori++;
+                if (card->value == 7){
+                    sette++;
+                    set_settebello (self, self->player1_settebello);
+                    settebello=true;
+                }
+            } else if (card->value==7 && card->suit!=DIAMONDS)
                 sette++;
-                set_settebello (self, self->player1_settebello);
-                settebello=true;
-            }
-        } else if (card->value==7 && card->suit!=DIAMONDS)
-            sette++;
-        player1_pile = player1_pile->next;
-    } while(player1_pile!=NULL);
+
+            // create the item for the store
+            CardItem *item = card_item_new (count, card);
+            g_list_store_append(self->store1, item);
+            g_object_unref (item);
+
+            player1_pile = player1_pile->next;
+        } while(player1_pile!=NULL);
+    }
+
+    // create and assign the items for the second player
+    if (player2_pile!=NULL) {
+        do {
+            struct Card * card = player2_pile->card;
+            CardItem *item = card_item_new (count, card);
+            g_list_store_append(self->store2, item);
+            g_object_unref (item);
+            player2_pile = player2_pile->next;
+        } while(player2_pile!=NULL);
+    }
+
+    GtkNoSelection *selection1 = gtk_no_selection_new(G_LIST_MODEL(self->store1));
+    GtkListItemFactory *factory1 = gtk_signal_list_item_factory_new ();
+    g_signal_connect (factory1, "setup", G_CALLBACK (setup_listitem_cb), NULL);
+    g_signal_connect (factory1, "bind", G_CALLBACK(bind_listitem_cb), self);
+    gtk_list_view_set_factory(self->player1_listview, factory1);
+    gtk_list_view_set_model(self->player1_listview, GTK_SELECTION_MODEL(selection1));
+
+    GtkNoSelection *selection2 = gtk_no_selection_new(G_LIST_MODEL(self->store2));
+    GtkListItemFactory *factory2 = gtk_signal_list_item_factory_new ();
+    g_signal_connect (factory2, "setup", G_CALLBACK (setup_listitem_cb), NULL);
+    g_signal_connect (factory2, "bind", G_CALLBACK(bind_listitem_cb), self);
+    gtk_list_view_set_factory(self->player2_listview, factory2);
+    gtk_list_view_set_model(self->player2_listview, GTK_SELECTION_MODEL(selection2));
+
+    g_object_unref(selection1);
+    g_object_unref(selection2);
+    g_object_unref(factory1);
+    g_object_unref(factory2);
 
     if(!settebello)
         set_settebello (self, self->player2_settebello);

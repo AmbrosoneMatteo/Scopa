@@ -3,10 +3,7 @@
 #include <adwaita.h>
 #include "engine/game-assets.h"
 
-#define SELECT_COMBINATION_TYPE_WINDOW (select_combination_window_get_type())
-
-G_DECLARE_FINAL_TYPE (EndGameDialogWindow, endgame_dialog_window,
-                       ENDGAMEDIALOG, WINDOW, AdwApplicationWindow)
+#define ENDGAME_DIALOG_TYPE_WINDOW (endgame_dialog_window_get_type())
 
 struct _EndGameDialogWindow
 {
@@ -25,7 +22,12 @@ struct _EndGameDialogWindow
     GtkLabel        *player2_settebello;
     GtkListView     *player1_listview;
     GtkListView     *player2_listview;
+    GListStore      *store1;
+    GListStore      *store2;
 };
+
+G_DECLARE_FINAL_TYPE (EndGameDialogWindow, endgame_dialog_window,
+                       ENDGAMEDIALOG, WINDOW, AdwApplicationWindow)
 
 void set_scope(EndGameDialogWindow *self, int player1_count, int player2_count);
 void set_card_count(EndGameDialogWindow *self, int player1_count, int player2_count);
