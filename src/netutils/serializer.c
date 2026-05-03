@@ -92,3 +92,40 @@ struct Table *deserialize_table(struct NetTable *net_table){
   table->count = net_table->count;
   return table;
 }
+
+// Function that deserializes the NetCombinationList structure received from
+// the network to a CombinationNode structure
+struct CombinationNode *deserialize_combination_list(struct NetCombinationList *net_list){
+  struct CombinationNode *list = calloc(1, sizeof(struct CombinationNode));
+  struct CombinationNode *list_head = NULL;
+  if(list == NULL){
+    return NULL;
+  }
+  for(int i = 0; i < net_list->count; i++){
+    struct CombinationList *combo_list = calloc(1, sizeof(struct CombinationList));
+    if(combo_list == NULL){
+      return NULL;
+    }
+    for(int j = 0; j < net_list->combo_sizes[i]; j++){
+      struct Card *card = calloc(1, sizeof(struct Card));
+      *card = net_list->combinations[i][j];
+      if(combo_list->node == NULL){
+        combo_list->node = append_card(combo_list->node, card);
+      }else{
+        append_card(combo_list->node, card);
+      }
+    }
+    list->list = combo_list;
+    if(i < net_list->count - 1){ // If it is not the last combination in the list
+      list->next = calloc(1, sizeof(struct CombinationNode));
+      if(list->next == NULL){
+        return NULL;
+      }
+      if(i == 0){
+        list_head = list;
+      }
+      list = list->next;
+    }
+  }
+  return list_head;
+}

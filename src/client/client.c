@@ -12,6 +12,8 @@
 // Queue to pass the card dropped by the player from
 // the GUI thread to the client thread
 GAsyncQueue *player_card_queue = NULL;
+// Queue to manage the combination selected by the player from the dedicated dialog
+GAsyncQueue *player_combo_queue = NULL;
 // Variable to define if the network client is running or if the game is local
 bool is_network_game = false;
 
@@ -50,6 +52,9 @@ void run_game(GSocketConnection *connection){
         // Creating the queue
         player_card_queue = g_async_queue_new();
     }
+    if(player_combo_queue == NULL){
+        player_combo_queue = g_async_queue_new();
+    }
     is_network_game = true;
     g_print("Client successfully connected to the server\n");
 
@@ -70,7 +75,6 @@ void run_game(GSocketConnection *connection){
                 update_ui_opponent_hand_cards_count(opponent_cards_count);
                 break;
             case REQ_CARD:
-                g_print("REQ_CARD\n");
                 update_ui_enable_cards();
                 // Waiting for the player card to be received in the queue
                 gpointer queue_card = g_async_queue_pop(player_card_queue);
@@ -81,7 +85,6 @@ void run_game(GSocketConnection *connection){
                 update_ui_disable_cards();
                 break;
             case SET_HAND:
-                g_print("SET_HAND\n");
                 payload = (struct NetHand*)payload;
                 hand = deserialize_hand(payload);
                 update_ui_hand(hand);
@@ -91,7 +94,6 @@ void run_game(GSocketConnection *connection){
                 }
                 break;
             case UPDATE_TABLE:
-                g_print("UPDATE_TABLE\n");
                 payload = (struct NetTable*)payload;
                 struct Table *table = deserialize_table(payload);
                 update_ui_table(table);
@@ -101,7 +103,8 @@ void run_game(GSocketConnection *connection){
                 update_ui_opponent_hand_cards_count(opponent_cards_count);
                 break;
             case REQ_COMBO:
-                g_print("REQ_COMBO\n");
+                payload = (struct NetCombinationList*)payload;
+                struct CombinationNode *combo_list = deserialize_combination_list(payload);
                 break;
             case UPDATE_PILE:
                 struct NetUpdatePile *net_pile = (struct NetUpdatePile*)payload;
