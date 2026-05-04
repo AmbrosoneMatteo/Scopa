@@ -1,4 +1,6 @@
 #include "engine/game-assets.h"
+#include "select-combination.h"
+
 #include "client-ui-manager.h"
 
 // Function that passes the data to the UI function that
@@ -60,6 +62,12 @@ void update_ui_place_on_pile(struct Card *card, bool is_opponent_pile){
     g_idle_add(client_place_card_on_pile, data);
 }
 
+// Function that shows the dialog for the user to select an available
+// combination to play if there are more than 2
+void update_ui_show_combinations_dialog(struct CombinationNode *combinations){
+    g_idle_add(client_show_combinations_dialog, combinations);
+}
+
 void update_ui_enable_cards(void){
     g_idle_add(client_enable_player_cards, main_window->player_cards);
 }
@@ -99,6 +107,23 @@ gboolean client_place_card_on_pile(gpointer user_data){
     place_card_on_pile(data->pile, data->card);
     free(data->card);
     free(data);
+
+    return G_SOURCE_REMOVE;
+}
+
+gboolean client_show_combinations_dialog(gpointer user_data){
+    struct CombinationNode *combinations = (struct CombinationNode *)user_data;
+    ScopaApplication *app = SCOPA_APPLICATION(g_application_get_default());
+    GtkWindow *parent = gtk_application_get_active_window(GTK_APPLICATION(app));
+    SelectCombinationWindow *window = g_object_new(
+        SELECT_COMBINATION_TYPE_WINDOW,
+        "application", app,
+        "transient-for", parent,
+        "modal", TRUE,
+        NULL
+    );
+    add_combinations(window, combinations);
+    gtk_window_present(GTK_WINDOW(window));
 
     return G_SOURCE_REMOVE;
 }

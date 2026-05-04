@@ -105,6 +105,7 @@ void run_game(GSocketConnection *connection){
             case REQ_COMBO:
                 payload = (struct NetCombinationList*)payload;
                 struct CombinationNode *combo_list = deserialize_combination_list(payload);
+                update_ui_show_combinations_dialog(combo_list);
                 break;
             case UPDATE_PILE:
                 struct NetUpdatePile *net_pile = (struct NetUpdatePile*)payload;
