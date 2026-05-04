@@ -1,4 +1,7 @@
+#include <gtk/gtk.h>
 #include "config.h"
+#include "client/client.h"
+
 #include "select-combination.h"
 
 #define COMBO_TYPE_ITEM (combo_item_get_type())
@@ -85,8 +88,16 @@ on_combination_clicked(GtkButton *button, gpointer user_data)
 
     g_print("Combination %u clicked\n", index);
     selected_index = index;
-
-    g_signal_emit(self, signals[0], 0);
+    // If the game is played over the network, the selected combination needs
+    // to be sent to the client thread via the dedicated queue
+    if(is_network_game){
+        int *combo_index = malloc(sizeof(int));
+        *combo_index = index;
+        g_async_queue_push(player_combo_queue, combo_index);
+        gtk_window_destroy(GTK_WINDOW(self));
+    }else{
+        g_signal_emit(self, signals[0], 0);
+    }
 }
 
 int

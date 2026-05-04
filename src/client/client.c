@@ -106,6 +106,12 @@ void run_game(GSocketConnection *connection){
                 payload = (struct NetCombinationList*)payload;
                 struct CombinationNode *combo_list = deserialize_combination_list(payload);
                 update_ui_show_combinations_dialog(combo_list);
+                // Waiting for the player to choice a combination
+                gpointer queue_combo = g_async_queue_pop(player_combo_queue);
+                int *combo_index = (int*)queue_combo;
+                // Sending selected combination index to the server
+                send_packet_playcombo(out, *combo_index);
+                free(combo_index);
                 break;
             case UPDATE_PILE:
                 struct NetUpdatePile *net_pile = (struct NetUpdatePile*)payload;

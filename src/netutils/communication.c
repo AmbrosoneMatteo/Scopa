@@ -55,6 +55,10 @@ void send_packet_updatepile(GOutputStream *out, struct Card *card, bool is_oppon
   free(net_pile);
 }
 
+void send_packet_playcombo(GOutputStream *out, int combo_index){
+  send_packet(out, PLAY_COMBO, &combo_index, sizeof(int));
+}
+
 // Function that receives the player played card from the input stream
 // and parses it to a struct Card. A pointer to the card is returned
 struct Card *receive_packet_card(GInputStream *in){

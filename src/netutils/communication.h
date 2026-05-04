@@ -31,6 +31,7 @@ void send_packet_reqcombo(GOutputStream *out, struct CombinationNode *combo_list
 void send_packet_init(GOutputStream *out);
 void send_packet_playcard(GOutputStream *out, struct Card *card);
 void send_packet_updatepile(GOutputStream *out, struct Card *card, bool is_opponent_pile);
+void send_packet_playcombo(GOutputStream *out, int combo_index);
 struct Card *receive_packet_card(GInputStream *in);
 int receive_packet_comboselect(GInputStream *in);
 
