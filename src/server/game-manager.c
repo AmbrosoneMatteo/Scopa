@@ -42,6 +42,7 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
   // Structures to store the cards collected by each player during the game
   struct CardNode *player_piles[2] = {NULL, NULL};
   int scope_counter[2] = {0, 0};
+  int last_grabber;
   send_packet_init(player1_out);
   send_packet_init(player2_out);
 
@@ -98,6 +99,7 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
         // Sending packet to update UI pile if the player took something from the table
         send_packet_updatepile(out_streams[current_player], card, false);
         send_packet_updatepile(out_streams[opponent], card, true);
+        last_grabber = current_player;
       }else{
         // The player cannot take anything from the table
         // Adding the card the table
@@ -122,6 +124,8 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
     get_hand(deck, player1_hand);
     get_hand(deck, player2_hand);
   }
-
-  g_print("START\n");
+  // Game end
+  clear_table_endgame(table, player_piles[last_grabber]);
+  send_packet_table(player1_out, table);
+  send_packet_table(player2_out, table);
 }

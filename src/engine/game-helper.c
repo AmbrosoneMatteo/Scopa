@@ -403,6 +403,17 @@ void remove_combination_from_table(struct Table *table, struct CombinationList *
     }
 }
 
+// Fucntion used at the end of the game that clears the table struct
+// and updates the player's pile adding the remaining cards from the table.
+void clear_table_endgame(struct Table *table, struct CardNode *player_pile){
+    while(table->node != NULL){
+        struct CardNode *node = table->node;
+        table->node = node->next;
+        table->count--;
+        append_node(player_pile, node);
+    }
+}
+
 /*
  * This function removes the first node of a linked list and
  * returns a pointer to the next one
