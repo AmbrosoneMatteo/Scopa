@@ -15,11 +15,13 @@ struct _EndGameDialogWindow
     GtkLabel        *player1_scope_count;
     GtkLabel        *player1_sette_count;
     GtkLabel        *player1_settebello;
+    GtkLabel        *player1_win;
     GtkLabel        *player2_card_count;
     GtkLabel        *player2_ori_count;
     GtkLabel        *player2_scope_count;
     GtkLabel        *player2_sette_count;
     GtkLabel        *player2_settebello;
+    GtkLabel        *player2_win;
     GtkListView     *player1_listview;
     GtkListView     *player2_listview;
     GListStore      *store1;
@@ -41,4 +43,5 @@ void set_cards(EndGameDialogWindow *self,
                int player2_scope);
 
 G_END_DECLS
+
 

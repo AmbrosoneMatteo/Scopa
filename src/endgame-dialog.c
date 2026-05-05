@@ -82,6 +82,11 @@ endgame_dialog_window_class_init (EndGameDialogWindowClass *klass)
                                           player1_listview);
     gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
                                           player2_listview);
+
+    gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
+                                          player1_win);
+    gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
+                                          player2_win);
 }
 
 void
@@ -138,6 +143,9 @@ void set_cards(EndGameDialogWindow *self,
     int sette = 0;
     bool settebello = false;
 
+    int player1_points = 0;
+    int player2_points = 0;
+
     self->store1 = g_list_store_new(CARD_TYPE_ITEM);
     self->store2 = g_list_store_new(CARD_TYPE_ITEM);
     // assign the scores for the player 1. For the second is sufficient to invert
@@ -151,6 +159,7 @@ void set_cards(EndGameDialogWindow *self,
                 if (card->value == 7){
                     sette++;
                     set_settebello (self, self->player1_settebello);
+                    player1_points++;
                     settebello=true;
                 }
             } else if (card->value==7 && card->suit!=DIAMONDS)
@@ -195,8 +204,45 @@ void set_cards(EndGameDialogWindow *self,
     g_object_unref(factory1);
     g_object_unref(factory2);
 
-    if(!settebello)
+    if(!settebello) {
         set_settebello (self, self->player2_settebello);
+        player2_points++;
+    }
+
+    if(count>20)
+        player1_points++;
+    else if (count<20)
+        player2_points++;
+
+    if(ori>5)
+        player1_points++;
+    else if(ori<5)
+        player2_points++;
+
+    if(sette>2)
+        player1_points++;
+    else if(sette<2)
+        player2_points++;
+
+    player1_points+=player1_scope;
+    player2_points+=player2_scope;
+
+    char* msg1;
+    char* msg2;
+    if(player1_points>player2_points) {
+        asprintf (&msg1, "Player 1 won points: %d", player1_points);
+        asprintf (&msg2, "Player 2 lost, points: %d", player2_points);
+    }
+    else if (player1_points<player2_points) {
+        asprintf (&msg1, "Player 1 lost, points: %d", player1_points);
+        asprintf (&msg2, "Player 2 won, points: %d", player2_points);
+    } else {
+        asprintf (&msg1, "It's a draw, points: %d", player1_points);
+        asprintf (&msg2, "It's a draw, points: %d", player2_points);
+    }
+
+    gtk_label_set_text (self->player1_win, msg1);
+    gtk_label_set_text (self->player2_win, msg2);
 
     set_card_count(self, count, DECK_SIZE-count);
     set_ori_count (self, ori, 10-ori);
@@ -253,4 +299,5 @@ endgame_dialog_window_init (EndGameDialogWindow *self)
 {
     gtk_widget_init_template (GTK_WIDGET (self));
 }
+
 
