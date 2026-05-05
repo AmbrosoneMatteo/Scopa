@@ -61,12 +61,12 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
       send_packet_reqcard(out_streams[current_player]);
       struct Card *card = receive_packet_card(in_streams[current_player]);
       if(card == NULL){
-        g_error("Error receiving card, game aborted\n");
+        g_error("SERVER: Error receiving card, game aborted\n");
         return;
       }
-      g_print("Player played: %d of %d\n", card->value, card->suit); // Temp debug info
+      g_print("SERVER: Player played: %d of %c\n", card->value, suit_strings[card->suit]); // Temp debug info
       if(!hand_has_card(hands[current_player], card)){
-        g_error("Error: card played not found in user's hand, game aborted\n");
+        g_error("SERVER: Error: card played not found in user's hand, game aborted\n");
         return;
       }
 
@@ -85,7 +85,7 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
           int combo_index = receive_packet_comboselect(in_streams[current_player]);
           struct CombinationList *combo = get_combination_at_index(combinations, combo_index);
           if(combo == NULL){
-            g_error("Error receiving combination, game aborted\n");
+            g_error("SERVER: Error receiving combination, game aborted\n");
             return;
           }
           remove_combination_from_table(table, combo, &player_piles[current_player]);
@@ -128,4 +128,7 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
   clear_table_endgame(table, player_piles[last_grabber]);
   send_packet_table(player1_out, table);
   send_packet_table(player2_out, table);
+  send_packet_endgame(player1_out, player_piles[0], player_piles[1], scope_counter[0], scope_counter[1]);
+  send_packet_endgame(player2_out, player_piles[1], player_piles[0], scope_counter[1], scope_counter[0]);
+  g_print("SERVER: Game ended!\n");
 }

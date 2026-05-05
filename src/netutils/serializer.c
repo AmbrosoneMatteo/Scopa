@@ -57,6 +57,21 @@ struct NetCombinationList *serialize_combination_list(struct CombinationNode *li
   return net_list;
 }
 
+// Function that serializes the player's pile to a structure that
+// does not use pointers so that can be send over the network
+struct NetPile *serialize_pile(struct CardNode *pile){
+  struct NetPile *net_pile = calloc(1, sizeof(struct NetPile));
+  struct CardNode *node = pile;
+  int counter = 0;
+  while(node != NULL){
+    net_pile->cards[counter] = *(node->card);
+    node = node->next;
+    counter++;
+  }
+  net_pile->count = counter;
+  return net_pile;
+}
+
 // Function that deserializes the NetHand structure received from
 // the network to a Hand structure
 struct Hand *deserialize_hand(struct NetHand *net_hand){

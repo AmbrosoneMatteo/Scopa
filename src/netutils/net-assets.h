@@ -29,4 +29,16 @@ struct NetUpdatePile {
   bool is_opponent_pile;
 };
 
+struct NetPile{
+  struct Card cards[DECK_SIZE];
+  int count;
+};
+
+struct NetEndGameData {
+  struct NetPile player_pile;
+  struct NetPile opponent_pile;
+  int player_scope;
+  int opponent_scope;
+};
+
 #endif

@@ -59,6 +59,19 @@ void send_packet_playcombo(GOutputStream *out, int combo_index){
   send_packet(out, PLAY_COMBO, &combo_index, sizeof(int));
 }
 
+// Function that sends to the client the end of the game signal with the scores
+void send_packet_endgame(GOutputStream *out, struct CardNode *player_pile,
+  struct CardNode *opponent_pile, int player_scope, int opponent_scope){
+
+  struct NetEndGameData *net_endgame = calloc(1, sizeof(struct NetEndGameData));
+  net_endgame->player_pile = *(serialize_pile(player_pile));
+  net_endgame->opponent_pile = *(serialize_pile(opponent_pile));
+  net_endgame->player_scope = player_scope;
+  net_endgame->opponent_scope = opponent_scope;
+  send_packet(out, GAME_END, net_endgame, sizeof(struct NetEndGameData));
+  free(net_endgame);
+}
+
 // Function that receives the player played card from the input stream
 // and parses it to a struct Card. A pointer to the card is returned
 struct Card *receive_packet_card(GInputStream *in){
