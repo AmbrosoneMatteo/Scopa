@@ -230,12 +230,12 @@ void set_cards(EndGameDialogWindow *self,
     char* msg1;
     char* msg2;
     if(player1_points>player2_points) {
-        asprintf (&msg1, "Player 1 won points: %d", player1_points);
-        asprintf (&msg2, "Player 2 lost, points: %d", player2_points);
+        asprintf (&msg1, "Opponent won points: %d", player1_points);
+        asprintf (&msg2, "You lost, points: %d", player2_points);
     }
     else if (player1_points<player2_points) {
-        asprintf (&msg1, "Player 1 lost, points: %d", player1_points);
-        asprintf (&msg2, "Player 2 won, points: %d", player2_points);
+        asprintf (&msg1, "Opponent lost, points: %d", player1_points);
+        asprintf (&msg2, "You won, points: %d", player2_points);
     } else {
         asprintf (&msg1, "It's a draw, points: %d", player1_points);
         asprintf (&msg2, "It's a draw, points: %d", player2_points);
@@ -287,9 +287,9 @@ void set_ori_count(EndGameDialogWindow *self, int player1_count, int player2_cou
 }
 
 void set_settebello(EndGameDialogWindow *self, GtkLabel *label) {
-    gtk_label_set_text (label, "ül g'hà");
+    gtk_label_set_text (label, "ül g'hà"); // (The player has the settebello)
     if(label == self->player1_settebello)
-        gtk_label_set_text (self->player2_settebello, "ül g'hà mia");
+        gtk_label_set_text (self->player2_settebello, "ül g'hà mia"); // (The player does not have the settebello)
     else
         gtk_label_set_text (self->player1_settebello, "ül g'hà mia");
 }

@@ -47,7 +47,7 @@ void start_game(GSocketConnection *player1, GSocketConnection *player2){
   send_packet_init(player2_out);
 
   // Game loop
-  while(deck->count >= 6){ // There are enough cards to deal the last hand
+  for(int rounds = 0; rounds < 6; rounds++){ // A scopa game has exactly 6 rounds
     send_packet_hand(player1_out, player1_hand);
     send_packet_hand(player2_out, player2_hand);
     send_packet_table(player1_out, table);

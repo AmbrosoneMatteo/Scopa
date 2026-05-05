@@ -64,11 +64,15 @@ void send_packet_endgame(GOutputStream *out, struct CardNode *player_pile,
   struct CardNode *opponent_pile, int player_scope, int opponent_scope){
 
   struct NetEndGameData *net_endgame = calloc(1, sizeof(struct NetEndGameData));
-  net_endgame->player_pile = *(serialize_pile(player_pile));
-  net_endgame->opponent_pile = *(serialize_pile(opponent_pile));
+  struct NetPile *net_player_pile = serialize_pile(player_pile);
+  struct NetPile *net_opponent_pile = serialize_pile(opponent_pile);
+  net_endgame->player_pile = *net_player_pile;
+  net_endgame->opponent_pile = *net_opponent_pile;
   net_endgame->player_scope = player_scope;
   net_endgame->opponent_scope = opponent_scope;
   send_packet(out, GAME_END, net_endgame, sizeof(struct NetEndGameData));
+  free(net_player_pile);
+  free(net_opponent_pile);
   free(net_endgame);
 }
 

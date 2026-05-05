@@ -34,6 +34,9 @@
                             <property name="orientation">vertical</property>
                             <property name="vexpand">True</property>
                             <property name="vexpand-set">True</property>
+                            <property name="spacing">24</property>
+                            <property name="margin-top">24</property>
+                            <property name="margin-bottom">24</property>
                             <child>
                               <object class="GtkBox">
                                 <property name="hexpand">True</property>
@@ -41,10 +44,14 @@
                                 <property name="valign">start</property>
                                 <property name="vexpand">True</property>
                                 <property name="vexpand-set">True</property>
+                                <property name="spacing">12</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="halign">start</property>
                                     <property name="label">Insert difficulty: </property>
+                                    <style>
+                                      <class name="dim-label"/>
+                                    </style>
                                   </object>
                                 </child>
                                 <child>
@@ -62,7 +69,6 @@
                                     <property name="halign">start</property>
                                     <property name="hexpand">True</property>
                                     <property name="hexpand-set">True</property>
-                                    <property name="margin-start">00</property>
                                     <property name="wrap">True</property>
                                   </object>
                                 </child>
@@ -75,9 +81,11 @@
                                 <property name="valign">end</property>
                                 <property name="vexpand">True</property>
                                 <property name="vexpand-set">True</property>
+                                <property name="margin-top">12</property>
                                 <signal name="clicked" handler="on_start_local_clicked"/>
                                 <style>
                                   <class name="suggested-action"/>
+                                  <class name="pill"/>
                                 </style>
                               </object>
                             </child>
@@ -103,6 +111,7 @@
                             <property name="valign">start</property>
                             <property name="vexpand">True</property>
                             <property name="vexpand-set">True</property>
+                            <property name="spacing">16</property>
                             <child type="top">
                               <object class="AdwViewSwitcher">
                                 <property name="policy">wide</property>
@@ -110,6 +119,7 @@
                                 <property name="valign">start</property>
                                 <property name="vexpand">True</property>
                                 <property name="vexpand-set">True</property>
+                                <property name="margin-bottom">12</property>
                               </object>
                             </child>
                             <child type="bottom">
@@ -136,9 +146,12 @@
                                             <property name="valign">start</property>
                                             <property name="vexpand">true</property>
                                             <property name="vexpand-set">True</property>
+                                            <property name="spacing">16</property>
                                             <child>
                                               <object class="GtkEntry" id="ip_address_number">
                                                 <property name="placeholder-text">ip address or hostname</property>
+                                                <property name="halign">center</property>
+                                                <property name="width-request">250</property>
                                               </object>
                                             </child>
                                             <child>
@@ -146,9 +159,14 @@
                                                 <property name="hexpand">true</property>
                                                 <property name="orientation">horizontal</property>
                                                 <property name="vexpand">true</property>
+                                                <property name="halign">center</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkLabel">
                                                     <property name="label">port number</property>
+                                                    <style>
+                                                      <class name="dim-label"/>
+                                                    </style>
                                                   </object>
                                                 </child>
                                                 <child>
@@ -156,7 +174,6 @@
                                                     <property name="halign">start</property>
                                                     <property name="hexpand">True</property>
                                                     <property name="hexpand-set">True</property>
-                                                    <property name="margin-start">10</property>
                                                     <property name="adjustment">
                                                       <object class="GtkAdjustment">
                                                         <property name="page-increment">1.0</property>
@@ -177,9 +194,11 @@
                                                 <property name="valign">end</property>
                                                 <property name="vexpand">True</property>
                                                 <property name="vexpand-set">True</property>
+                                                <property name="margin-top">12</property>
                                                 <signal name="clicked" handler="on_start_network_clicked"/>
                                                 <style>
                                                   <class name="suggested-action"/>
+                                                  <class name="pill"/>
                                                 </style>
                                               </object>
                                             </child>
@@ -200,14 +219,20 @@
                                             <property name="hexpand">true</property>
                                             <property name="orientation">vertical</property>
                                             <property name="vexpand">true</property>
+                                            <property name="spacing">16</property>
                                             <child>
                                               <object class="GtkBox">
                                                 <property name="hexpand">true</property>
                                                 <property name="orientation">horizontal</property>
                                                 <property name="vexpand">true</property>
+                                                <property name="halign">center</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkLabel">
                                                     <property name="label">port number</property>
+                                                    <style>
+                                                      <class name="dim-label"/>
+                                                    </style>
                                                   </object>
                                                 </child>
                                                 <child>
@@ -215,9 +240,7 @@
                                                     <property name="halign">start</property>
                                                     <property name="hexpand">True</property>
                                                     <property name="hexpand-set">True</property>
-                                                    <property name="margin-start">10</property>
                                                     <property name="valign">end</property>
-                                                    <property name="margin-start">00</property>
                                                     <property name="adjustment">
                                                       <object class="GtkAdjustment">
                                                         <property name="page-increment">1.0</property>
@@ -241,9 +264,11 @@
                                                 <property name="valign">end</property>
                                                 <property name="vexpand">True</property>
                                                 <property name="vexpand-set">True</property>
+                                                <property name="margin-top">12</property>
                                                 <signal name="clicked" handler="on_start_server_clicked"/>
                                                 <style>
                                                   <class name="suggested-action"/>
+                                                  <class name="pill"/>
                                                 </style>
                                               </object>
                                             </child>
