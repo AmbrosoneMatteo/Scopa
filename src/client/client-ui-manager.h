@@ -19,6 +19,13 @@ struct PileUiData{
     struct Card *card;
 };
 
+struct EndGameUiData{
+    struct CardNode *player_pile;
+    struct CardNode *opponent_pile;
+    int player_scope;
+    int opponent_scope;
+};
+
 void update_ui_table(struct Table * table);
 void update_ui_hand(struct Hand * hand);
 void update_ui_opponent_hand_cards_count(int cards_in_hand);
@@ -26,11 +33,14 @@ void update_ui_enable_cards(void);
 void update_ui_disable_cards(void);
 void update_ui_place_on_pile(struct Card *card, bool is_opponent_pile);
 void update_ui_show_combinations_dialog(struct CombinationNode *combinations);
+void update_ui_endgame_dialog(struct CardNode *player_pile,
+    struct CardNode *opponent_pile, int player_scope, int opponent_scope);
 gboolean client_place_all_cards_on_hand(gpointer user_data);
 gboolean client_place_cards_on_table(gpointer user_data);
 gboolean client_disable_player_cards(gpointer user_data);
 gboolean client_enable_player_cards(gpointer user_data);
 gboolean client_place_card_on_pile(gpointer user_data);
 gboolean client_show_combinations_dialog(gpointer user_data);
+gboolean client_show_endgame_dialog(gpointer user_data);
 
 #endif

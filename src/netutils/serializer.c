@@ -142,3 +142,19 @@ struct CombinationNode *deserialize_combination_list(struct NetCombinationList *
   }
   return list_head;
 }
+
+// Function that deserializes the NetPile structure received from
+// the network to a CardNode structure
+struct CardNode *deserialize_pile(struct NetPile *net_pile){
+  struct CardNode *pile = NULL;
+  for(int i = 0; i < net_pile->count; i++){
+    struct Card *card = calloc(1, (sizeof(struct Card)));
+    *card = net_pile->cards[i];
+    if(pile == NULL){
+      pile = append_card(pile, card);
+    }else{
+      append_card(pile, card);
+    }
+  }
+  return pile;
+}

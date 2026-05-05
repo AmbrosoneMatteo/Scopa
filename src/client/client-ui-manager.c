@@ -1,5 +1,6 @@
 #include "engine/game-assets.h"
 #include "select-combination.h"
+#include "endgame-dialog.h"
 
 #include "client-ui-manager.h"
 
@@ -68,6 +69,19 @@ void update_ui_show_combinations_dialog(struct CombinationNode *combinations){
     g_idle_add(client_show_combinations_dialog, combinations);
 }
 
+// Function that shows the endgame dialog with all the points and cards
+// that were played during the game
+void update_ui_endgame_dialog(struct CardNode *player_pile,
+    struct CardNode *opponent_pile, int player_scope, int opponent_scope){
+
+    struct EndGameUiData *data = calloc(1, sizeof(struct EndGameUiData));
+    data->player_pile = player_pile;
+    data->opponent_pile = opponent_pile;
+    data->player_scope = player_scope;
+    data->opponent_scope = opponent_scope;
+    g_idle_add(client_show_endgame_dialog, data);
+}
+
 void update_ui_enable_cards(void){
     g_idle_add(client_enable_player_cards, main_window->player_cards);
 }
@@ -124,6 +138,24 @@ gboolean client_show_combinations_dialog(gpointer user_data){
     );
     add_combinations(window, combinations);
     gtk_window_present(GTK_WINDOW(window));
+
+    return G_SOURCE_REMOVE;
+}
+
+gboolean client_show_endgame_dialog(gpointer user_data){
+    struct EndGameUiData *data = (struct EndGameUiData*)user_data;
+    ScopaApplication *app = SCOPA_APPLICATION(g_application_get_default());
+    GtkWindow *parent = gtk_application_get_active_window(GTK_APPLICATION(app));
+    EndGameDialogWindow *window = g_object_new(
+        ENDGAME_DIALOG_TYPE_WINDOW,
+        "application", app,
+        "transient-for", parent,
+        "modal", TRUE,
+        NULL
+    );
+    set_cards(window, data->player_pile, data->opponent_pile, data->player_scope, data->opponent_scope);
+    gtk_window_present(GTK_WINDOW(window));
+    free(data);
 
     return G_SOURCE_REMOVE;
 }

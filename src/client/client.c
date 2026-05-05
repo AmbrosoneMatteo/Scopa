@@ -66,10 +66,11 @@ void run_game(GSocketConnection *connection){
         struct GamePacket header;
         void *payload = receive_packet(in, &header);
         if(header.payload_length > 0 && payload == NULL){
-            g_print("Error receiving packet\n");
+            g_print("CLIENT: Error receiving packet\n");
             return;
         }
 
+        // Checking the packet header to determinate the action to perform
         switch(header.type){
             case INIT:
                 update_ui_opponent_hand_cards_count(opponent_cards_count);
@@ -118,6 +119,13 @@ void run_game(GSocketConnection *connection){
                 struct Card *card = calloc(1, sizeof(struct Card));
                 *card = net_pile->card;
                 update_ui_place_on_pile(card, net_pile->is_opponent_pile);
+                break;
+            case GAME_END:
+                struct NetEndGameData *net_endgame = (struct NetEndGameData*)payload;
+                struct CardNode *player_pile = deserialize_pile(&net_endgame->player_pile);
+                struct CardNode *opponent_pile = deserialize_pile(&net_endgame->opponent_pile);
+                update_ui_endgame_dialog(player_pile, opponent_pile, net_endgame->player_scope, net_endgame->opponent_scope);
+                game_over = true;
                 break;
         }
 

@@ -8,5 +8,6 @@ struct NetPile *serialize_pile(struct CardNode *pile);
 struct Hand *deserialize_hand(struct NetHand *net_hand);
 struct Table *deserialize_table(struct NetTable *net_table);
 struct CombinationNode *deserialize_combination_list(struct NetCombinationList *net_list);
+struct CardNode *deserialize_pile(struct NetPile *net_pile);
 
 #endif
