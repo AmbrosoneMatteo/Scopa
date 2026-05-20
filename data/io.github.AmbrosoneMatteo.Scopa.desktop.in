@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=scopa
+Exec=scopa
+Icon=io.github.AmbrosoneMatteo.Scopa
+Terminal=false
+Type=Application
+Categories=Games;
+Keywords=GTK;
+StartupNotify=true
+DBusActivatable=true
