@@ -262,7 +262,7 @@ void selection_made(SelectCombinationWindow *window, guint index, GMainLoop *loo
 static void
 on_window_closed(SelectCombinationWindow *window, GMainLoop *loop)
 {
-    combination_index = 0; // if the user closes the dialog, use the first combination
+    combination_index = -1; // if the user closes the dialog, use the first combination
     g_main_loop_quit(loop);
 }
 
@@ -301,7 +301,7 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode ** pil
                 NULL, G_CONNECT_DEFAULT
             );
 
-            g_signal_connect(window, "delete-event",
+            g_signal_connect(window, "destroy",
                  G_CALLBACK(on_window_closed), loop);
 
             add_combinations(window, combinations);
@@ -312,7 +312,12 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode ** pil
             // resuming
             g_main_loop_run(loop);
             g_main_loop_unref(loop);
-            gtk_window_close (GTK_WINDOW (window));
+
+            if (combination_index==-1) {
+                combination_index=0;
+            } else {
+                gtk_window_close (GTK_WINDOW (window));
+            }
 
             struct CombinationList *list = get_combination_at_index (combinations
                                                              , combination_index);
@@ -403,7 +408,7 @@ void remove_combination_from_table(struct Table *table, struct CombinationList *
     }
 }
 
-// Fucntion used at the end of the game that clears the table struct
+// Function used at the end of the game that clears the table struct
 // and updates the player's pile adding the remaining cards from the table.
 void clear_table_endgame(struct Table *table, struct CardNode *player_pile){
     while(table->node != NULL){
