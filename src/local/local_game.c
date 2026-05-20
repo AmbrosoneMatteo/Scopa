@@ -116,7 +116,7 @@ player_play_card(int player_card_index) {
       }
 
       remove_card_from_hand(player_hand, player_card);
-      remove_all_box_cards(main_window->table_top);
+      clear_table_cards (main_window);
       remove_all_box_cards (main_window->player_cards);
 
       struct Card * played_card = decide_move();

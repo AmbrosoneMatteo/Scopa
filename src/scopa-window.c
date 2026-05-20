@@ -29,14 +29,24 @@
 
 G_DEFINE_FINAL_TYPE (ScopaWindow, scopa_window, ADW_TYPE_APPLICATION_WINDOW)
 
+int top_cards = 0;
+int bottom_cards = 0;
+
 void
 remove_all_box_cards(GtkBox* box) {
-
     GtkWidget *child;
     while((child = gtk_widget_get_first_child ((GtkWidget *)box))
                                                 !=NULL) {
         gtk_box_remove (box, child);
     }
+}
+
+void
+clear_table_cards(ScopaWindow *self) {
+    top_cards = 0;
+    bottom_cards = 0;
+    remove_all_box_cards (self->table_top);
+    remove_all_box_cards (self->table_bottom);
 }
 
 void
@@ -80,10 +90,8 @@ place_cards_on_table(ScopaWindow* window, struct Table* current_table) {
     if(node==NULL)
         return ;// No cards present
 
-    int index = 0;
     do {
-        place_card_on_table (window, node->card, index);
-        index++;
+        place_card_on_table (window, node->card);
         node = node->next;
     } while (node!=NULL);
 }
@@ -98,7 +106,6 @@ show_stats(ScopaWindow *window, struct Hand* hand_top, struct Hand *hand_bottom,
 
 gboolean
 close_request(GtkWindow* self, gpointer user_data) {
-    g_print("fottiti\n");
     return false;
 }
 
@@ -113,7 +120,9 @@ scopa_window_class_init (ScopaWindowClass *klass)
     	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player1_pile);
     gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player2_pile);
     	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, adversary_cards);
+    gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table);
     	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table_top);
+    gtk_widget_class_bind_template_child (widget_class, ScopaWindow, table_bottom);
   	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, pile_box);
 }
 
@@ -161,7 +170,7 @@ void enable_player_cards(GtkBox *box) {
     gtk_widget_set_sensitive ((GtkWidget *) box, true);
 }
 
-void place_card_on_table(ScopaWindow *window, struct Card * card, int index) {
+void place_card_on_table(ScopaWindow *window, struct Card * card) {
     char *path;
     int value = card->value;
     char suit = suit_strings[card->suit];
@@ -175,7 +184,13 @@ void place_card_on_table(ScopaWindow *window, struct Card * card, int index) {
     gtk_widget_set_hexpand_set (image, true);
     gtk_image_set_pixel_size ((GtkImage*)image, 160);
 
-    gtk_box_append (window->table_top, image);
+    if (top_cards > MAX_TABLE_SIZE) {
+        gtk_box_append (window->table_bottom, image);
+        bottom_cards++;
+    } else {
+        gtk_box_append (window->table_top, image);
+        top_cards++;
+    }
 }
 
 static void
@@ -191,7 +206,7 @@ scopa_window_init (ScopaWindow *self)
                                                              GTK_STYLE_PROVIDER(css),
                                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
     g_object_unref(css);
-    gtk_widget_set_name(GTK_WIDGET(self->table_top), "table_top");
+    gtk_widget_set_name(GTK_WIDGET(self->table), "table_top");
     gtk_widget_set_name(GTK_WIDGET(self->pile_box), "table_top");
     gtk_widget_set_name(GTK_WIDGET(self->player_cards), "hand");
     gtk_widget_set_name(GTK_WIDGET(self->adversary_cards), "hand");
@@ -201,10 +216,11 @@ scopa_window_init (ScopaWindow *self)
     gtk_widget_set_css_classes (GTK_WIDGET (self->player2_pile), classes);
 
     GtkDropTarget *tgt = gtk_drop_target_new (G_TYPE_INT, GDK_ACTION_COPY);
-    g_signal_connect (tgt, "drop", G_CALLBACK (place_card), self->table_top);
+    g_signal_connect (tgt, "drop", G_CALLBACK (place_card), self->table);
     // The ownership of tgt is taken by the instance.
-    gtk_widget_add_controller (GTK_WIDGET (self->table_top), GTK_EVENT_CONTROLLER (tgt));
+    gtk_widget_add_controller (GTK_WIDGET (self->table), GTK_EVENT_CONTROLLER (tgt));
 }
+
 
 
 

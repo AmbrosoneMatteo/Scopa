@@ -503,12 +503,10 @@ struct Table *table_init(struct Deck *deck){
 struct Table *table_init_display(struct Deck *deck){
     struct Table *table = table_init(deck);
     struct CardNode * l_node = table->node;
-    int i = 0;
     while(l_node != NULL){
         struct Card * card = l_node->card;
         place_card_on_table (main_window,
-                                card, i);
-        i++;
+                                card);
         l_node = l_node->next;
     }
     return table;
@@ -595,4 +593,5 @@ bool hand_has_card(struct Hand *hand, struct Card *card){
   }
   return false;
 }
+
 

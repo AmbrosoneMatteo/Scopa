@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (ScopaWindow, scopa_window, SCOPA, WINDOW, AdwApplicationWindow)
 void place_player_card (ScopaWindow *window, struct Card * card, int index);
-void place_card_on_table(ScopaWindow *window, struct Card * card, int index);
+void place_card_on_table(ScopaWindow *window, struct Card * card);
 void remove_all_box_cards(GtkBox* box);
 void place_all_cards_on_hand(ScopaWindow *window,
                              GtkBox      *box,
@@ -38,6 +38,7 @@ void place_cards_on_table(ScopaWindow* window, struct Table* current_table);
 void disable_player_cards(GtkBox *box);
 void enable_player_cards(GtkBox *box);
 void place_card_on_pile(GtkImage* pile, struct Card* card);
+void clear_table_cards(ScopaWindow *self);
 struct _ScopaWindow
 {
 	AdwApplicationWindow  parent_instance;
@@ -47,9 +48,12 @@ struct _ScopaWindow
         GtkBox          *player_cards;
         GtkBox          *adversary_cards;
         GtkBox          *table_top;
+        GtkBox          *table_bottom;
         GtkBox          *pile_box;
+        GtkBox          *table;
         GtkImage        *player1_pile;
         GtkImage        *player2_pile;
 };
 
 G_END_DECLS
+

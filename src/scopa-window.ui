@@ -58,7 +58,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkBox">
+                  <object class="GtkBox" id="table">
                     <property name="halign">center</property>
                     <property name="orientation">vertical</property>
                     <child>
@@ -69,6 +69,20 @@
                         <property name="hexpand-set">True</property>
                         <property name="margin-top">10</property>
                         <property name="name">table_top </property>
+                        <property name="valign">fill</property>
+                        <property name="vexpand">True</property>
+                        <property name="vexpand-set">True</property>
+                        <property name="width-request">600</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="table_bottom">
+                        <property name="halign">fill</property>
+                        <property name="height-request">100</property>
+                        <property name="hexpand">True</property>
+                        <property name="hexpand-set">True</property>
+                        <property name="margin-top">10</property>
+                        <property name="name">table_bottom </property>
                         <property name="valign">fill</property>
                         <property name="vexpand">True</property>
                         <property name="vexpand-set">True</property>
@@ -145,4 +159,5 @@
     </section>
   </menu>
 </interface>
+
 
