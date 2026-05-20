@@ -59,6 +59,13 @@ connect_on_drag_begin(GtkDragSource* self,
     gtk_drag_icon_set_from_paintable (drag, paintable, 60, 100);
 }
 
+void connect_on_drag_cancel(GtkDragSource* self,
+                      GdkDrag* drag,
+                      GdkDragCancelReason* reason,
+                      gpointer user_data) {
+    gtk_widget_set_visible((GtkWidget *)(user_data), true);
+}
+
 void
 place_all_cards_on_hand(ScopaWindow *window, GtkBox *box, struct Hand* hand) {
     for(int i = 0; i < 3; i++) {
@@ -91,6 +98,8 @@ place_all_cards_on_hand(ScopaWindow *window, GtkBox *box, struct Hand* hand) {
                 g_print("%p\n", image);
                 g_signal_connect (src, "drag-begin",
                                   G_CALLBACK(connect_on_drag_begin), image);
+                g_signal_connect(src, "drag-cancel",
+                                 G_CALLBACK(connect_on_drag_cancel), image);
             }
             gtk_box_append (box, image);
         }
