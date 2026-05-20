@@ -198,7 +198,7 @@ void place_card_on_table(ScopaWindow *window, struct Card * card) {
     gtk_widget_set_hexpand_set (image, true);
     gtk_image_set_pixel_size ((GtkImage*)image, 160);
 
-    if (top_cards > MAX_TABLE_SIZE) {
+    if (top_cards > TABLE_SIZE) {
         gtk_box_append (window->table_bottom, image);
         bottom_cards++;
     } else {
@@ -234,9 +234,3 @@ scopa_window_init (ScopaWindow *self)
     // The ownership of tgt is taken by the instance.
     gtk_widget_add_controller (GTK_WIDGET (self->table), GTK_EVENT_CONTROLLER (tgt));
 }
-
-
-
-
-
-
