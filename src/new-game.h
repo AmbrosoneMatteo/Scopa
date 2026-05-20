@@ -28,4 +28,9 @@ G_BEGIN_DECLS
 
 G_DECLARE_FINAL_TYPE (NewGameWindow, new_game_window, NEW, WINDOW, AdwApplicationWindow)
 
+int new_game_window_get_difficulty (NewGameWindow *self);
+int new_game_window_get_server_port(NewGameWindow *self);
+int new_game_window_get_connect_port(NewGameWindow *self);
+char *new_game_window_get_connect_host(NewGameWindow *self);
+
 G_END_DECLS

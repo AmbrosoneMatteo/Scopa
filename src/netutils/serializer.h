@@ -1,0 +1,13 @@
+#ifndef SERIALIZER_H
+#define SERIALIZER_H
+
+struct NetHand *serialize_hand(struct Hand * hand);
+struct NetTable *serialize_table(struct Table * table);
+struct NetCombinationList *serialize_combination_list(struct CombinationNode *list);
+struct NetPile *serialize_pile(struct CardNode *pile);
+struct Hand *deserialize_hand(struct NetHand *net_hand);
+struct Table *deserialize_table(struct NetTable *net_table);
+struct CombinationNode *deserialize_combination_list(struct NetCombinationList *net_list);
+struct CardNode *deserialize_pile(struct NetPile *net_pile);
+
+#endif

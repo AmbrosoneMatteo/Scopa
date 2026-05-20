@@ -3,6 +3,52 @@
   <gresource prefix="/org/gnome/Example">
     <file preprocess="xml-stripblanks">scopa-window.ui</file>
     <file preprocess="xml-stripblanks">new-game.ui</file>
+    <file preprocess="xml-stripblanks">select-combination.ui</file>
+    <file preprocess="xml-stripblanks">endgame-dialog.ui</file>
     <file preprocess="xml-stripblanks">shortcuts-dialog.ui</file>
+    <file>window.css</file>
+    <file>images/retro.svg</file>
+    <file>images/DalNegro_Cards/10_C.png</file>
+    <file>images/DalNegro_Cards/10_D.png</file>
+    <file>images/DalNegro_Cards/10_H.png</file>
+    <file>images/DalNegro_Cards/10_S.png</file>
+    <file>images/DalNegro_Cards/1_C.png</file>
+    <file>images/DalNegro_Cards/1_D.png</file>
+    <file>images/DalNegro_Cards/1_H.png</file>
+    <file>images/DalNegro_Cards/1_S.png</file>
+    <file>images/DalNegro_Cards/2_C.png</file>
+    <file>images/DalNegro_Cards/2_D.png</file>
+    <file>images/DalNegro_Cards/2_H.png</file>
+    <file>images/DalNegro_Cards/2_S.png</file>
+    <file>images/DalNegro_Cards/3_C.png</file>
+    <file>images/DalNegro_Cards/3_D.png</file>
+    <file>images/DalNegro_Cards/3_H.png</file>
+    <file>images/DalNegro_Cards/3_S.png</file>
+    <file>images/DalNegro_Cards/4_C.png</file>
+    <file>images/DalNegro_Cards/4_D.png</file>
+    <file>images/DalNegro_Cards/4_H.png</file>
+    <file>images/DalNegro_Cards/4_S.png</file>
+    <file>images/DalNegro_Cards/5_C.png</file>
+    <file>images/DalNegro_Cards/5_D.png</file>
+    <file>images/DalNegro_Cards/5_H.png</file>
+    <file>images/DalNegro_Cards/5_S.png</file>
+    <file>images/DalNegro_Cards/6_C.png</file>
+    <file>images/DalNegro_Cards/6_D.png</file>
+    <file>images/DalNegro_Cards/6_H.png</file>
+    <file>images/DalNegro_Cards/6_S.png</file>
+    <file>images/DalNegro_Cards/7_C.png</file>
+    <file>images/DalNegro_Cards/7_D.png</file>
+    <file>images/DalNegro_Cards/7_H.png</file>
+    <file>images/DalNegro_Cards/7_S.png</file>
+    <file>images/DalNegro_Cards/8_C.png</file>
+    <file>images/DalNegro_Cards/8_D.png</file>
+    <file>images/DalNegro_Cards/8_H.png</file>
+    <file>images/DalNegro_Cards/8_S.png</file>
+    <file>images/DalNegro_Cards/9_C.png</file>
+    <file>images/DalNegro_Cards/9_D.png</file>
+    <file>images/DalNegro_Cards/9_H.png</file>
+    <file>images/DalNegro_Cards/9_S.png</file>
   </gresource>
 </gresources>
+
+

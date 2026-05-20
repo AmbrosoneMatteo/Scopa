@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "scopa-window.h"
 #include <adwaita.h>
 
 G_BEGIN_DECLS
@@ -30,5 +31,4 @@ G_DECLARE_FINAL_TYPE (ScopaApplication, scopa_application, SCOPA, APPLICATION, A
 
 ScopaApplication *scopa_application_new (const char        *application_id,
                                          GApplicationFlags  flags);
-
-G_END_DECLS
+extern ScopaWindow *main_window;
