@@ -51,7 +51,7 @@ endgame_dialog_window_class_init (EndGameDialogWindowClass *klass)
     GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                          "/org/gnome/Example/endgame-dialog.ui");
+                          "/io/github/AmbrosoneMatteo/Scopa/endgame-dialog.ui");
 
     gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
                                           player1_card_count);
@@ -96,7 +96,7 @@ build_card_item(GtkWidget *image, struct Card *card)
     char *path;
     int value = card->value;
     char suit = suit_strings[card->suit];
-    asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+    asprintf(&path, "/io/github/AmbrosoneMatteo/Scopa/images/DalNegro_Cards/%d_%c.png",
              value, suit);
 
     gtk_image_set_from_resource ((GtkImage *)image, path);
@@ -299,5 +299,6 @@ endgame_dialog_window_init (EndGameDialogWindow *self)
 {
     gtk_widget_init_template (GTK_WIDGET (self));
 }
+
 
 

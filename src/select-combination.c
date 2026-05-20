@@ -40,7 +40,7 @@ select_combination_window_class_init (SelectCombinationWindowClass *klass)
     GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
     gtk_widget_class_set_template_from_resource (widget_class,
-                          "/org/gnome/Example/select-combination.ui");
+                          "/io/github/AmbrosoneMatteo/Scopa/select-combination.ui");
 
     gtk_widget_class_bind_template_child (widget_class, SelectCombinationWindow, list_view);
 
@@ -65,7 +65,7 @@ build_card_row(struct CombinationList *combo_list)
         char *path;
         int value = card->value;
         char suit = suit_strings[card->suit];
-        asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+        asprintf(&path, "/io/github/AmbrosoneMatteo/Scopa/images/DalNegro_Cards/%d_%c.png",
                  value, suit);
 
         GtkWidget *image = gtk_image_new_from_resource(path);

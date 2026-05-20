@@ -1,4 +1,4 @@
-application_id = 'org.gnome.Example'
+application_id = 'io.github.AmbrosoneMatteo.Scopa'
 
 scalable_dir = 'hicolor' / 'scalable' / 'apps'
 install_data(

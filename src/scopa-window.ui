@@ -51,7 +51,7 @@
                     <property name="hexpand">True</property>
                     <property name="hexpand-set">True</property>
                     <property name="pixel-size">120</property>
-                    <property name="resource">/org/gnome/Example/images/retro.svg</property>
+                    <property name="resource">/io/github/AmbrosoneMatteo/Scopa/images/retro.svg</property>
                     <property name="vexpand">True</property>
                     <property name="vexpand-set">True</property>
                     <property name="width-request">0</property>

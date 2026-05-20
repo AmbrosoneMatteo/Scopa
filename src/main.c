@@ -37,7 +37,7 @@ main (int   argc,
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-  app = scopa_application_new ("org.gnome.Example", G_APPLICATION_NON_UNIQUE);
+  app = scopa_application_new ("io.github.AmbrosoneMatteo.Scopa", G_APPLICATION_NON_UNIQUE);
   ret = g_application_run (G_APPLICATION (app), argc, argv);
 
 	return ret;

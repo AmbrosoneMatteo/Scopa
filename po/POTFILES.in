@@ -1,8 +1,8 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-data/org.gnome.Example.desktop.in
-data/org.gnome.Example.metainfo.xml.in
-data/org.gnome.Example.gschema.xml
+data/io.github.AmbrosoneMatteo.Scopa.desktop.in
+data/io.github.AmbrosoneMatteo.Scopa.metainfo.xml.in
+data/io.github.AmbrosoneMatteo.Scopa.gschema.xml
 src/main.c
 src/scopa-window.c
 src/scopa-window.ui

@@ -58,10 +58,10 @@ place_all_cards_on_hand(ScopaWindow *window, GtkBox *box, struct Hand* hand) {
               struct Card *card = hand->cards[i];
               int value = card->value;
               char suit = suit_strings[card->suit];
-              asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+              asprintf(&path, "/io/github/AmbrosoneMatteo/Scopa/images/DalNegro_Cards/%d_%c.png",
                        value, suit);
             } else {
-              path = "/org/gnome/Example/images/retro.svg";
+              path = "/io/github/AmbrosoneMatteo/Scopa/images/retro.svg";
             }
             GtkWidget *image = gtk_image_new_from_resource (path);
             gtk_widget_set_vexpand (image, true);
@@ -96,14 +96,6 @@ place_cards_on_table(ScopaWindow* window, struct Table* current_table) {
     } while (node!=NULL);
 }
 
-void
-show_stats(ScopaWindow *window, struct Hand* hand_top, struct Hand *hand_bottom,
-          int player1_scope, int player2_scope) {
-
-
-
-}
-
 gboolean
 close_request(GtkWindow* self, gpointer user_data) {
     return false;
@@ -114,7 +106,7 @@ scopa_window_class_init (ScopaWindowClass *klass)
 {
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-	gtk_widget_class_set_template_from_resource (widget_class, "/org/gnome/Example/scopa-window.ui");
+	gtk_widget_class_set_template_from_resource (widget_class, "/io/github/AmbrosoneMatteo/Scopa/scopa-window.ui");
 	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, stack_card_image);
   	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player_cards);
     	gtk_widget_class_bind_template_child (widget_class, ScopaWindow, player1_pile);
@@ -156,7 +148,7 @@ place_card_on_pile(GtkImage* pile, struct Card* card) {
         char *path;
         int value = card->value;
         char suit = suit_strings[card->suit];
-        asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+        asprintf(&path, "/io/github/AmbrosoneMatteo/Scopa/images/DalNegro_Cards/%d_%c.png",
                  value, suit);
         gtk_image_set_from_resource (pile, path);
     }
@@ -174,7 +166,7 @@ void place_card_on_table(ScopaWindow *window, struct Card * card) {
     char *path;
     int value = card->value;
     char suit = suit_strings[card->suit];
-    asprintf(&path, "/org/gnome/Example/images/DalNegro_Cards/%d_%c.png",
+    asprintf(&path, "/io/github/AmbrosoneMatteo/Scopa/images/DalNegro_Cards/%d_%c.png",
              value, suit);
 
     GtkWidget *image = gtk_image_new_from_resource (path);
@@ -200,7 +192,7 @@ scopa_window_init (ScopaWindow *self)
 
     GtkCssProvider *css = gtk_css_provider_new();
     GError *err = NULL;
-    gtk_css_provider_load_from_resource(css,"/org/gnome/Example/window.css");
+    gtk_css_provider_load_from_resource(css,"/io/github/AmbrosoneMatteo/Scopa/window.css");
     if (err) { g_printerr("CSS load error: %s\n", err->message); g_clear_error(&err); }
     gtk_style_context_add_provider_for_display(gdk_display_get_default(),
                                                              GTK_STYLE_PROVIDER(css),
