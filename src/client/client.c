@@ -20,6 +20,7 @@ bool is_network_game = false;
 // Function that starts the client socket and connects to
 // the peer hosting the server
 void start_client(char *host, int port){
+    enable_player_cards (main_window->player_cards);
     GError *error = NULL;
     GSocketClient *client = g_socket_client_new();
     GSocketConnection *connection = g_socket_client_connect_to_host(
