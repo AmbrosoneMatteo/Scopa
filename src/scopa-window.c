@@ -50,6 +50,16 @@ clear_table_cards(ScopaWindow *self) {
 }
 
 void
+connect_on_drag_begin(GtkDragSource* self,
+                      GdkDrag* drag,
+                      gpointer user_data) {
+    gtk_widget_set_visible ((GtkWidget *)(user_data), false);
+    GdkPaintable *paintable = gtk_image_get_paintable((GtkImage *)(user_data));
+
+    gtk_drag_icon_set_from_paintable (drag, paintable, 60, 100);
+}
+
+void
 place_all_cards_on_hand(ScopaWindow *window, GtkBox *box, struct Hand* hand) {
     for(int i = 0; i < 3; i++) {
         if(hand->cards[i]!=NULL) {
@@ -78,6 +88,9 @@ place_all_cards_on_hand(ScopaWindow *window, GtkBox *box, struct Hand* hand) {
                 g_object_unref (content);
                 gtk_widget_add_controller (GTK_WIDGET (image),
                                                GTK_EVENT_CONTROLLER (src));
+                g_print("%p\n", image);
+                g_signal_connect (src, "drag-begin",
+                                  G_CALLBACK(connect_on_drag_begin), image);
             }
             gtk_box_append (box, image);
         }
@@ -212,6 +225,7 @@ scopa_window_init (ScopaWindow *self)
     // The ownership of tgt is taken by the instance.
     gtk_widget_add_controller (GTK_WIDGET (self->table), GTK_EVENT_CONTROLLER (tgt));
 }
+
 
 
 
