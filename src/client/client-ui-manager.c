@@ -1,6 +1,7 @@
 #include "engine/game-assets.h"
 #include "select-combination.h"
 #include "endgame-dialog.h"
+#include "client.h"
 
 #include "client-ui-manager.h"
 
@@ -94,7 +95,7 @@ void update_ui_disable_cards(void){
 gboolean client_place_cards_on_table(gpointer user_data){
     struct TableUiData *data = (struct TableUiData*)user_data;
     // Calling function from scopa-window
-    remove_all_box_cards(data->window->table_top);
+    clear_table_cards(data->window);
     place_cards_on_table(data->window, data->table);
     free(data);
 
@@ -136,10 +137,18 @@ gboolean client_show_combinations_dialog(gpointer user_data){
         "modal", TRUE,
         NULL
     );
+    g_signal_connect(window, "destroy", G_CALLBACK(on_network_combo_window_destroyed), NULL);
+
     add_combinations(window, combinations);
     gtk_window_present(GTK_WINDOW(window));
 
     return G_SOURCE_REMOVE;
+}
+
+static void on_network_combo_window_destroyed(GtkWidget *window, gpointer user_data){
+    int *combo_index = malloc(sizeof(int));
+    *combo_index = 0; // Select first available combination
+    g_async_queue_push(player_combo_queue, combo_index);
 }
 
 gboolean client_show_endgame_dialog(gpointer user_data){
