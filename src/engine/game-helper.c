@@ -316,7 +316,7 @@ bool local_play_card(struct Hand* hand,struct Card *card, struct CardNode ** pil
             if (combination_index==-1) {
                 combination_index=0;
             } else {
-                gtk_window_close (GTK_WINDOW (window));
+                g_idle_add((GSourceFunc)gtk_window_close, window);
             }
 
             struct CombinationList *list = get_combination_at_index (combinations

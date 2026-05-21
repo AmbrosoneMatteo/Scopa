@@ -19,6 +19,7 @@
  */
 
 #include "endgame-dialog.h"
+#include "scopa-application.h"
 
 G_DEFINE_FINAL_TYPE (EndGameDialogWindow, endgame_dialog_window,
                      ADW_TYPE_APPLICATION_WINDOW)
@@ -36,6 +37,10 @@ G_DEFINE_TYPE(CardItem, card_item, G_TYPE_OBJECT)
 
 static void card_item_class_init(CardItemClass *klass) { (void)klass; }
 static void card_item_init(CardItem *self)              { (void)self;  }
+static void on_start_new_game_clicked (GSimpleAction *action,
+                               GVariant      *parameter,
+                               gpointer       user_data);
+
 static CardItem *
 card_item_new(guint index, struct Card *card)
 {
@@ -87,6 +92,13 @@ endgame_dialog_window_class_init (EndGameDialogWindowClass *klass)
                                           player1_win);
     gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
                                           player2_win);
+}
+
+static void
+on_start_new_game_clicked (GSimpleAction *action,
+                               GVariant      *parameter,
+                               gpointer       user_data) {
+
 }
 
 void
@@ -294,9 +306,17 @@ void set_settebello(EndGameDialogWindow *self, GtkLabel *label) {
         gtk_label_set_text (self->player1_settebello, "ül g'hà mia");
 }
 
+static const GActionEntry dialog_actions[] = {
+	{ "new_game_button_clicked", on_start_new_game_clicked },
+};
+
 static void
 endgame_dialog_window_init (EndGameDialogWindow *self)
 {
+  	g_action_map_add_action_entries (G_ACTION_MAP (self),
+	                                 dialog_actions,
+	                                 G_N_ELEMENTS (dialog_actions),
+	                                 self);
     gtk_widget_init_template (GTK_WIDGET (self));
 }
 
