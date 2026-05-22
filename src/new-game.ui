@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Created with Cambalache 1.0 -->
+<!-- Created with Cambalache 1.0.1 -->
 <interface>
   <!-- interface-name new-game.ui -->
   <requires lib="gtk" version="4.18"/>
@@ -31,20 +31,20 @@
                           <object class="GtkBox">
                             <property name="hexpand">True</property>
                             <property name="hexpand-set">True</property>
+                            <property name="margin-bottom">24</property>
+                            <property name="margin-top">24</property>
                             <property name="orientation">vertical</property>
+                            <property name="spacing">24</property>
                             <property name="vexpand">True</property>
                             <property name="vexpand-set">True</property>
-                            <property name="spacing">24</property>
-                            <property name="margin-top">24</property>
-                            <property name="margin-bottom">24</property>
                             <child>
                               <object class="GtkBox">
                                 <property name="hexpand">True</property>
                                 <property name="hexpand-set">True</property>
+                                <property name="spacing">12</property>
                                 <property name="valign">start</property>
                                 <property name="vexpand">True</property>
                                 <property name="vexpand-set">True</property>
-                                <property name="spacing">12</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="halign">start</property>
@@ -78,10 +78,10 @@
                               <object class="GtkButton">
                                 <property name="halign">center</property>
                                 <property name="label">Start local game</property>
+                                <property name="margin-top">12</property>
                                 <property name="valign">end</property>
                                 <property name="vexpand">True</property>
                                 <property name="vexpand-set">True</property>
-                                <property name="margin-top">12</property>
                                 <signal name="clicked" handler="on_start_local_clicked"/>
                                 <style>
                                   <class name="suggested-action"/>
@@ -93,6 +93,7 @@
                         </child>
                       </object>
                     </property>
+                    <property name="icon-name">go-home</property>
                     <property name="name">local</property>
                     <property name="title">Local</property>
                   </object>
@@ -108,18 +109,18 @@
                           <object class="GtkBox">
                             <property name="halign">baseline-fill</property>
                             <property name="orientation">vertical</property>
+                            <property name="spacing">16</property>
                             <property name="valign">start</property>
                             <property name="vexpand">True</property>
                             <property name="vexpand-set">True</property>
-                            <property name="spacing">16</property>
                             <child type="top">
                               <object class="AdwViewSwitcher">
+                                <property name="margin-bottom">12</property>
                                 <property name="policy">wide</property>
                                 <property name="stack">net_type_stack</property>
                                 <property name="valign">start</property>
                                 <property name="vexpand">True</property>
                                 <property name="vexpand-set">True</property>
-                                <property name="margin-bottom">12</property>
                               </object>
                             </child>
                             <child type="bottom">
@@ -143,24 +144,24 @@
                                             <property name="hexpand">true</property>
                                             <property name="hexpand-set">True</property>
                                             <property name="orientation">vertical</property>
+                                            <property name="spacing">16</property>
                                             <property name="valign">start</property>
                                             <property name="vexpand">true</property>
                                             <property name="vexpand-set">True</property>
-                                            <property name="spacing">16</property>
                                             <child>
                                               <object class="GtkEntry" id="ip_address_number">
-                                                <property name="placeholder-text">ip address or hostname</property>
                                                 <property name="halign">center</property>
+                                                <property name="placeholder-text">ip address or hostname</property>
                                                 <property name="width-request">250</property>
                                               </object>
                                             </child>
                                             <child>
                                               <object class="GtkBox">
+                                                <property name="halign">center</property>
                                                 <property name="hexpand">true</property>
                                                 <property name="orientation">horizontal</property>
-                                                <property name="vexpand">true</property>
-                                                <property name="halign">center</property>
                                                 <property name="spacing">12</property>
+                                                <property name="vexpand">true</property>
                                                 <child>
                                                   <object class="GtkLabel">
                                                     <property name="label">port number</property>
@@ -171,18 +172,18 @@
                                                 </child>
                                                 <child>
                                                   <object class="GtkSpinButton" id="connect_port_number">
-                                                    <property name="halign">start</property>
-                                                    <property name="hexpand">True</property>
-                                                    <property name="hexpand-set">True</property>
                                                     <property name="adjustment">
                                                       <object class="GtkAdjustment">
+                                                        <property name="lower">1</property>
                                                         <property name="page-increment">1.0</property>
                                                         <property name="step-increment">1.0</property>
                                                         <property name="upper">65535</property>
-                                                        <property name="lower">1</property>
                                                         <property name="value">8888</property>
                                                       </object>
                                                     </property>
+                                                    <property name="halign">start</property>
+                                                    <property name="hexpand">True</property>
+                                                    <property name="hexpand-set">True</property>
                                                   </object>
                                                 </child>
                                               </object>
@@ -191,10 +192,10 @@
                                               <object class="GtkButton">
                                                 <property name="halign">center</property>
                                                 <property name="label">Connect to server</property>
+                                                <property name="margin-top">12</property>
                                                 <property name="valign">end</property>
                                                 <property name="vexpand">True</property>
                                                 <property name="vexpand-set">True</property>
-                                                <property name="margin-top">12</property>
                                                 <signal name="clicked" handler="on_start_network_clicked"/>
                                                 <style>
                                                   <class name="suggested-action"/>
@@ -206,6 +207,7 @@
                                         </child>
                                       </object>
                                     </property>
+                                    <property name="icon-name">go-up</property>
                                     <property name="name">connect to server</property>
                                     <property name="title">connect</property>
                                   </object>
@@ -218,15 +220,15 @@
                                           <object class="GtkBox">
                                             <property name="hexpand">true</property>
                                             <property name="orientation">vertical</property>
-                                            <property name="vexpand">true</property>
                                             <property name="spacing">16</property>
+                                            <property name="vexpand">true</property>
                                             <child>
                                               <object class="GtkBox">
+                                                <property name="halign">center</property>
                                                 <property name="hexpand">true</property>
                                                 <property name="orientation">horizontal</property>
-                                                <property name="vexpand">true</property>
-                                                <property name="halign">center</property>
                                                 <property name="spacing">12</property>
+                                                <property name="vexpand">true</property>
                                                 <child>
                                                   <object class="GtkLabel">
                                                     <property name="label">port number</property>
@@ -237,21 +239,21 @@
                                                 </child>
                                                 <child>
                                                   <object class="GtkSpinButton" id="server_port_number">
-                                                    <property name="halign">start</property>
-                                                    <property name="hexpand">True</property>
-                                                    <property name="hexpand-set">True</property>
-                                                    <property name="valign">end</property>
                                                     <property name="adjustment">
                                                       <object class="GtkAdjustment">
+                                                        <property name="lower">1</property>
                                                         <property name="page-increment">1.0</property>
                                                         <property name="step-increment">1.0</property>
                                                         <property name="upper">65535</property>
-                                                        <property name="lower">1</property>
                                                         <property name="value">8888</property>
                                                       </object>
                                                     </property>
                                                     <property name="climb-rate">1.0</property>
                                                     <property name="enable-undo">False</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="hexpand">True</property>
+                                                    <property name="hexpand-set">True</property>
+                                                    <property name="valign">end</property>
                                                     <property name="wrap">True</property>
                                                   </object>
                                                 </child>
@@ -261,10 +263,10 @@
                                               <object class="GtkButton">
                                                 <property name="halign">center</property>
                                                 <property name="label">Start server</property>
+                                                <property name="margin-top">12</property>
                                                 <property name="valign">end</property>
                                                 <property name="vexpand">True</property>
                                                 <property name="vexpand-set">True</property>
-                                                <property name="margin-top">12</property>
                                                 <signal name="clicked" handler="on_start_server_clicked"/>
                                                 <style>
                                                   <class name="suggested-action"/>
@@ -276,6 +278,7 @@
                                         </child>
                                       </object>
                                     </property>
+                                    <property name="icon-name">network-server</property>
                                     <property name="name">create server</property>
                                     <property name="title">create</property>
                                   </object>
@@ -286,6 +289,7 @@
                         </child>
                       </object>
                     </property>
+                    <property name="icon-name">network-wired</property>
                     <property name="name">network</property>
                     <property name="title">network</property>
                   </object>

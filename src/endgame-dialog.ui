@@ -1,10 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Created with Cambalache 1.0 -->
+<!-- Created with Cambalache 1.0.1 -->
 <interface>
   <!-- interface-name new-game.ui -->
   <requires lib="gtk" version="4.18"/>
   <requires lib="libadwaita" version="1.4"/>
   <template class="EndGameDialogWindow" parent="AdwApplicationWindow">
+    <property name="default-height">500</property>
+    <property name="default-width">800</property>
     <child>
       <object class="AdwToolbarView">
         <child type="top">
@@ -17,9 +19,9 @@
               <object class="GtkBox">
                 <child>
                   <object class="GtkBox">
-                    <property name="orientation">vertical</property>
-                    <property name="margin-start">15</property>
                     <property name="margin-end">15</property>
+                    <property name="margin-start">15</property>
+                    <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkBox">
                         <property name="name">Player2Stats</property>
@@ -99,10 +101,10 @@
                     </child>
                     <child>
                       <object class="GtkBox">
-                        <property name="vexpand">True</property>
-                        <property name="vexpand-set">True</property>
                         <property name="name">Player1Stats</property>
                         <property name="orientation">vertical</property>
+                        <property name="vexpand">True</property>
+                        <property name="vexpand-set">True</property>
                         <child>
                           <object class="GtkBox">
                             <property name="margin-bottom">10</property>
@@ -181,14 +183,14 @@
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkScrolledWindow" id="player2_cards_window">
-                        <property name="has-frame">true</property>
                         <property name="halign">fill</property>
-                        <property name="valign">fill</property>
+                        <property name="has-frame">true</property>
                         <property name="hexpand">true</property>
-                        <property name="vexpand">true</property>
                         <property name="hexpand-set">true</property>
-                        <property name="vexpand-set">true</property>
                         <property name="hscrollbar-policy">automatic</property>
+                        <property name="valign">fill</property>
+                        <property name="vexpand">true</property>
+                        <property name="vexpand-set">true</property>
                         <property name="vscrollbar-policy">never</property>
                         <child>
                           <object class="GtkListView" id="player2_listview">
@@ -199,14 +201,14 @@
                     </child>
                     <child>
                       <object class="GtkScrolledWindow" id="player1_cards_window">
-                        <property name="has-frame">true</property>
                         <property name="halign">fill</property>
-                        <property name="valign">fill</property>
+                        <property name="has-frame">true</property>
                         <property name="hexpand">true</property>
-                        <property name="vexpand">true</property>
                         <property name="hexpand-set">true</property>
-                        <property name="vexpand-set">true</property>
                         <property name="hscrollbar-policy">automatic</property>
+                        <property name="valign">fill</property>
+                        <property name="vexpand">true</property>
+                        <property name="vexpand-set">true</property>
                         <property name="vscrollbar-policy">never</property>
                         <child>
                           <object class="GtkListView" id="player1_listview">
@@ -221,21 +223,21 @@
             </child>
             <child>
               <object class="GtkBox">
-              <property name="vexpand">True</property>
-              <property name="vexpand-set">True</property>
-              <property name="hexpand">True</property>
-              <property name="hexpand-set">True</property>
-              <property name="halign">center</property>
-              <property name="valign">center</property>
+                <property name="halign">center</property>
+                <property name="hexpand">True</property>
+                <property name="hexpand-set">True</property>
+                <property name="valign">center</property>
+                <property name="vexpand">True</property>
+                <property name="vexpand-set">True</property>
                 <child>
                   <object class="GtkButton" id="new_game_button">
-                    <property name="vexpand">True</property>
-                    <property name="vexpand-set">True</property>
+                    <property name="halign">center</property>
                     <property name="hexpand">True</property>
                     <property name="hexpand-set">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
                     <property name="label">New Game</property>
+                    <property name="valign">center</property>
+                    <property name="vexpand">True</property>
+                    <property name="vexpand-set">True</property>
                     <style>
                       <class name="suggested-action"/>
                       <class name="pill"/>
@@ -244,14 +246,14 @@
                 </child>
                 <child>
                   <object class="GtkButton">
-                    <property name="vexpand">True</property>
-                    <property name="vexpand-set">True</property>
+                    <property name="action-name">app.quit</property>
+                    <property name="halign">center</property>
                     <property name="hexpand">True</property>
                     <property name="hexpand-set">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
                     <property name="label">Exit</property>
-                    <property name="action-name">app.quit</property>
+                    <property name="valign">center</property>
+                    <property name="vexpand">True</property>
+                    <property name="vexpand-set">True</property>
                     <style>
                       <class name="destructive-action"/>
                       <class name="pill"/>
@@ -264,7 +266,5 @@
         </child>
       </object>
     </child>
-    <property name="default-height">500</property>
-    <property name="default-width">800</property>
   </template>
 </interface>
