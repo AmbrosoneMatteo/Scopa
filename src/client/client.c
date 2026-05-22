@@ -127,6 +127,9 @@ void run_game(GSocketConnection *connection){
                 update_ui_endgame_dialog(player_pile, opponent_pile, net_endgame->player_scope, net_endgame->opponent_scope);
                 game_over = true;
                 break;
+            default:
+                g_print("received invalid header type\n");
+                break;
         }
 
         free(payload);

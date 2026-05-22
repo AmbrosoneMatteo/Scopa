@@ -32,6 +32,15 @@ G_DEFINE_FINAL_TYPE (ScopaWindow, scopa_window, ADW_TYPE_APPLICATION_WINDOW)
 int top_cards = 0;
 int bottom_cards = 0;
 
+gboolean close_request(GtkWindow* self, gpointer user_data);
+void connect_on_drag_cancel(GtkDragSource* self,
+                      GdkDrag* drag,
+                      GdkDragCancelReason* reason,
+                      gpointer user_data);
+void connect_on_drag_begin(GtkDragSource* self,
+                      GdkDrag* drag,
+                      gpointer user_data);
+
 void
 remove_all_box_cards(GtkBox* box) {
     GtkWidget *child;
@@ -47,6 +56,13 @@ clear_table_cards(ScopaWindow *self) {
     bottom_cards = 0;
     remove_all_box_cards (self->table_top);
     remove_all_box_cards (self->table_bottom);
+}
+
+// This function is to be called from the endgame dialog to hide the piles
+// of cards, in the eventuality that the user starts a new game
+void clear_piles(ScopaWindow *self) {
+    gtk_image_set_from_file(self->player1_pile, false);
+    gtk_image_set_from_file (self->player2_pile, false);
 }
 
 void
@@ -78,7 +94,7 @@ place_all_cards_on_hand(ScopaWindow *window, GtkBox *box, struct Hand* hand) {
               asprintf(&path, "/io/github/AmbrosoneMatteo/Scopa/images/DalNegro_Cards/%d_%c.png",
                        value, suit);
             } else {
-              path = "/io/github/AmbrosoneMatteo/Scopa/images/retro.svg";
+              asprintf(&path, "/io/github/AmbrosoneMatteo/Scopa/images/retro.svg");
             }
             GtkWidget *image = gtk_image_new_from_resource (path);
             gtk_widget_set_vexpand (image, true);

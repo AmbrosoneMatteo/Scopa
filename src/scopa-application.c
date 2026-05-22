@@ -153,7 +153,6 @@ scopa_application_new_game_action (GSimpleAction *action,
 static void
 on_start_local (NewGameWindow *window, gpointer user_data)
 {
-    ScopaApplication *self = user_data;
     int diff = new_game_window_get_difficulty (window);
     gtk_window_close (GTK_WINDOW (window));
     g_print("starting local game with difficulty: %d\n", diff);
@@ -163,7 +162,6 @@ on_start_local (NewGameWindow *window, gpointer user_data)
 static void
 on_start_network (NewGameWindow *window, gpointer user_data)
 {
-    ScopaApplication *self = user_data;
     gtk_window_close (GTK_WINDOW (window));
 	int connect_port = new_game_window_get_connect_port (window);
 	char *connect_host = new_game_window_get_connect_host (window);
@@ -177,7 +175,6 @@ on_start_network (NewGameWindow *window, gpointer user_data)
 static void
 on_start_server (NewGameWindow *window, gpointer user_data)
 {
-    ScopaApplication *self = user_data;
     gtk_window_close (GTK_WINDOW (window));
 	int srv_port = new_game_window_get_server_port (window);
 	struct ServerArgs *srv_args = g_new(struct ServerArgs, 1);

@@ -39,6 +39,7 @@ void disable_player_cards(GtkBox *box);
 void enable_player_cards(GtkBox *box);
 void place_card_on_pile(GtkImage* pile, struct Card* card);
 void clear_table_cards(ScopaWindow *self);
+void clear_piles(ScopaWindow *self);
 struct _ScopaWindow
 {
 	AdwApplicationWindow  parent_instance;

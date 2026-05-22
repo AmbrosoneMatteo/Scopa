@@ -20,6 +20,7 @@
 
 #include "endgame-dialog.h"
 #include "scopa-application.h"
+#include "scopa-window.h"
 
 G_DEFINE_FINAL_TYPE (EndGameDialogWindow, endgame_dialog_window,
                      ADW_TYPE_APPLICATION_WINDOW)
@@ -37,9 +38,9 @@ G_DEFINE_TYPE(CardItem, card_item, G_TYPE_OBJECT)
 
 static void card_item_class_init(CardItemClass *klass) { (void)klass; }
 static void card_item_init(CardItem *self)              { (void)self;  }
-static void on_start_new_game_clicked (GSimpleAction *action,
-                               GVariant      *parameter,
-                               gpointer       user_data);
+static void on_start_new_game_clicked (GtkWidget *widget,
+                                      gpointer   data);
+void build_card_item(GtkWidget *image, struct Card *card);
 
 static CardItem *
 card_item_new(guint index, struct Card *card)
@@ -92,13 +93,19 @@ endgame_dialog_window_class_init (EndGameDialogWindowClass *klass)
                                           player1_win);
     gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
                                           player2_win);
+
+    gtk_widget_class_bind_template_child (widget_class, EndGameDialogWindow,
+                                          new_game_button);
 }
 
 static void
-on_start_new_game_clicked (GSimpleAction *action,
-                               GVariant      *parameter,
-                               gpointer       user_data) {
-
+on_start_new_game_clicked (GtkWidget *widget,
+                          gpointer   data) {
+    GtkWindow *self = GTK_WINDOW(data);
+    gtk_window_close(self);
+    clear_piles (main_window);
+    ScopaApplication *app = SCOPA_APPLICATION(g_application_get_default());
+    g_action_group_activate_action(G_ACTION_GROUP(app), "new_game", NULL);
 }
 
 void
@@ -139,7 +146,6 @@ bind_listitem_cb (GtkListItemFactory *factory,
 
   image = gtk_list_item_get_child (list_item);
   item = CARD_ITEM(gtk_list_item_get_item(list_item));
-  GtkWidget *list_view = gtk_list_item_get_child(list_item);
 
   build_card_item(image, item->card);
 }
@@ -306,18 +312,13 @@ void set_settebello(EndGameDialogWindow *self, GtkLabel *label) {
         gtk_label_set_text (self->player1_settebello, "ül g'hà mia");
 }
 
-static const GActionEntry dialog_actions[] = {
-	{ "new_game_button_clicked", on_start_new_game_clicked },
-};
 
 static void
 endgame_dialog_window_init (EndGameDialogWindow *self)
 {
-  	g_action_map_add_action_entries (G_ACTION_MAP (self),
-	                                 dialog_actions,
-	                                 G_N_ELEMENTS (dialog_actions),
-	                                 self);
     gtk_widget_init_template (GTK_WIDGET (self));
+    g_signal_connect (self->new_game_button, "clicked",
+                      G_CALLBACK(on_start_new_game_clicked), self);
 }
 
 

@@ -228,7 +228,7 @@
               <property name="halign">center</property>
               <property name="valign">center</property>
                 <child>
-                  <object class="GtkButton">
+                  <object class="GtkButton" id="new_game_button">
                     <property name="vexpand">True</property>
                     <property name="vexpand-set">True</property>
                     <property name="hexpand">True</property>
@@ -236,7 +236,6 @@
                     <property name="halign">center</property>
                     <property name="valign">center</property>
                     <property name="label">New Game</property>
-                    <property name="action-name">dialog.new_game_button_clicked</property>
                     <style>
                       <class name="suggested-action"/>
                       <class name="pill"/>

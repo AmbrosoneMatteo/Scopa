@@ -7,7 +7,7 @@
 
 // Function that passes the data to the UI function that
 // updates the table on the GUI. The function is called
-// with g_idle_add that allowes the safe update on the GUI thread
+// with g_idle_add that allows the safe update on the GUI thread
 void update_ui_table(struct Table * table){
     if(table == NULL){
         return;
@@ -21,7 +21,7 @@ void update_ui_table(struct Table * table){
 
 // Function that passes the data to the UI function that
 // updates the hand on the GUI. The function is called
-// with g_idle_add that allowes the safe update on the GUI thread
+// with g_idle_add that allows the safe update on the GUI thread
 void update_ui_hand(struct Hand * hand){
     if(hand == NULL){
         return;

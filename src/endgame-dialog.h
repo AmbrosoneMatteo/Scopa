@@ -26,6 +26,7 @@ struct _EndGameDialogWindow
     GtkListView     *player2_listview;
     GListStore      *store1;
     GListStore      *store2;
+    GtkButton       *new_game_button;
 };
 
 G_DECLARE_FINAL_TYPE (EndGameDialogWindow, endgame_dialog_window,
