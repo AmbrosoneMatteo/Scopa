@@ -37,6 +37,7 @@ void place_all_cards_on_hand(ScopaWindow *window,
 void place_cards_on_table(ScopaWindow* window, struct Table* current_table);
 void disable_player_cards(GtkBox *box);
 void enable_player_cards(GtkBox *box);
+void new_game_menu_button_enabled(bool enabled);
 void place_card_on_pile(GtkImage* pile, struct Card* card);
 void clear_table_cards(ScopaWindow *self);
 void clear_piles(ScopaWindow *self);

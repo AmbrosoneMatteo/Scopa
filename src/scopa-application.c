@@ -163,6 +163,7 @@ static void
 on_start_network (NewGameWindow *window, gpointer user_data)
 {
     gtk_window_close (GTK_WINDOW (window));
+	new_game_menu_button_enabled(false);
 	int connect_port = new_game_window_get_connect_port (window);
 	char *connect_host = new_game_window_get_connect_host (window);
 	struct ClientArgs *args = g_new(struct ClientArgs, 1);
@@ -176,6 +177,7 @@ static void
 on_start_server (NewGameWindow *window, gpointer user_data)
 {
     gtk_window_close (GTK_WINDOW (window));
+	new_game_menu_button_enabled(false);
 	int srv_port = new_game_window_get_server_port (window);
 	struct ServerArgs *srv_args = g_new(struct ServerArgs, 1);
 	srv_args->port = srv_port;

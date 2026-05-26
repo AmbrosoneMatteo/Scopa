@@ -200,6 +200,12 @@ void enable_player_cards(GtkBox *box) {
     gtk_widget_set_sensitive ((GtkWidget *) box, true);
 }
 
+void new_game_menu_button_enabled(bool enabled){
+    GApplication *global_app = g_application_get_default();
+    GAction *action = g_action_map_lookup_action(G_ACTION_MAP(global_app), "new_game");
+    g_simple_action_set_enabled(G_SIMPLE_ACTION(action), enabled);
+}
+
 void place_card_on_table(ScopaWindow *window, struct Card * card) {
     char *path;
     int value = card->value;
