@@ -254,12 +254,12 @@ void set_cards(EndGameDialogWindow *self,
     char* msg1;
     char* msg2;
     if(player1_points>player2_points) {
-        asprintf (&msg1, "Opponent won points: %d", player1_points);
-        asprintf (&msg2, "You lost, points: %d", player2_points);
+        asprintf (&msg1, "You won, points: %d", player1_points);
+        asprintf (&msg2, "Opponent lost, points: %d", player2_points);
     }
     else if (player1_points<player2_points) {
-        asprintf (&msg1, "Opponent lost, points: %d", player1_points);
-        asprintf (&msg2, "You won, points: %d", player2_points);
+        asprintf (&msg1, "You lost, points: %d", player1_points);
+        asprintf (&msg2, "Opponent won, points: %d", player2_points);
     } else {
         asprintf (&msg1, "It's a draw, points: %d", player1_points);
         asprintf (&msg2, "It's a draw, points: %d", player2_points);
