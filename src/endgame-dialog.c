@@ -21,6 +21,7 @@
 #include "endgame-dialog.h"
 #include "scopa-application.h"
 #include "scopa-window.h"
+#include "client/client.h"
 
 G_DEFINE_FINAL_TYPE (EndGameDialogWindow, endgame_dialog_window,
                      ADW_TYPE_APPLICATION_WINDOW)
@@ -156,6 +157,11 @@ void set_cards(EndGameDialogWindow *self,
                int player1_scope,
                int player2_scope) {
     set_scope(self, player1_scope, player2_scope);
+    if(is_network_game){
+        // Hide the new game button since the feauture is not available for games over the network
+        gtk_widget_set_visible(GTK_WIDGET(self->new_game_button), FALSE);
+    }
+
     int count = 0;
     int ori = 0;
     int sette = 0;
