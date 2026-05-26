@@ -171,10 +171,14 @@ gboolean client_show_endgame_dialog(gpointer user_data){
 
 gboolean client_enable_player_cards(gpointer user_data){
     enable_player_cards((GtkBox *) user_data);
+    gtk_widget_add_css_class(GTK_WIDGET (main_window->player_cards), "hand-enabled");
+    gtk_widget_remove_css_class(GTK_WIDGET (main_window->player_cards), "hand-disabled");
     return G_SOURCE_REMOVE;
 }
 
 gboolean client_disable_player_cards(gpointer user_data){
     disable_player_cards((GtkBox *) user_data);
+    gtk_widget_add_css_class(GTK_WIDGET (main_window->player_cards), "hand-disabled");
+    gtk_widget_remove_css_class(GTK_WIDGET (main_window->player_cards), "hand-enabled");
     return G_SOURCE_REMOVE;
 }

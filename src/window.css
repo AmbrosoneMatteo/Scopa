@@ -19,3 +19,11 @@
     border: 2px solid #ffff1a;
     border-radius: 15px;
 }
+
+.hand-enabled {
+    opacity: 1.0;
+}
+
+.hand-disabled {
+    opacity: 0.5;
+}
