@@ -160,6 +160,8 @@ void set_cards(EndGameDialogWindow *self,
     if(is_network_game){
         // Hide the new game button since the feauture is not available for games over the network
         gtk_widget_set_visible(GTK_WIDGET(self->new_game_button), FALSE);
+    }else{
+        new_game_menu_button_enabled(true); // Enabling the menu button to start a new local/net game
     }
 
     int count = 0;

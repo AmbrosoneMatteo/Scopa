@@ -184,6 +184,7 @@ player_play_card(int player_card_index) {
 
 void start_local_game(int diff) {
     enable_player_cards (main_window->player_cards);
+    new_game_menu_button_enabled(false);
     difficulty = diff;
     player_hand = malloc(sizeof(struct Hand));
     bot_hand = malloc(sizeof(struct Hand));
