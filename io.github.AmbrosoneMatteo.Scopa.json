@@ -9,8 +9,7 @@
         "--share=ipc",
         "--socket=fallback-x11",
         "--device=dri",
-        "--socket=wayland",
-        "--socket=session-bus"
+        "--socket=wayland"
     ],
     "cleanup" : [
         "/include",
@@ -31,7 +30,8 @@
             "sources" : [
                 {
                     "type" : "git",
-                    "url" : "file:///home/matteo/Projects"
+                    "url" : "https://github.com/mesonbuild/meson",
+                    "tag": "1.11.2"
                 }
             ],
             "config-opts" : [
